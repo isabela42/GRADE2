@@ -8,7 +8,7 @@ Based on
   - Mainá Bitar's 'GRADE2 (Basic Rnaseq Analysis IN) PBS'
   - Isabela Almeida's 'HyDRA (Hybrid de novo RNA assembly) pipeline'
 Created on May 27, 2024
-Last modified on Jun 14, 2024
+Last modified on September 16, 2025
 Version: ${version}
 
 Description: Write and submit PBS jobs for step 041 of the
@@ -24,7 +24,7 @@ Resources baseline: -m 20 -c 6 -w "05:00:00"
                             directory. This TSV file should contain:
                             
                             Col1:
-                            path/from/working/dir/to/GRADE2_step021_trim-reads-adapters_Trimmomatic_DATE/adapter-trimmed_stem
+                            path/from/working/dir/to/grade021_trim-adapters_Trimmomatic_DATE/adapter-trimmed_stem
                             of both _R1.f* and _R2.f* files in individual lines
                             and no full stops.
 
@@ -118,32 +118,18 @@ human_thislogdate=`date`
 logfile=logfile_ipda_GRADE2_step041-to-pbs_${thislogdate}.txt
 
 #................................................
-#  Additional information
-#................................................
-
-# NA
-
-#................................................
 #  Required modules, softwares and libraries
 #................................................
 
-## Load tools from HPC
-# For more info, see
-# <https://genomeinfo.qimrberghofer.edu.au/wiki/HPC/Avalon#Loading_Software_.28modules.29>
-
 # Kallisto 0.43.0:
 module_kallisto=kallisto/0.43.0
-
-## Path to user-installed tools
-
-# None required
 
 #................................................
 #  Set and create output path
 #................................................
 
 ## Set stem for output directories
-outpath_GRADE2041_Kallisto="GRADE2_step041_quantification_Kallisto_${thislogdate}"
+outpath_GRADE2041_Kallisto="grade041_quant_Kallisto_${thislogdate}"
 
 ## Create output directories
 mkdir -p ${outpath_GRADE2041_Kallisto}
@@ -247,11 +233,7 @@ cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g' | cut -d'_' -f2-` ; echo "#  Load Softwares, Libraries and Modules" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g' | cut -d'_' -f2-` ; echo "#................................................" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g' | cut -d'_' -f2-` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g' | cut -d'_' -f2-` ; echo 'echo "## Load tools from HPC"' >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g' | cut -d'_' -f2-` ; echo "module load ${module_kallisto}" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g' | cut -d'_' -f2-` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g' | cut -d'_' -f2-` ; echo 'echo "## Path to user-installed tools"' >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g' | cut -d'_' -f2-` ; echo 'echo "# None required"' >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g' | cut -d'_' -f2-` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 
 ## Write PBS command lines

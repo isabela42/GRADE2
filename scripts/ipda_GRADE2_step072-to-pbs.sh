@@ -8,7 +8,7 @@ Based on
   - Mainá Bitar's 'GRADE2 (Basic Rnaseq Analysis IN) PBS'
   - Isabela Almeida's 'HyDRA (Hybrid de novo RNA assembly) pipeline'
 Created on Jun 14, 2024
-Last modified on Jun 14, 2024
+Last modified on September 16, 2025
 Version: ${version}
 
 Description: Write and submit PBS jobs for step 072 of the
@@ -28,7 +28,7 @@ To avoid going over the resources asked, we only ask for
                             directory. This TSV file should contain:
                             
                             Col1:
-                            path/from/working/dir/to/GRADE2_step071_alignment_SAMtools_DATE/stem.samtools.bam
+                            path/from/working/dir/to/grade071_alignment_SAMtools_DATE/stem.samtools.bam
                             full file paths
 
 -p <PBS stem>               Stem for PBS file names
@@ -130,23 +130,15 @@ cpuless=$((ncpus*80/100))
 #  Required modules, softwares and libraries
 #................................................
 
-## Load tools from HPC
-# For more info, see
-# <https://genomeinfo.qimrberghofer.edu.au/wiki/HPC/Avalon#Loading_Software_.28modules.29>
-
 # Novoalign 3.05.01
 module_novoalign=novoalign/3.05.01
-
-## Path to user-installed tools
-
-# None required
 
 #................................................
 #  Set and create output path
 #................................................
 
 ## Set stem for output directories
-outpath_GRADE2072_Novosort="GRADE2_step072_alignment_Novosort_${thislogdate}"
+outpath_GRADE2072_Novosort="grade072_alignment_Novosort_${thislogdate}"
 
 ## Create output directories
 mkdir -p ${outpath_GRADE2072_Novosort}
@@ -250,11 +242,7 @@ cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_fil
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "#  Load Softwares, Libraries and Modules" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "#................................................" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo 'echo "## Load tools from HPC"' >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "module load ${module_novoalign}" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo 'echo "## Path to user-installed tools"' >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo 'echo "# None required"' >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 
 ## Write PBS command lines

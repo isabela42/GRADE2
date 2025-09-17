@@ -8,7 +8,7 @@ Based on
   - Mainá Bitar's 'GRADE2 (Basic Rnaseq Analysis IN) PBS'
   - Isabela Almeida's 'HyDRA (Hybrid de novo RNA assembly) pipeline'
 Created on Jun 03, 2024
-Last modified on Jun 18, 2024
+Last modified on September 16, 2025
 Version: ${version}
 
 Description: Write and submit PBS jobs for step 051 of the
@@ -24,7 +24,7 @@ Resources baseline: -m 2 -c 1 -w "10:00:00"
                             directory. This TSV file should contain:
                             
                             Col1:
-                            path/from/working/dir/to/GRADE2_step041_quantification_Kallisto_DATE/
+                            path/from/working/dir/to/grade041_quant_Kallisto_DATE/
 
 -p <PBS stem>               Stem for PBS file names
 -e <email>                  Email for PBS job
@@ -109,26 +109,6 @@ done
 thislogdate=$(date +'%d%m%Y%H%M%S%Z')
 human_thislogdate=`date`
 logfile=logfile_ipda_GRADE2_step051-to-pbs_${thislogdate}.txt
-
-#................................................
-#  Additional information
-#................................................
-
-# NA
-
-#................................................
-#  Required modules, softwares and libraries
-#................................................
-
-## Load tools from HPC
-# For more info, see
-# <https://genomeinfo.qimrberghofer.edu.au/wiki/HPC/Avalon#Loading_Software_.28modules.29>
-
-# None required
-
-## Path to user-installed tools
-
-# None required
 
 #................................................
 #  Print Execution info to user
@@ -222,18 +202,6 @@ cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${p
 cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo 'cd ${PBS_O_WORKDIR}' >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
 cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
 cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo 'echo ; echo "WARNING: The main directory for this run was set to ${PBS_O_WORKDIR}"; echo ' >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-
-## Write load modules
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "#................................................" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "#  Load Softwares, Libraries and Modules" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "#................................................" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo 'echo "## Load tools from HPC"' >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo 'echo "# No HPC modules required"' >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo 'echo "## Path to user-installed tools"' >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo 'echo "# None required"' >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
 cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
 
 ## Write PBS command lines

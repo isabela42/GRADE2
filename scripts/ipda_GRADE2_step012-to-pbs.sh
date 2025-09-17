@@ -8,7 +8,7 @@ Based on
   - Mainá Bitar's 'GRADE2 (Basic Rnaseq Analysis IN) PBS'
   - Isabela Almeida's 'HyDRA (Hybrid de novo RNA assembly) pipeline'
 Created on May 27, 2024
-Last modified on Jun 14, 2024
+Last modified on September 16, 2025
 Version: ${version}
 
 Description: Write and submit PBS jobs for step 012 of the
@@ -107,22 +107,8 @@ human_thislogdate=`date`
 logfile=logfile_ipda_GRADE2_step012-to-pbs_${thislogdate}.txt
 
 #................................................
-#  Additional information
-#................................................
-
-# NA
-
-#................................................
 #  Required modules, softwares and libraries
 #................................................
-
-## Load tools from HPC
-# For more info, see
-# <https://genomeinfo.qimrberghofer.edu.au/wiki/HPC/Avalon#Loading_Software_.28modules.29>
-
-# None required
-
-## Path to user-installed tools
 
 # MultiQC:
 # <https://multiqc.info/docs/getting_started/installation/>
@@ -133,7 +119,7 @@ multiqc="/working/lab_julietF/isabelaA/tools/anaconda3/bin/multiqc"
 #................................................
 
 ## Set stem for output directories
-outpath_GRADE2012_MultiQC="GRADE2_step012_QC-raw-files_MultiQC_${thislogdate}"
+outpath_GRADE2012_MultiQC="grade012_qc-raw_MultiQC_${thislogdate}"
 
 ## Create output directories
 mkdir -p ${outpath_GRADE2012_MultiQC}
@@ -237,10 +223,6 @@ echo "#................................................" >> ${pbs_stem}_${thislo
 echo "#  Load Softwares, Libraries and Modules" >> ${pbs_stem}_${thislogdate}.pbs
 echo "#................................................" >> ${pbs_stem}_${thislogdate}.pbs
 echo "" >> ${pbs_stem}_${thislogdate}.pbs
-echo 'echo "## Load tools from HPC"' >> ${pbs_stem}_${thislogdate}.pbs
-echo 'echo "# No HPC modules required"' >> ${pbs_stem}_${thislogdate}.pbs
-echo "" >> ${pbs_stem}_${thislogdate}.pbs
-echo 'echo "## Path to user-installed tools"' >> ${pbs_stem}_${thislogdate}.pbs
 echo "echo \"${multiqc}\"" >> ${pbs_stem}_${thislogdate}.pbs
 echo "" >> ${pbs_stem}_${thislogdate}.pbs
 

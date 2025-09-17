@@ -8,7 +8,7 @@ Based on
   - Mainá Bitar's 'GRADE2 (Basic Rnaseq Analysis IN) PBS'
   - Isabela Almeida's 'HyDRA (Hybrid de novo RNA assembly) pipeline'
 Created on May 30, 2024
-Last modified on Jun 14, 2024
+Last modified on September 16, 2025
 Version: ${version}
 
 Description: Write and submit PBS jobs for step 011 of the
@@ -25,12 +25,24 @@ Resources baseline: -m 1 -c 6 -w "02:00:00"
                             
                             Col1:
                             path/from/working/dir/to/raw/reads/stem
-                            of both _R1.f* and _R2.f* files in individual lines
+                            of both *1.f* and *2.f* files in individual lines
                             and no full stops.
+                            Extensions accepted: .fastq.gz/fq.gz/fastq/fq
 
                             Col2:
-                            path/from/working/dir/to/raw/reads/stem_R1.f* (line 1)
-                            path/from/working/dir/to/raw/reads/stem_R2.f* (line 2)
+                            path/from/working/dir/to/raw/reads/stem_*1.f* (line 1)
+                            path/from/working/dir/to/raw/reads/stem_*2.f* (line 2)
+                            Extensions accepted: .fastq.gz/fq.gz/fastq/fq
+
+                            Col3:
+                            path/from/working/dir/to/adapters.fasta
+                            In order to define which adapter to trim (especially when sequencing
+                            details are not fully known) one can consult FastQC results and check
+                            for adapter contamination.
+                            These are examples of common adapters from 
+                            <http://docs.blast2go.com/user-manual/tools-(pro-feature)/fastq-quality-check/#FASTQQualityCheck-AdapterContent>
+                            Illumina Universal Adapter: AGATCGGAAGAG (12bp)
+                            Nextera Transposase Sequence: CTGTCTCTTATA (12bp)
 
                             It does not matter if same stem 
                             appears more than once on this input file.
@@ -120,44 +132,20 @@ human_thislogdate=`date`
 logfile=logfile_ipda_GRADE2_step021-to-pbs_${thislogdate}.txt
 
 #................................................
-#  Additional information
-#................................................
-
-# WARNING!
-# In order to define which adapter to trim (especially when sequencing
-# details are not fully known) one can consult FastQC results and check
-# for adapter contamination.
-# These are examples of common adapters from 
-# <http://docs.blast2go.com/user-manual/tools-(pro-feature)/fastq-quality-check/#FASTQQualityCheck-AdapterContent>
-# Illumina Universal Adapter: AGATCGGAAGAG (12bp)
-# Nextera Transposase Sequence: CTGTCTCTTATA (12bp)
-# Adapter sequences are available in the QIMRB cluster:
-# /software/trimmomatic/trimmomatic-0.36/adapters/
-adapters_fasta="/working/lab_julietF/isabelaA/data/references/adapters_trimmomatic.fa"
-
-#................................................
 #  Required modules, softwares and libraries
 #................................................
-
-## Load tools from HPC
-# For more info, see
-# <https://genomeinfo.qimrberghofer.edu.au/wiki/HPC/Avalon#Loading_Software_.28modules.29>
 
 # Trimmomatic 0.36:
 # <http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/Trimmomatic-Src-0.36.zip>
 # <http://www.usadellab.org/cms/?page=trimmomatic>
 module_trimmomatic=trimmomatic/0.36
 
-## Path to user-installed tools
-
-# None required
-
 #................................................
 #  Set and create output path
 #................................................
 
 ## Set stem for output directories
-outpath_GRADE2021_Trimmomatic="GRADE2_step021_trim-reads-adapters_Trimmomatic_${thislogdate}"
+outpath_GRADE2021_Trimmomatic="grade021_trim-adapters_Trimmomatic_${thislogdate}"
 
 ## Create output directories
 mkdir -p ${outpath_GRADE2021_Trimmomatic}
@@ -261,11 +249,7 @@ cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#  Load Softwares, Libraries and Modules" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#................................................" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo 'echo "## Load tools from HPC"' >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "module load ${module_trimmomatic}" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo 'echo "## Path to user-installed tools"' >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo 'echo "# None required"' >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 
 ## Write PBS command lines
@@ -274,7 +258,7 @@ cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#................................................" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo 'echo "## Run Trimmomatic PE at" ; date ; echo' >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; f1="${path_file}_R1.f*"; f2="${path_file}_R2.f*"; echo "trimmomatic PE -phred33 -threads ${ncpus} ${f1} ${f2} ${outpath_GRADE2021_Trimmomatic}/adapter-trimmed_${file}_R1.fq.gz ${outpath_GRADE2021_Trimmomatic}/unpaired_adapter-trimmed_${file}_R1.fq.gz ${outpath_GRADE2021_Trimmomatic}/adapter-trimmed_${file}_R2.fq.gz ${outpath_GRADE2021_Trimmomatic}/unpaired_adapter-trimmed_${file}_R2.fq.gz ILLUMINACLIP:${adapters_fasta}:2:30:10 SLIDINGWINDOW:4:20 MINLEN:75 HEADCROP:12" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; f1="${path_file}*1.f*"; f2="${path_file}*2.f*"; adapters_fasta=`grep ${path_file} ${input} | cut -f3 | sort | uniq`; echo "trimmomatic PE -phred33 -threads ${ncpus} ${f1} ${f2} ${outpath_GRADE2021_Trimmomatic}/adapter-trimmed_${file}_R1.fq.gz ${outpath_GRADE2021_Trimmomatic}/unpaired_adapter-trimmed_${file}_R1.fq.gz ${outpath_GRADE2021_Trimmomatic}/adapter-trimmed_${file}_R2.fq.gz ${outpath_GRADE2021_Trimmomatic}/unpaired_adapter-trimmed_${file}_R2.fq.gz ILLUMINACLIP:${adapters_fasta}:2:30:10 SLIDINGWINDOW:4:20 MINLEN:75 HEADCROP:12" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 
 #................................................
 #  Submit PBS jobs

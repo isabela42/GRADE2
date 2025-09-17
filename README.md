@@ -98,7 +98,7 @@ Project Link: [https://github.com/isabela42/GRADE2](https://github.com/isabela42
 <!-- LICENSE -->
 ## License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+Distributed under the MIT License. See [LICENSE][license-url] for more information.
 
 
 <!-- MARKDOWN LINKS & IMAGES -->
@@ -112,6 +112,6 @@ Distributed under the MIT License. See `LICENSE` for more information.
 [issues-shield]: https://img.shields.io/github/issues/isabela42/NB-lncRNAs.svg?style=for-the-badge
 [issues-url]: https://github.com/isabela42/GRADE2/issues
 [license-shield]: https://img.shields.io/github/license/isabela42/NB-lncRNAs.svg?style=for-the-badge
-[license-url]: https://github.com/isabela42/GRADE2/blob/master/LICENSE.txt
+[license-url]: https://github.com/isabela42/GRADE2/blob/master/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/isabela42/

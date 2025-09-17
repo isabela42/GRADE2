@@ -8,7 +8,7 @@ Based on
   - Mainá Bitar's 'GRADE2 (Basic Rnaseq Analysis IN) PBS'
   - Isabela Almeida's 'HyDRA (Hybrid de novo RNA assembly) pipeline'
 Created on May 27, 2024
-Last modified on Jun 14, 2024
+Last modified on September 16, 2025
 Version: ${version}
 
 Description: Write and submit PBS jobs for step 011 of the
@@ -25,12 +25,14 @@ Resources baseline: -m 10 -c 1 -w "02:00:00"
                             
                             Col1:
                             path/from/working/dir/to/raw/reads/stem
-                            of both _R1.f* and _R2.f* files in individual lines
+                            of both *1.f* and *2.f* files in individual lines
                             and no full stops.
+                            Extensions accepted: .fastq.gz/fq.gz/fastq/fq
 
                             Col2:
-                            path/from/working/dir/to/raw/reads/stem_R1.f* (line 1)
-                            path/from/working/dir/to/raw/reads/stem_R2.f* (line 2)
+                            path/from/working/dir/to/raw/reads/stem_*1.f* (line 1)
+                            path/from/working/dir/to/raw/reads/stem_*2.f* (line 2)
+                            Extensions accepted: .fastq.gz/fq.gz/fastq/fq
 
                             It does not matter if same stem 
                             appears more than once on this input file.
@@ -120,33 +122,19 @@ human_thislogdate=`date`
 logfile=logfile_ipda_GRADE2_step011-to-pbs_${thislogdate}.txt
 
 #................................................
-#  Additional information
-#................................................
-
-# NA
-
-#................................................
 #  Required modules, softwares and libraries
 #................................................
-
-## Load tools from HPC
-# For more info, see
-# <https://genomeinfo.qimrberghofer.edu.au/wiki/HPC/Avalon#Loading_Software_.28modules.29>
 
 # FastQC 0.12.1:
 # <https://www.bioinformatics.babraham.ac.uk/projects/fastqc>
 module_fastqc=fastqc/0.12.1
-
-## Path to user-installed tools
-
-# None required
 
 #................................................
 #  Set and create output path
 #................................................
 
 ## Set stem for output directories
-outpath_GRADE2011_FastQC="GRADE2_step011_QC-raw-files_FastQC_${thislogdate}"
+outpath_GRADE2011_FastQC="grade011_qc-raw_FastQC_${thislogdate}"
 
 ## Create output directories
 mkdir -p ${outpath_GRADE2011_FastQC}
@@ -250,12 +238,7 @@ cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#  Load Softwares, Libraries and Modules" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#................................................" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo 'echo "## Load tools from HPC"' >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "module load ${module_fastqc}" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo 'echo "## Path to user-installed tools"' >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo 'echo "# None required"' >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 
 ## Write PBS command lines
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#................................................" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
@@ -263,7 +246,7 @@ cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#................................................" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo 'echo "## Run FastQC at" ; date ; echo' >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; f1="${path_file}_R1.f*"; f2="${path_file}_R2.f*"; echo "fastqc -t ${ncpus} --outdir ${outpath_GRADE2011_FastQC} ${f1} ${f2} --memory 10000" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; f1="${path_file}*1.f*"; f2="${path_file}*2.f*"; echo "fastqc -t ${ncpus} --outdir ${outpath_GRADE2011_FastQC} ${f1} ${f2} --memory 10000" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 
 #................................................
 #  Submit PBS jobs

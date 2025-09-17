@@ -8,7 +8,7 @@ Based on
   - Mainá Bitar's 'GRADE2 (Basic Rnaseq Analysis IN) PBS'
   - Isabela Almeida's 'HyDRA (Hybrid de novo RNA assembly) pipeline'
 Created on Jun 13, 2024
-Last modified on Jun 14, 2024
+Last modified on September 16, 2025
 Version: ${version}
 
 Description: Write and submit PBS jobs for step 071 of the
@@ -24,7 +24,7 @@ Resources baseline: -m 5 -c 6 -w "01:00:00"
                             directory. This TSV file should contain:
                             
                             Col1:
-                            path/from/working/dir/to/GRADE2_step061_alignment_STAR_DATE/stem
+                            path/from/working/dir/to/grade061_alignment_STAR_DATE/stem
                             of STAR alignment subfolder containg Aligned.toTranscriptome.out.bam file
 
                             Col2:
@@ -120,32 +120,18 @@ human_thislogdate=`date`
 logfile=logfile_ipda_GRADE2_step071-to-pbs_${thislogdate}.txt
 
 #................................................
-#  Additional information
-#................................................
-
-# NA
-
-#................................................
 #  Required modules, softwares and libraries
 #................................................
 
-## Load tools from HPC
-# For more info, see
-# <https://genomeinfo.qimrberghofer.edu.au/wiki/HPC/Avalon#Loading_Software_.28modules.29>
-
 # SAMtools 1.3
 module_samtools=samtools/1.3
-
-## Path to user-installed tools
-
-# None required
 
 #................................................
 #  Set and create output path
 #................................................
 
 ## Set stem for output directories
-outpath_GRADE2071_SAMtools="GRADE2_step071_alignment_SAMtools_${thislogdate}"
+outpath_GRADE2071_SAMtools="grade071_alignment_SAMtools_${thislogdate}"
 
 ## Create output directories
 mkdir -p ${outpath_GRADE2071_SAMtools}
@@ -249,11 +235,7 @@ cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_fil
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | rev | cut -d"/" -f1 | rev | cut -d"_" -f2-` ; echo "#  Load Softwares, Libraries and Modules" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | rev | cut -d"/" -f1 | rev | cut -d"_" -f2-` ; echo "#................................................" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | rev | cut -d"/" -f1 | rev | cut -d"_" -f2-` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | rev | cut -d"/" -f1 | rev | cut -d"_" -f2-` ; echo 'echo "## Load tools from HPC"' >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | rev | cut -d"/" -f1 | rev | cut -d"_" -f2-` ; echo "module load ${module_samtools}" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | rev | cut -d"/" -f1 | rev | cut -d"_" -f2-` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | rev | cut -d"/" -f1 | rev | cut -d"_" -f2-` ; echo 'echo "## Path to user-installed tools"' >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | rev | cut -d"/" -f1 | rev | cut -d"_" -f2-` ; echo 'echo "# None required"' >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | rev | cut -d"/" -f1 | rev | cut -d"_" -f2-` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 
 ## Write PBS command lines
