@@ -103,15 +103,15 @@ Distributed under the MIT License. See [LICENSE][license-url] for more informati
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/isabela42/NB-lncRNAs.svg?style=for-the-badge
+[contributors-shield]: https://img.shields.io/github/contributors/isabela42/GRADE2.svg?style=for-the-badge
 [contributors-url]: https://github.com/isabela42/GRADE2/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/isabela42/NB-lncRNAs.svg?style=for-the-badge
+[forks-shield]: https://img.shields.io/github/forks/isabela42/GRADE2.svg?style=for-the-badge
 [forks-url]: https://github.com/isabela42/GRADE2/network/members
-[stars-shield]: https://img.shields.io/github/stars/isabela42/NB-lncRNAs.svg?style=for-the-badge
+[stars-shield]: https://img.shields.io/github/stars/isabela42/GRADE2.svg?style=for-the-badge
 [stars-url]: https://github.com/isabela42/GRADE2/stargazers
-[issues-shield]: https://img.shields.io/github/issues/isabela42/NB-lncRNAs.svg?style=for-the-badge
+[issues-shield]: https://img.shields.io/github/issues/isabela42/GRADE2.svg?style=for-the-badge
 [issues-url]: https://github.com/isabela42/GRADE2/issues
-[license-shield]: https://img.shields.io/github/license/isabela42/NB-lncRNAs.svg?style=for-the-badge
+[license-shield]: https://img.shields.io/github/license/isabela42/GRADE2.svg?style=for-the-badge
 [license-url]: https://github.com/isabela42/GRADE2/blob/master/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/isabela42/
