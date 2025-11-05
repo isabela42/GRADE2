@@ -1,0 +1,20 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: >-
+  General RNAseq Analysis for Differential Expression
+  version 2
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Isabela
+    family-names: Almeida
+    email: mb.isabela42@gmail.com
+    orcid: 'https://orcid.org/0000-0001-9995-782X'
+    affiliation: QIMR Berghofer
+repository-code: 'https://github.com/isabela42/GRADE2'
+license: MIT
+version: '2'
