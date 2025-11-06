@@ -121,6 +121,7 @@ logfile=logfile_ipda_GRADE2_step000-to-pbs_${thislogdate}.txt
 module_bedtools=bedtools/2.31.1
 # Figure if BAM is derived from pair-end or single-end reads: https://www.biostars.org/p/178730/
 # Decoding SAM flags: http://broadinstitute.github.io/picard/explain-flags.html
+# samtools view -c -f 1 /working/joint_projects/Edwards-French-Omara_TCGA-GTEx-OV/20250821_TCGA-OV/fffe86e1-ca37-4141-ab78-6a3d2b910810/23d2011e-aab7-4dda-b818-55d6fa86503b.rna_seq.genomic.gdc_realn.bam
 
 #................................................
 #  Set and create output path
@@ -240,8 +241,7 @@ cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#................................................" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo 'echo "## Run bamToFastq at" ; date ; echo' >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "kallisto index -i ${path_index}/${file} -k31 ${path_file}" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-bamToFastq -i ${path_file} -fq ${outpath_GRADE2000_BamToFastq}/${file}_R1.fq -fq2 ${outpath_GRADE2000_BamToFastq}/${file}_R2.fq ; gzip ${outpath_GRADE2000_BamToFastq}/${file}_R1.fq ; gzip ${outpath_GRADE2000_BamToFastq}/${file}_R2.fq
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "bamToFastq -i ${path_file} -fq ${outpath_GRADE2000_BamToFastq}/${file}_R1.fq -fq2 ${outpath_GRADE2000_BamToFastq}/${file}_R2.fq ; gzip ${outpath_GRADE2000_BamToFastq}/${file}_R1.fq ; gzip ${outpath_GRADE2000_BamToFastq}/${file}_R2.fq" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 
 #................................................
 #  Submit PBS jobs
