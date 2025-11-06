@@ -8,7 +8,7 @@ Based on
   - Mainá Bitar's 'GRADE (Basic Rnaseq Analysis IN) PBS'
   - Isabela Almeida's 'HyDRA (Hybrid de novo RNA assembly) pipeline'
 Created on Jun 13, 2024
-Last modified on September 16, 2025
+Last modified on November 06, 2025
 Version: ${version}
 
 Description: Write and submit PBS jobs for step 071 of the
@@ -48,7 +48,7 @@ PBS files                   PBS files created
 
 Pipeline description:
 
-#   000 Index building (1Kallisto, 2RSEM, 3STAR)
+#   000 Index building (0BedTools, 1Kallisto, 2RSEM, 3STAR)
 #   010 Quality check raw files (1FastQC, 2MultiQC)
 #   020 Trim reads of adapters (1Trimmomatic)
 #   030 Quality check raw files (1FastQC, 2MultiQC)

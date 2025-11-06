@@ -7,16 +7,16 @@ Written by Isabela Almeida
 Based on
   - Mainá Bitar's 'GRADE (Basic Rnaseq Analysis IN) PBS'
   - Isabela Almeida's 'HyDRA (Hybrid de novo RNA assembly) pipeline'
-Created on May 27, 2024
+Created on November 06, 2025
 Last modified on November 06, 2025
 Version: ${version}
 
-Description: Write and submit PBS jobs for step 002 of the
+Description: Write and submit PBS jobs for step 000 of the
 GRADE2 PBS 2.0 pipeline (General RNAseq Analysis for Differential Expression version 2).
 
-Usage: bash ipda_GRADE2_step002-to-pbs.sh -i "path/to/input/files" -p "PBS stem" -e "email" -m INT -c INT -w "HH:MM:SS"
+Usage: bash ipda_GRADE2_step000-to-pbs.sh -i "path/to/input/files" -p "PBS stem" -e "email" -m INT -c INT -w "HH:MM:SS"
 
-Resources baseline: -m 40 -c 7 -w "08:00:00"
+Resources baseline: -m 50 -c 1 -w "10:00:00"
 
 ## Input:
 
@@ -24,17 +24,10 @@ Resources baseline: -m 40 -c 7 -w "08:00:00"
                             directory. This TSV file should contain:
                             
                             Col1:
-                            path/from/working/dir/to/file.gtf
-                            of user desired transcriptome (e.g. gencode +
-                            custom transcriptome in a single gtf file)
+                            path/from/working/dir/to/file.bam
 
-                            Col2:
-                            path/to/build/rsem-index/
-                            Index will be named as stem of file.gtf
-
-                            Col3:
-                            path/from/working/dir/to/file.fasta
-                            of reference genome file
+                            It does not matter if same stem 
+                            appears more than once on this input file.
 
 -p <PBS stem>               Stem for PBS file names
 -e <email>                  Email for PBS job
@@ -103,7 +96,7 @@ do
         w) walltime="${OPTARG}";;    # Clock walltime required for PBS job
         h) Help ; exit;;             # Print Help and exit
         v) echo "${version}"; exit;; # Print version and exit
-        ?) echo script usage: bash ipda_GRADE2_step002-to-pbs.sh -i path/to/input/files -p PBS stem -e email -m INT -c INT -w "HH:MM:SS" >&2
+        ?) echo script usage: bash ipda_GRADE2_step000-to-pbs.sh -i path/to/input/files -p PBS stem -e email -m INT -c INT -w "HH:MM:SS" >&2
            exit;;
     esac
 done
@@ -118,24 +111,33 @@ done
 # and memory/CPU usage for all executions
 thislogdate=$(date +'%d%m%Y%H%M%S%Z')
 human_thislogdate=`date`
-logfile=logfile_ipda_GRADE2_step002-to-pbs_${thislogdate}.txt
+logfile=logfile_ipda_GRADE2_step000-to-pbs_${thislogdate}.txt
 
 #................................................
 #  Required modules, softwares and libraries
 #................................................
 
-# RSEM 1.2.30:
-module_rsem=RSEM/1.2.30
+# Bedtools 2.31.1:
+module_bedtools=bedtools/2.31.1
+# Figure if BAM is derived from pair-end or single-end reads: https://www.biostars.org/p/178730/
+# Decoding SAM flags: http://broadinstitute.github.io/picard/explain-flags.html
 
-# Perl 5.22:
-module_perl=perl/5.22
+#................................................
+#  Set and create output path
+#................................................
+
+## Set stem for output directories
+outpath_GRADE2000_BamToFastq="grade000_bam2fastq_BedTools_${thislogdate}"
+
+## Create output directories
+mkdir -p ${outpath_GRADE2000_BamToFastq}
 
 #................................................
 #  Print Execution info to user
 #................................................
 
 date
-echo "## Executing bash ipda_GRADE2_step002-to-pbs.sh"
+echo "## Executing bash ipda_GRADE2_step000-to-pbs.sh"
 echo "## This execution PID: ${pid}"
 echo
 echo "## Given inputs:"
@@ -167,7 +169,7 @@ echo
 exec &> "${logfile}"
 
 date
-echo "## Executing bash ipda_GRADE2_step002-to-pbs.sh"
+echo "## Executing bash ipda_GRADE2_step000-to-pbs.sh"
 echo "## This execution PID: ${pid}"
 echo
 echo "## Given inputs:"
@@ -229,8 +231,7 @@ cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#  Load Softwares, Libraries and Modules" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#................................................" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "module load ${module_rsem}" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "module load ${module_perl}" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "module load ${module_bedtools}" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 
 ## Write PBS command lines
@@ -238,8 +239,9 @@ cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#  Run step" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#................................................" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo 'echo "## Build RSEM index at" ; date ; echo' >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; path_index=`grep "${path_file}" ${input} | cut -f2 | sort | uniq`; mkdir -p ${path_index}; reference_gen=`grep "${path_file}" ${input} | cut -f3`; echo "rsem-prepare-reference -p ${ncpus} --gtf ${path_file} ${reference_gen} ${path_index}/${file}" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo 'echo "## Run bamToFastq at" ; date ; echo' >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "kallisto index -i ${path_index}/${file} -k31 ${path_file}" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+bamToFastq -i ${path_file} -fq ${outpath_GRADE2000_BamToFastq}/${file}_R1.fq -fq2 ${outpath_GRADE2000_BamToFastq}/${file}_R2.fq ; gzip ${outpath_GRADE2000_BamToFastq}/${file}_R1.fq ; gzip ${outpath_GRADE2000_BamToFastq}/${file}_R2.fq
 
 #................................................
 #  Submit PBS jobs
@@ -248,7 +250,7 @@ cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename
 ## Submit PBS jobs 
 ls ${pbs_stem}_*${thislogdate}.pbs | while read pbs; do echo ; echo "#................................................" ; echo "# This is PBS: ${pbs}" ;  echo "#" ; echo "# main command line(s): $(tail -n1 ${pbs})" ; echo "#" ; echo "# now submitting PBS" ; echo "qsub ${pbs}" ; qsub ${pbs} ; echo "#................................................" ; done
 
-date ## Status of all user jobs (including GRADE2 step 002 jobs) at
+date ## Status of all user jobs (including GRADE2 step 000 jobs) at
 qstat -u "$user"
 
 # This will remove $VARNAMES from output file with the actual $VARVALUE
@@ -262,8 +264,7 @@ sed -i 's,${walltime},'"${walltime}"',g' "$logfile"
 sed -i 's,${human_thislogdate},'"${human_thislogdate}"',g' "$logfile"
 sed -i 's,${thislogdate},'"${thislogdate}"',g' "$logfile"
 sed -i 's,${user},'"${user}"',g' "$logfile"
-sed -i 's,${module_rsem},'"${module_rsem}"',g' "$logfile"
-sed -i 's,${module_perl},'"${module_perl}"',g' "$logfile"
+sed -i 's,${module_bedtools},'"${module_bedtools}"',g' "$logfile"
 sed -i 's,${logfile},'"${logfile}"',g' "$logfile"
 sed -n -e :a -e '1,3!{P;N;D;};N;ba' $logfile > tmp ; mv tmp $logfile
 set +v
