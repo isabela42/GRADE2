@@ -24,18 +24,18 @@ Resources baseline: -m 1 -c 6 -w "02:00:00"
                             directory. This TSV file should contain:
                             
                             Col1:
-                            path/from/working/dir/to/raw/reads/stem
+                            /path/from/working/dir/to/raw/reads/stem
                             of both *1.f* and *2.f* files in individual lines
                             and no full stops.
                             Extensions accepted: .fastq.gz/fq.gz/fastq/fq
 
                             Col2:
-                            path/from/working/dir/to/raw/reads/stem_*1.f* (line 1)
-                            path/from/working/dir/to/raw/reads/stem_*2.f* (line 2)
+                            /path/from/working/dir/to/raw/reads/stem_*1.f* (line 1)
+                            /path/from/working/dir/to/raw/reads/stem_*2.f* (line 2)
                             Extensions accepted: .fastq.gz/fq.gz/fastq/fq
 
                             Col3:
-                            path/from/working/dir/to/adapters.fasta
+                            /path/from/working/dir/to/adapters.fasta
                             In order to define which adapter to trim (especially when sequencing
                             details are not fully known) one can consult FastQC results and check
                             for adapter contamination.
@@ -258,7 +258,7 @@ cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#................................................" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo 'echo "## Run Trimmomatic PE at" ; date ; echo' >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; f1=`grep ${path_file} ${input} | cut -f2 | head -n1`; f2=`grep \"${path_file}\" ${input} | cut -f2 | tail -n1`; adapters_fasta=`grep ${path_file} ${input} | cut -f3 | sort | uniq`; echo "trimmomatic PE -phred33 -threads ${ncpus} ${f1} ${f2} ${outpath_GRADE2021_Trimmomatic}/adapter-trimmed_${file}_R1.fq.gz ${outpath_GRADE2021_Trimmomatic}/unpaired_adapter-trimmed_${file}_R1.fq.gz ${outpath_GRADE2021_Trimmomatic}/adapter-trimmed_${file}_R2.fq.gz ${outpath_GRADE2021_Trimmomatic}/unpaired_adapter-trimmed_${file}_R2.fq.gz ILLUMINACLIP:${adapters_fasta}:2:30:10 SLIDINGWINDOW:4:20 MINLEN:75 HEADCROP:12" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; f1=`grep ${path_file} ${input} | cut -f2 | head -n1`; f2=`grep ${path_file} ${input} | cut -f2 | tail -n1`; adapters_fasta=`grep ${path_file} ${input} | cut -f3 | sort | uniq`; echo "trimmomatic PE -phred33 -threads ${ncpus} ${f1} ${f2} ${outpath_GRADE2021_Trimmomatic}/adapter-trimmed_${file}_R1.fq.gz ${outpath_GRADE2021_Trimmomatic}/unpaired_adapter-trimmed_${file}_R1.fq.gz ${outpath_GRADE2021_Trimmomatic}/adapter-trimmed_${file}_R2.fq.gz ${outpath_GRADE2021_Trimmomatic}/unpaired_adapter-trimmed_${file}_R2.fq.gz ILLUMINACLIP:${adapters_fasta}:2:30:10 SLIDINGWINDOW:4:20 MINLEN:75 HEADCROP:12" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 
 #................................................
 #  Submit PBS jobs
