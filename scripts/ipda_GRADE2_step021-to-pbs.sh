@@ -14,7 +14,7 @@ Version: ${version}
 Description: Write and submit PBS jobs for step 011 of the
 GRADE2 PBS 2.0 pipeline (General RNAseq Analysis for Differential Expression version 2).
 
-Usage: bash ipda_GRADE2_step021-to-pbs.sh -i "path/to/input/files" -p "PBS stem" -e "email" -m INT -c INT -w "HH:MM:SS"
+Usage: bash ipda_GRADE2_step021-to-pbs.sh -i "path/to/input/files" -p "PBS stem" -e "email" -m INT -c INT -w "HH:MM:SS" [-t]
 
 Resources baseline: -m 1 -c 6 -w "02:00:00"
 
@@ -57,6 +57,7 @@ Resources baseline: -m 1 -c 6 -w "02:00:00"
 -m <INT>                    Memory INT required for PBS job in GB
 -c <INT>                    Number of CPUS required for PBS job
 -w <HH:MM:SS>               Clock walltime required for PBS job
+-t                          Flag to run test and get jobperft resources usage info
 
 ## Output:
 
@@ -108,7 +109,7 @@ set -e
 #................................................
 
 ## Get parameters from command line flags
-while getopts "i:p:e:m:c:w:h:v" flag
+while getopts "i:p:e:m:c:w:th:v" flag
 do
     case "${flag}" in
         i) input="${OPTARG}";;       # Input files including path
@@ -117,6 +118,7 @@ do
         m) mem="${OPTARG}";;         # Memory required for PBS job
         c) ncpus="${OPTARG}";;       # Number of CPUS required for PBS job
         w) walltime="${OPTARG}";;    # Clock walltime required for PBS job
+        t) test=true;;               # If running a test, execute jobperft for resources usage info
         h) Help ; exit;;             # Print Help and exit
         v) echo "${version}"; exit;; # Print version and exit
         ?) echo script usage: bash ipda_GRADE2_step021-to-pbs.sh -i path/to/input/files -p PBS stem -e email -m INT -c INT -w "HH:MM:SS" >&2
@@ -144,6 +146,9 @@ logfile=logfile_ipda_GRADE2_step021-to-pbs_${thislogdate}.txt
 # <http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/Trimmomatic-Src-0.36.zip>
 # <http://www.usadellab.org/cms/?page=trimmomatic>
 module_trimmomatic=trimmomatic/0.36
+
+# Jobperf 0.1.0:
+module_jobperf=jobperf/0.1.0
 
 #................................................
 #  Set and create output path
@@ -255,6 +260,7 @@ cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#................................................" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "module load ${module_trimmomatic}" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+if [[ "$test" == true ]]; then cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "module load ${module_jobperf}" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done; fi
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 
 ## Write PBS command lines
@@ -262,23 +268,27 @@ cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#  Run step" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#................................................" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+if [[ "$test" == true ]]; then cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "set -x" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done; fi
+if [[ "$test" == true ]]; then cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "date >&2" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done; fi
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo 'echo "## Run gzip if flag yes at" ; date ; echo' >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; flag_merge=`grep "${path_file}" ${input} | cut -f4 | sort | uniq`; if [[ $flag_merge = "yes" ]]; then echo "zcat -c ${path_file}*_*1.f* | gzip -c >> ${outpath_GRADE2021_Trimmomatic}/${file}_R1.fastq.gz" >> ${pbs_stem}_${file}_${thislogdate}.pbs; elif [[ $flag_merge = "no" ]]; then echo "#Flag to do not merge file" >> ${pbs_stem}_${file}_${thislogdate}.pbs; else echo "Unknown flag provided. Please provide either yes or no string and try again" >> ${pbs_stem}_${file}_${thislogdate}.pbs; fi; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; flag_merge=`grep "${path_file}" ${input} | cut -f4 | sort | uniq`; if [[ $flag_merge = "yes" ]]; then echo "zcat -c ${path_file}*_*2.f* | gzip -c >> ${outpath_GRADE2021_Trimmomatic}/${file}_R2.fastq.gz" >> ${pbs_stem}_${file}_${thislogdate}.pbs; elif [[ $flag_merge = "no" ]]; then echo "#Flag to do not merge file" >> ${pbs_stem}_${file}_${thislogdate}.pbs; else echo "Unknown flag provided. Please provide either yes or no string and try again" >> ${pbs_stem}_${file}_${thislogdate}.pbs; fi; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo 'echo "## Run Trimmomatic PE at" ; date ; echo' >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; flag_merge=`grep "${path_file}" ${input} | cut -f4 | sort | uniq`; if [[ $flag_merge = "yes" ]]; then f1="${outpath_GRADE2021_Trimmomatic}/${file}_R1.fastq.gz"; f2="${outpath_GRADE2021_Trimmomatic}/${file}_R2.fastq.gz"; elif [[ $flag_merge = "no" ]]; then f1=`grep "${path_file}" ${input} | cut -f2`; f2=`grep "${path_file}" ${input} | cut -f3`; fi; adapters_fasta=`grep ${path_file} ${input} | cut -f3 | sort | uniq`; echo "trimmomatic PE -phred33 -threads ${ncpus} ${f1} ${f2} ${outpath_GRADE2021_Trimmomatic}/adapter-trimmed_${file}_R1.fq.gz ${outpath_GRADE2021_Trimmomatic}/unpaired_adapter-trimmed_${file}_R1.fq.gz ${outpath_GRADE2021_Trimmomatic}/adapter-trimmed_${file}_R2.fq.gz ${outpath_GRADE2021_Trimmomatic}/unpaired_adapter-trimmed_${file}_R2.fq.gz ILLUMINACLIP:${adapters_fasta}:2:30:10 SLIDINGWINDOW:4:20 MINLEN:75 HEADCROP:12" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+if [[ "$test" == true ]]; then cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "date >&2" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done; fi
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; flag_merge=`grep "${path_file}" ${input} | cut -f4 | sort | uniq`; if [[ $flag_merge = "yes" ]]; then f1="${outpath_GRADE2021_Trimmomatic}/${file}_R1.fastq.gz"; f2="${outpath_GRADE2021_Trimmomatic}/${file}_R2.fastq.gz"; elif [[ $flag_merge = "no" ]]; then f1=`grep "${path_file}" ${input} | cut -f2 | head -n1`; f2=`grep "${path_file}" ${input} | cut -f2 | tail -n1`; fi; adapters_fasta=`grep ${path_file} ${input} | cut -f3 | sort | uniq`; echo "trimmomatic PE -phred33 -threads ${ncpus} ${f1} ${f2} ${outpath_GRADE2021_Trimmomatic}/adapter-trimmed_${file}_R1.fq.gz ${outpath_GRADE2021_Trimmomatic}/unpaired_adapter-trimmed_${file}_R1.fq.gz ${outpath_GRADE2021_Trimmomatic}/adapter-trimmed_${file}_R2.fq.gz ${outpath_GRADE2021_Trimmomatic}/unpaired_adapter-trimmed_${file}_R2.fq.gz ILLUMINACLIP:${adapters_fasta}:2:30:10 SLIDINGWINDOW:4:20 MINLEN:75 HEADCROP:12" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; flag_merge=`grep "${path_file}" ${input} | cut -f4 | sort | uniq`; if [[ $flag_merge = "yes" ]]; then f1="${outpath_GRADE2021_Trimmomatic}/${file}_R1.fastq.gz"; f2="${outpath_GRADE2021_Trimmomatic}/${file}_R2.fastq.gz"; elif [[ $flag_merge = "no" ]]; then f1=`grep "${path_file}" ${input} | cut -f2`; f2=`grep "${path_file}" ${input} | cut -f3`; fi; adapters_fasta=`grep ${path_file} ${input} | cut -f3 | sort | uniq`; echo "rm -f ${outpath_GRADE2021_Trimmomatic}/unpaired_*" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+if [[ "$test" == true ]]; then cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "date >&2" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done; fi
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; flag_merge=`grep "${path_file}" ${input} | cut -f4 | sort | uniq`; echo "rm -f ${outpath_GRADE2021_Trimmomatic}/unpaired_*" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 
 #................................................
 #  Submit PBS jobs
 #................................................
 
 ## Submit PBS jobs 
-ls ${pbs_stem}_*${thislogdate}.pbs | while read pbs; do echo ; echo "#................................................" ; echo "# This is PBS: ${pbs}" ;  echo "#" ; echo "# main command line(s): $(tail -n3 ${pbs} | head -n1)" ; echo "#" ; echo "# now submitting PBS" ; echo "qsub ${pbs}" ; qsub ${pbs} ; echo "#................................................" ; done
+ls ${pbs_stem}_*${thislogdate}.pbs | while read pbs; do echo ; echo "#................................................" ; echo "# This is PBS: ${pbs}" ;  echo "#" ; echo "# main command line(s): $(tail -n4 ${pbs} | head -n1)" ; echo "#" ; echo "# now submitting PBS" ; echo "qsub ${pbs}" ; qsub ${pbs} ; echo "#................................................" ; done
 
 date ## Status of all user jobs (including HYDRA step 021 jobs) at
 qstat -u "$user"
@@ -295,6 +305,7 @@ sed -i 's,${human_thislogdate},'"${human_thislogdate}"',g' "$logfile"
 sed -i 's,${thislogdate},'"${thislogdate}"',g' "$logfile"
 sed -i 's,${user},'"${user}"',g' "$logfile"
 sed -i 's,${module_trimmomatic},'"${module_trimmomatic}"',g' "$logfile"
+sed -i 's,${module_jobperf},'"${module_jobperf}"',g' "$logfile"
 sed -i 's,${adapters_fasta},'"${adapters_fasta}"',g' "$logfile"
 sed -i 's,${outpath_GRADE2021_Trimmomatic},'"${outpath_GRADE2021_Trimmomatic}"',g' "$logfile"
 sed -i 's,${logfile},'"${logfile}"',g' "$logfile"
