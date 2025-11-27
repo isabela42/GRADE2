@@ -57,7 +57,8 @@ Resources baseline: -m 1 -c 6 -w "02:00:00"
 -m <INT>                    Memory INT required for PBS job in GB
 -c <INT>                    Number of CPUS required for PBS job
 -w <HH:MM:SS>               Clock walltime required for PBS job
--t                          Flag to run test mode to monitor resource usage
+-t                          Flag to run test mode to monitor resource usage.
+                            Saves jobstats.db to home folder (check ~/.local/share/jobstats.db).
 
 ## Output:
 
@@ -268,6 +269,7 @@ cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#  Run step" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#................................................" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+if [[ "$test" == true ]]; then cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "jobperf -record -w -rate 5s -http-disable-auth -http &" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done; fi
 if [[ "$test" == true ]]; then cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "set -x" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done; fi
 if [[ "$test" == true ]]; then cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "date >&2" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done; fi
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo 'echo "## Run gzip if flag yes at" ; date ; echo' >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
