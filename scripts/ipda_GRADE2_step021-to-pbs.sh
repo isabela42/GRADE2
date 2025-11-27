@@ -57,7 +57,7 @@ Resources baseline: -m 1 -c 6 -w "02:00:00"
 -m <INT>                    Memory INT required for PBS job in GB
 -c <INT>                    Number of CPUS required for PBS job
 -w <HH:MM:SS>               Clock walltime required for PBS job
--t                          Flag to run test and get jobperft resources usage info
+-t                          Flag to run test mode to monitor resource usage
 
 ## Output:
 
