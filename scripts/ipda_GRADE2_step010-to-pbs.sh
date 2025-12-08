@@ -42,7 +42,7 @@ PBS files                   PBS files created
 
 Pipeline description:
 
-#   010 Index building (0gffcompare, 1Kallisto, 2RSEM, 3STAR)
+#   000 Index building (0gffcompare, 1Kallisto, 2RSEM, 3STAR)
 #-->010 Quality check raw files (0Bedtools, 1FastQC, 2MultiQC)
 #   020 Trim reads of adapters (1Trimmomatic)
 #   030 Quality check raw files (1FastQC, 2MultiQC)
