@@ -8,13 +8,13 @@ Based on
   - Mainá Bitar's 'GRADE (Basic Rnaseq Analysis IN) PBS'
   - Isabela Almeida's 'HyDRA (Hybrid de novo RNA assembly) pipeline'
 Created on Jun 14, 2024
-Last modified on November 06, 2025
+Last modified on December 08, 2025
 Version: ${version}
 
-Description: Write and submit PBS jobs for step 072 of the
+Description: Write and submit PBS jobs for step 053 of the
 GRADE2 PBS 2.0 pipeline (General RNAseq Analysis for Differential Expression version 2).
 
-Usage: bash ipda_GRADE2_step072-to-pbs.sh -i "path/to/input/files" -p "PBS stem" -e "email" -m INT -c INT -w "HH:MM:SS"
+Usage: bash ipda_GRADE2_step053-to-pbs.sh -i "path/to/input/files" -p "PBS stem" -e "email" -m INT -c INT -w "HH:MM:SS"
 
 Resources baseline: -m 20 -c 5 -w "01:00:00"
 
@@ -44,17 +44,14 @@ PBS files                   PBS files created
 
 Pipeline description:
 
-#   000 Index building (0BedTools, 1Kallisto, 2RSEM, 3STAR)
-#   010 Quality check raw files (1FastQC, 2MultiQC)
+#   000 Index building (0gffcompare, 1Kallisto, 2RSEM, 3STAR, 4Salmon)
+#   010 Quality check raw files (0Bedtools, 1FastQC, 2MultiQC)
 #   020 Trim reads of adapters (1Trimmomatic)
-#   030 Quality check raw files (1FastQC, 2MultiQC)
-#   040 Quantify reads (1Kallisto)
-#   050 Create Kallisto count tables (1Kallisto)
-#   060 Alignment (1STAR)
-#-->070 Process alignment (1SAMtools, 2NovoSort)
-#   080 Quantify reads (1RSEM)
-#   090 Create RSEM/Kallisto count tables (1Kallisto-RSEM)
-#   100 Differential Expression Analysis (1EdgeR)
+#   030 Quality check trimmed files (1FastQC, 2MultiQC)
+#   040 Pseudo align and quantify reads (1Kallisto, 2BASH count tables)
+#-->050 Align (1STAR, 2SAMtools, 3NovoSort) and quantify reads (4RSEM, 5BASH count tables)
+#   060 PSeudo align and quantify reads at isoform level (1Salmon, 2BASH count tables)
+#   070 Differential Expression Analysis (1EdgeR)
 
 Please contact Isabela Almeida at mb.isabela42@gmail.com if you encounter any problems.
 "
@@ -98,7 +95,7 @@ do
         w) walltime="${OPTARG}";;    # Clock walltime required for PBS job
         h) Help ; exit;;             # Print Help and exit
         v) echo "${version}"; exit;; # Print version and exit
-        ?) echo script usage: bash ipda_GRADE2_step072-to-pbs.sh -i path/to/input/files -p PBS stem -e email -m INT -c INT -w "HH:MM:SS" >&2
+        ?) echo script usage: bash ipda_GRADE2_step053-to-pbs.sh -i path/to/input/files -p PBS stem -e email -m INT -c INT -w "HH:MM:SS" >&2
            exit;;
     esac
 done
@@ -113,7 +110,7 @@ done
 # and memory/CPU usage for all executions
 thislogdate=$(date +'%d%m%Y%H%M%S%Z')
 human_thislogdate=`date`
-logfile=logfile_ipda_GRADE2_step072-to-pbs_${thislogdate}.txt
+logfile=logfile_ipda_GRADE2_step053-to-pbs_${thislogdate}.txt
 
 #................................................
 #  Additional information
@@ -138,17 +135,17 @@ module_novoalign=novoalign/3.05.01
 #................................................
 
 ## Set stem for output directories
-outpath_GRADE2072_Novosort="grade072_alignment_Novosort_${thislogdate}"
+outpath_GRADE2053_Novosort="grade053_alignment_Novosort_${thislogdate}"
 
 ## Create output directories
-mkdir -p ${outpath_GRADE2072_Novosort}
+mkdir -p ${outpath_GRADE2053_Novosort}
 
 #................................................
 #  Print Execution info to user
 #................................................
 
 date
-echo "## Executing bash ipda_GRADE2_step072-to-pbs.sh"
+echo "## Executing bash ipda_GRADE2_step053-to-pbs.sh"
 echo "## This execution PID: ${pid}"
 echo
 echo "## Given inputs:"
@@ -162,7 +159,7 @@ echo "## PBS job walltime required:   ${walltime}"
 echo
 echo "## Outputs created:"
 echo
-echo "## Output files saved to:       ${outpath_GRADE2072_Novosort}"
+echo "## Output files saved to:       ${outpath_GRADE2053_Novosort}"
 echo "## logfile will be saved as:    ${logfile}"
 echo
 
@@ -180,7 +177,7 @@ echo
 exec &> "${logfile}"
 
 date
-echo "## Executing bash ipda_GRADE2_step072-to-pbs.sh"
+echo "## Executing bash ipda_GRADE2_step053-to-pbs.sh"
 echo "## This execution PID: ${pid}"
 echo
 echo "## Given inputs:"
@@ -194,7 +191,7 @@ echo "## PBS job walltime required:   ${walltime}"
 echo
 echo "## Outputs created:"
 echo
-echo "## Output files saved to:       ${outpath_GRADE2072_Novosort}"
+echo "## Output files saved to:       ${outpath_GRADE2053_Novosort}"
 echo "## This is logfile:             ${logfile}"
 
 set -v
@@ -251,7 +248,7 @@ cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_fil
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "#................................................" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo 'echo "## Run Novosort at" ; date ; echo' >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; mkdir -p ${outpath_GRADE2072_Novosort}; echo "novosort -n -m ${memless}G -c ${cpuless} ${path_file} > ${outpath_GRADE2072_Novosort}/${file}.novosort.bam" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; mkdir -p ${outpath_GRADE2053_Novosort}; echo "novosort -n -m ${memless}G -c ${cpuless} ${path_file} > ${outpath_GRADE2053_Novosort}/${file}.novosort.bam" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 
 #................................................
 #  Submit PBS jobs
@@ -260,7 +257,7 @@ cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_fil
 ## Submit PBS jobs 
 ls ${pbs_stem}_*${thislogdate}.pbs | while read pbs; do echo ; echo "#................................................" ; echo "# This is PBS: ${pbs}" ;  echo "#" ; echo "# main command line(s): $(tail -n1 ${pbs})" ; echo "#" ; echo "# now submitting PBS" ; echo "qsub ${pbs}" ; qsub ${pbs} ; echo "#................................................" ; done
 
-date ## Status of all user jobs (including GRADE2 step 072 jobs) at
+date ## Status of all user jobs (including GRADE2 step 053 jobs) at
 qstat -u "$user"
 
 # This will remove $VARNAMES from output file with the actual $VARVALUE
@@ -277,7 +274,7 @@ sed -i 's,${user},'"${user}"',g' "$logfile"
 sed -i 's,${module_novoalign},'"${module_novoalign}"',g' "$logfile"
 sed -i 's,${memless},'"${memless}"',g' "$logfile"
 sed -i 's,${cpuless},'"${cpuless}"',g' "$logfile"
-sed -i 's,${outpath_GRADE2072_Novosort},'"${outpath_GRADE2072_Novosort}"',g' "$logfile"
+sed -i 's,${outpath_GRADE2053_Novosort},'"${outpath_GRADE2053_Novosort}"',g' "$logfile"
 sed -i 's,${logfile},'"${logfile}"',g' "$logfile"
 sed -n -e :a -e '1,3!{P;N;D;};N;ba' $logfile > tmp ; mv tmp $logfile
 set +v

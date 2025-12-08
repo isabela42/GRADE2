@@ -8,7 +8,7 @@ Based on
   - Mainá Bitar's 'GRADE (Basic Rnaseq Analysis IN) PBS'
   - Isabela Almeida's 'HyDRA (Hybrid de novo RNA assembly) pipeline'
 Created on May 27, 2024
-Last modified on November 06, 2025
+Last modified on December 08, 2025
 Version: ${version}
 
 Description: Write and submit PBS jobs for step 041 of the
@@ -46,17 +46,14 @@ PBS files                   PBS files created
 
 Pipeline description:
 
-#   000 Index building (0BedTools, 1Kallisto, 2RSEM, 3STAR)
-#   010 Quality check raw files (1FastQC, 2MultiQC)
+#   000 Index building (0gffcompare, 1Kallisto, 2RSEM, 3STAR, 4Salmon)
+#   010 Quality check raw files (0Bedtools, 1FastQC, 2MultiQC)
 #   020 Trim reads of adapters (1Trimmomatic)
-#   030 Quality check raw files (1FastQC, 2MultiQC)
-#-->040 Quantify reads (1Kallisto)
-#   050 Create Kallisto count tables (1Kallisto)
-#   060 Alignment (1STAR)
-#   070 Process alignment (1SAMtools, 2NovoSort)
-#   080 Quantify reads (1RSEM)
-#   090 Create RSEM/Kallisto count tables (1Kallisto-RSEM)
-#   100 Differential Expression Analysis (1EdgeR)
+#   030 Quality check trimmed files (1FastQC, 2MultiQC)
+#-->040 Pseudo align and quantify reads (1Kallisto, 2BASH count tables)
+#   050 Align (1STAR, 2SAMtools, 3NovoSort) and quantify reads (4RSEM, 5BASH count tables)
+#   060 PSeudo align and quantify reads at isoform level (1Salmon, 2BASH count tables)
+#   070 Differential Expression Analysis (1EdgeR)
 
 Please contact Isabela Almeida at mb.isabela42@gmail.com if you encounter any problems.
 "

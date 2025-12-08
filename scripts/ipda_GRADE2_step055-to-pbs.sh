@@ -8,13 +8,13 @@ Based on
   - Mainá Bitar's 'GRADE (Basic Rnaseq Analysis IN) PBS'
   - Isabela Almeida's 'HyDRA (Hybrid de novo RNA assembly) pipeline'
 Created on Jun 18, 2024
-Last modified on November 06, 2025
+Last modified on December 08, 2025
 Version: ${version}
 
-Description: Write and submit PBS jobs for step 091 of the
+Description: Write and submit PBS jobs for step 055 of the
 GRADE2 PBS 2.0 pipeline (General RNAseq Analysis for Differential Expression version 2).
 
-Usage: bash ipda_GRADE2_step091-to-pbs.sh -i "path/to/input/files" -p "PBS stem" -e "email" -m INT -c INT -w "HH:MM:SS"
+Usage: bash ipda_GRADE2_step055-to-pbs.sh -i "path/to/input/files" -p "PBS stem" -e "email" -m INT -c INT -w "HH:MM:SS"
 
 Resources baseline: -m 2 -c 1 -w "10:00:00"
 
@@ -39,17 +39,14 @@ PBS files                   PBS files created
 
 Pipeline description:
 
-#   000 Index building (0BedTools, 1Kallisto, 2RSEM, 3STAR)
-#   010 Quality check raw files (1FastQC, 2MultiQC)
+#   000 Index building (0gffcompare, 1Kallisto, 2RSEM, 3STAR, 4Salmon)
+#   010 Quality check raw files (0Bedtools, 1FastQC, 2MultiQC)
 #   020 Trim reads of adapters (1Trimmomatic)
-#   030 Quality check raw files (1FastQC, 2MultiQC)
-#   040 Quantify reads (1Kallisto)
-#   050 Create Kallisto count tables (1Kallisto)
-#   060 Alignment (1STAR)
-#   070 Process alignment (1SAMtools, 2NovoSort)
-#   080 Quantify reads (1RSEM)
-#-->090 Create RSEM count tables (1RSEM)
-#   100 Differential Expression Analysis (1EdgeR)
+#   030 Quality check trimmed files (1FastQC, 2MultiQC)
+#   040 Pseudo align and quantify reads (1Kallisto, 2BASH count tables)
+#-->050 Align (1STAR, 2SAMtools, 3NovoSort) and quantify reads (4RSEM, 5BASH count tables)
+#   060 PSeudo align and quantify reads at isoform level (1Salmon, 2BASH count tables)
+#   070 Differential Expression Analysis (1EdgeR)
 
 Please contact Isabela Almeida at mb.isabela42@gmail.com if you encounter any problems.
 "
@@ -93,7 +90,7 @@ do
         w) walltime="${OPTARG}";;    # Clock walltime required for PBS job
         h) Help ; exit;;             # Print Help and exit
         v) echo "${version}"; exit;; # Print version and exit
-        ?) echo script usage: bash ipda_GRADE2_step091-to-pbs.sh -i path/to/input/files -p PBS stem -e email -m INT -c INT -w "HH:MM:SS" >&2
+        ?) echo script usage: bash ipda_GRADE2_step055-to-pbs.sh -i path/to/input/files -p PBS stem -e email -m INT -c INT -w "HH:MM:SS" >&2
            exit;;
     esac
 done
@@ -108,14 +105,14 @@ done
 # and memory/CPU usage for all executions
 thislogdate=$(date +'%d%m%Y%H%M%S%Z')
 human_thislogdate=`date`
-logfile=logfile_ipda_GRADE2_step091-to-pbs_${thislogdate}.txt
+logfile=logfile_ipda_GRADE2_step055-to-pbs_${thislogdate}.txt
 
 #................................................
 #  Print Execution info to user
 #................................................
 
 date
-echo "## Executing bash ipda_GRADE2_step091-to-pbs.sh"
+echo "## Executing bash ipda_GRADE2_step055-to-pbs.sh"
 echo "## This execution PID: ${pid}"
 echo
 echo "## Given inputs:"
@@ -147,7 +144,7 @@ echo
 exec &> "${logfile}"
 
 date
-echo "## Executing bash ipda_GRADE2_step091-to-pbs.sh"
+echo "## Executing bash ipda_GRADE2_step055-to-pbs.sh"
 echo "## This execution PID: ${pid}"
 echo
 echo "## Given inputs:"
@@ -251,7 +248,7 @@ cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${p
 ## Submit PBS jobs 
 ls ${pbs_stem}_*${thislogdate}.pbs | while read pbs; do echo ; echo "#................................................" ; echo "# This is PBS: ${pbs}" ;  echo "#" ; echo "# main command line(s): $(tail -n26 ${pbs} | head -n1)" ; echo "#                       $(tail -n25 ${pbs} | head -n1)" ; echo "#                       $(tail -n28 ${pbs} | head -n1)" ; echo "#                       $(tail -n27 ${pbs} | head -n1)" ; echo "#                       $(tail -n26 ${pbs} | head -n1)" ; echo "#                       $(tail -n25 ${pbs} | head -n1)" ; echo "#                       $(tail -n24 ${pbs} | head -n1)" ; echo "#                       $(tail -n18 ${pbs} | head -n1)" ; echo "#                       $(tail -n17 ${pbs} | head -n1)" ; echo "#                       $(tail -n16 ${pbs} | head -n1)" ; echo "#                       $(tail -n15 ${pbs} | head -n1)" ; echo "#                       $(tail -n14 ${pbs} | head -n1)" ; echo "#                       $(tail -n8 ${pbs} | head -n1)" ; echo "#                       $(tail -n7 ${pbs} | head -n1)" ; echo "#                       $(tail -n6 ${pbs} | head -n1)" ; echo "#                       $(tail -n5 ${pbs} | head -n1)" ; echo "#                       $(tail -n4 ${pbs} | head -n1)" ; echo "#" ; echo "# now submitting PBS" ; echo "qsub ${pbs}" ; qsub ${pbs} ; echo "#................................................" ; done
 
-date ## Status of all user jobs (including GRADE2 step 091 jobs) at
+date ## Status of all user jobs (including GRADE2 step 055 jobs) at
 qstat -u "$user"
 
 # This will remove $VARNAMES from output file with the actual $VARVALUE
