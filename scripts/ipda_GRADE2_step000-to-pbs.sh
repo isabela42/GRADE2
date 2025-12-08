@@ -24,7 +24,14 @@ Resources baseline: -m 60 -c 1 -w "24:00:00"
                             directory. This TSV file should contain:
                             
                             Col1:
-                            path/from/working/dir/to/file.bam
+                            stem for output
+                            
+                            Col2:
+                            /path/from/working/dir/to/ref.gtf
+
+                            Col3:
+                            /path/from/working/dir/to/first.gft /path/from/working/dir/to/second.gft /path/from/working/dir/to/n.gft
+                            Space separated full paths to each gtf file to be merged
 
                             It does not matter if same stem 
                             appears more than once on this input file.
@@ -188,66 +195,62 @@ set -v
 #................................................
 
 ## Write PBS header
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#!/bin/sh" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "##########################################################################" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#  Script:  ${pbs_stem}_${file}_${thislogdate}.pbs" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#  Author:  Isabela Almeida" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#  Created: ${human_thislogdate} at QIMR Berghofer (Brisbane, Australia) - VSC" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#  Updated: ${human_thislogdate} at QIMR Berghofer (Brisbane, Australia) - VSC" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#  Version: v01" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#  Email:   ${email}" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "##########################################################################" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do; echo "#!/bin/sh" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do; echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do; echo "##########################################################################" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do; echo "#" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do; echo "#  Script:  ${pbs_stem}_${stem}_${thislogdate}.pbs" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do; echo "#  Author:  Isabela Almeida" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do; echo "#  Created: ${human_thislogdate} at QIMR Berghofer (Brisbane, Australia) - VSC" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do; echo "#  Updated: ${human_thislogdate} at QIMR Berghofer (Brisbane, Australia) - VSC" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do; echo "#  Version: v01" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do; echo "#  Email:   ${email}" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do; echo "#" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do; echo "##########################################################################" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do; echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 
 ## Write PBS directives
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#PBS -N ${pbs_stem}_${file}_${thislogdate}" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#PBS -r n" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#PBS -l mem=${mem}GB,walltime=${walltime},ncpus=${ncpus}" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#PBS -m ae" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#PBS -M ${email}" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do; echo "#PBS -N ${pbs_stem}_${stem}_${thislogdate}" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do; echo "#PBS -r n" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do; echo "#PBS -l mem=${mem}GB,walltime=${walltime},ncpus=${ncpus}" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do; echo "#PBS -m ae" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do; echo "#PBS -M ${email}" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do; echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 
 ## Write directory setting
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#................................................" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#  Set main working directory" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#................................................" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "## Change to main directory" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo 'cd ${PBS_O_WORKDIR}' >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo 'echo ; echo "WARNING: The main directory for this run was set to ${PBS_O_WORKDIR}"; echo ' >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do; echo "#................................................" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do; echo "#  Set main working directory" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do; echo "#................................................" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do; echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do; echo "## Change to main directory" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do; echo 'cd ${PBS_O_WORKDIR}' >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do; echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do; echo 'echo ; echo "WARNING: The main directory for this run was set to ${PBS_O_WORKDIR}"; echo ' >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do; echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 
 ## Write load modules
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#................................................" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#  Load Softwares, Libraries and Modules" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#................................................" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "module load ${module_bedtools}" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "module load ${module_samtools}" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do; echo "#................................................" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do; echo "#  Load Softwares, Libraries and Modules" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do; echo "#................................................" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do; echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do; echo "module load ${module_bedtools}" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do; echo "module load ${module_samtools}" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do; echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 
 ## Write PBS command lines
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#................................................" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#  Run step" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#................................................" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo 'echo "## Run SAMtools sort at" ; date ; echo' >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "gffcompare -s -r -p '${outstem}' -o ${outpath_GRADE2000_MergeGFF}/${file}  ${path_file}" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo 'echo "## Run MergeGFF at" ; date ; echo' >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "MergeGFF -i ${outpath_GRADE2000_MergeGFF}/${file}.sort.bam -fq ${outpath_GRADE2000_MergeGFF}/${file}_R1.fq -fq2 ${outpath_GRADE2000_MergeGFF}/${file}_R2.fq ; gzip ${outpath_GRADE2000_MergeGFF}/${file}_R1.fq ; gzip ${outpath_GRADE2000_MergeGFF}/${file}_R2.fq; rm -f ${outpath_GRADE2000_MergeGFF}/${file}.sort.bam" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do; echo "#................................................" >> ${pbs_strem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do; echo "#  Run step" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do; echo "#................................................" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do; echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do; echo 'echo "## Run gffcompare at" ; date ; echo' >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do; ref=`grep "${stem}" ${input} | cut -f2 | sort | uniq`; inputs=`grep "${stem}" ${input} | cut -f3 | sort | uniq`; echo "gffcompare -r ${ref} -p '${stem}' -o ${outpath_GRADE2000_MergeGFF}/${stem} -i ${inputs}" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 
 #................................................
 #  Submit PBS jobs
 #................................................
 
 ## Submit PBS jobs 
-ls ${pbs_stem}_*${thislogdate}.pbs | while read pbs; do echo ; echo "#................................................" ; echo "# This is PBS: ${pbs}" ;  echo "#" ; echo "# main command line(s): $(tail -n4 ${pbs} | head -n1)" ; echo "#                       $(tail -n1 ${pbs})" ; echo "#" ; echo "# now submitting PBS" ; echo "qsub ${pbs}" ; qsub ${pbs} ; echo "#................................................" ; done
+ls ${pbs_stem}_*${thislogdate}.pbs | while read pbs; do echo ; echo "#................................................" ; echo "# This is PBS: ${pbs}" ;  echo "#" ; echo "# main command line(s): $(tail -n1 ${pbs})" ; echo "#" ; echo "# now submitting PBS" ; echo "qsub ${pbs}" ; qsub ${pbs} ; echo "#................................................" ; done
 
 
 date ## Status of all user jobs (including GRADE2 step 000 jobs) at
