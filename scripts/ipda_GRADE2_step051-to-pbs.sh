@@ -123,6 +123,7 @@ logfile=logfile_ipda_GRADE2_step051-to-pbs_${thislogdate}.txt
 #................................................
 
 # STAR 2.7.1a:
+module_star=STAR/2.7.1a
 
 #................................................
 #  Set and create output path
