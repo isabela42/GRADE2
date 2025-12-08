@@ -11,10 +11,10 @@ Created on November 06, 2025
 Last modified on November 07, 2025
 Version: ${version}
 
-Description: Write and submit PBS jobs for step 000 of the
+Description: Write and submit PBS jobs for step 010 of the
 GRADE2 PBS 2.0 pipeline (General RNAseq Analysis for Differential Expression version 2).
 
-Usage: bash ipda_GRADE2_step000-to-pbs.sh -i "path/to/input/files" -p "PBS stem" -e "email" -m INT -c INT -w "HH:MM:SS"
+Usage: bash ipda_GRADE2_step010-to-pbs.sh -i "path/to/input/files" -p "PBS stem" -e "email" -m INT -c INT -w "HH:MM:SS"
 
 Resources baseline: -m 20 -c 1 -w "24:00:00"
 
@@ -42,8 +42,8 @@ PBS files                   PBS files created
 
 Pipeline description:
 
-#-->000 Index building (0BedTools, 1Kallisto, 2RSEM, 3STAR)
-#   010 Quality check raw files (1FastQC, 2MultiQC)
+#   010 Index building (0gffcompare, 1Kallisto, 2RSEM, 3STAR)
+#-->010 Quality check raw files (0Bedtools, 1FastQC, 2MultiQC)
 #   020 Trim reads of adapters (1Trimmomatic)
 #   030 Quality check raw files (1FastQC, 2MultiQC)
 #   040 Quantify reads (1Kallisto)
@@ -96,7 +96,7 @@ do
         w) walltime="${OPTARG}";;    # Clock walltime required for PBS job
         h) Help ; exit;;             # Print Help and exit
         v) echo "${version}"; exit;; # Print version and exit
-        ?) echo script usage: bash ipda_GRADE2_step000-to-pbs.sh -i path/to/input/files -p PBS stem -e email -m INT -c INT -w "HH:MM:SS" >&2
+        ?) echo script usage: bash ipda_GRADE2_step010-to-pbs.sh -i path/to/input/files -p PBS stem -e email -m INT -c INT -w "HH:MM:SS" >&2
            exit;;
     esac
 done
@@ -111,7 +111,7 @@ done
 # and memory/CPU usage for all executions
 thislogdate=$(date +'%d%m%Y%H%M%S%Z')
 human_thislogdate=`date`
-logfile=logfile_ipda_GRADE2_step000-to-pbs_${thislogdate}.txt
+logfile=logfile_ipda_GRADE2_step010-to-pbs_${thislogdate}.txt
 
 #................................................
 #  Required modules, softwares and libraries
@@ -130,17 +130,17 @@ module_samtools=samtools/1.9
 #................................................
 
 ## Set stem for output directories
-outpath_GRADE2000_BamToFastq="grade000_bam2fastq_BedTools_${thislogdate}"
+outpath_GRADE2010_BamToFastq="grade010_bam2fastq_BedTools_${thislogdate}"
 
 ## Create output directories
-mkdir -p ${outpath_GRADE2000_BamToFastq}
+mkdir -p ${outpath_GRADE2010_BamToFastq}
 
 #................................................
 #  Print Execution info to user
 #................................................
 
 date
-echo "## Executing bash ipda_GRADE2_step000-to-pbs.sh"
+echo "## Executing bash ipda_GRADE2_step010-to-pbs.sh"
 echo "## This execution PID: ${pid}"
 echo
 echo "## Given inputs:"
@@ -172,7 +172,7 @@ echo
 exec &> "${logfile}"
 
 date
-echo "## Executing bash ipda_GRADE2_step000-to-pbs.sh"
+echo "## Executing bash ipda_GRADE2_step010-to-pbs.sh"
 echo "## This execution PID: ${pid}"
 echo
 echo "## Given inputs:"
@@ -244,11 +244,11 @@ cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#................................................" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo 'echo "## Run SAMtools sort at" ; date ; echo' >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "samtools sort -n -o ${outpath_GRADE2000_BamToFastq}/${file}.sort.bam ${path_file}" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "samtools sort -n -o ${outpath_GRADE2010_BamToFastq}/${file}.sort.bam ${path_file}" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo 'echo "## Run bamToFastq at" ; date ; echo' >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "bamToFastq -i ${outpath_GRADE2000_BamToFastq}/${file}.sort.bam -fq ${outpath_GRADE2000_BamToFastq}/${file}_R1.fq -fq2 ${outpath_GRADE2000_BamToFastq}/${file}_R2.fq ; gzip ${outpath_GRADE2000_BamToFastq}/${file}_R1.fq ; gzip ${outpath_GRADE2000_BamToFastq}/${file}_R2.fq; rm -f ${outpath_GRADE2000_BamToFastq}/${file}.sort.bam" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "bamToFastq -i ${outpath_GRADE2010_BamToFastq}/${file}.sort.bam -fq ${outpath_GRADE2010_BamToFastq}/${file}_R1.fq -fq2 ${outpath_GRADE2010_BamToFastq}/${file}_R2.fq ; gzip ${outpath_GRADE2010_BamToFastq}/${file}_R1.fq ; gzip ${outpath_GRADE2010_BamToFastq}/${file}_R2.fq; rm -f ${outpath_GRADE2010_BamToFastq}/${file}.sort.bam" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 
 #................................................
 #  Submit PBS jobs
@@ -258,7 +258,7 @@ cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename
 ls ${pbs_stem}_*${thislogdate}.pbs | while read pbs; do echo ; echo "#................................................" ; echo "# This is PBS: ${pbs}" ;  echo "#" ; echo "# main command line(s): $(tail -n4 ${pbs} | head -n1)" ; echo "#                       $(tail -n1 ${pbs})" ; echo "#" ; echo "# now submitting PBS" ; echo "qsub ${pbs}" ; qsub ${pbs} ; echo "#................................................" ; done
 
 
-date ## Status of all user jobs (including GRADE2 step 000 jobs) at
+date ## Status of all user jobs (including GRADE2 step 010 jobs) at
 qstat -u "$user"
 
 # This will remove $VARNAMES from output file with the actual $VARVALUE
