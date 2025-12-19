@@ -8,7 +8,7 @@ Based on
   - Mainá Bitar's 'GRADE (Basic Rnaseq Analysis IN) PBS'
   - Isabela Almeida's 'HyDRA (Hybrid de novo RNA assembly) pipeline'
 Created on Jun 13, 2024
-Last modified on November 06, 2025
+Last modified on December 19, 2025
 Version: ${version}
 
 Description: Write and submit PBS jobs for step 052 of the
