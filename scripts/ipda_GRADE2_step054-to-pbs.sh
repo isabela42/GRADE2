@@ -8,7 +8,7 @@ Based on
   - Mainá Bitar's 'GRADE (Basic Rnaseq Analysis IN) PBS'
   - Isabela Almeida's 'HyDRA (Hybrid de novo RNA assembly) pipeline'
 Created on Jun 14, 2024
-Last modified on December 08, 2025
+Last modified on December 22, 2025
 Version: ${version}
 
 Description: Write and submit PBS jobs for step 054 of the
@@ -16,7 +16,7 @@ GRADE2 PBS 2.0 pipeline (General RNAseq Analysis for Differential Expression ver
 
 Usage: bash ipda_GRADE2_step054-to-pbs.sh -i "path/to/input/files" -p "PBS stem" -e "email" -m INT -c INT -w "HH:MM:SS"
 
-Resources baseline: -m 8 -c 12 -w "08:00:00"
+Resources baseline: -m 40 -c 12 -w "20:00:00"
 
 ## Input:
 
@@ -191,54 +191,54 @@ set -v
 #................................................
 
 ## Write PBS header
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "#!/bin/bash" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "##########################################################################" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "#" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "#  Script:  ${pbs_stem}_${file}_${thislogdate}.pbs" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "#  Author:  Isabela Almeida" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "#  Created: ${human_thislogdate} at QIMR Berghofer (Brisbane, Australia) - VSC" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "#  Updated: ${human_thislogdate} at QIMR Berghofer (Brisbane, Australia) - VSC" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "#  Version: v01" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "#  Email:   ${email}" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "#" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "##########################################################################" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo "#!/bin/bash" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo "##########################################################################" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo "#" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo "#  Script:  ${pbs_stem}_${file}_${thislogdate}.pbs" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo "#  Author:  Isabela Almeida" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo "#  Created: ${human_thislogdate} at QIMR Berghofer (Brisbane, Australia) - VSC" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo "#  Updated: ${human_thislogdate} at QIMR Berghofer (Brisbane, Australia) - VSC" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo "#  Version: v01" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo "#  Email:   ${email}" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo "#" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo "##########################################################################" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 
 ## Write PBS directives
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "#PBS -N ${pbs_stem}_${file}_${thislogdate}" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "#PBS -r n" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "#PBS -l mem=${mem}GB,walltime=${walltime},ncpus=${ncpus}" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "#PBS -m ae" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "#PBS -M ${email}" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo "#PBS -N ${pbs_stem}_${file}_${thislogdate}" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo "#PBS -r n" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo "#PBS -l mem=${mem}GB,walltime=${walltime},ncpus=${ncpus}" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo "#PBS -m ae" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo "#PBS -M ${email}" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 
 ## Write directory setting
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "#................................................" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "#  Set main working directory" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "#................................................" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "## Change to main directory" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo 'cd ${PBS_O_WORKDIR}' >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo 'echo ; echo "WARNING: The main directory for this run was set to ${PBS_O_WORKDIR}"; echo ' >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo "#................................................" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo "#  Set main working directory" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo "#................................................" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo "## Change to main directory" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo 'cd ${PBS_O_WORKDIR}' >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo 'echo ; echo "WARNING: The main directory for this run was set to ${PBS_O_WORKDIR}"; echo ' >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 
 ## Write load modules
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "#................................................" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "#  Load Softwares, Libraries and Modules" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "#................................................" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "module load ${module_rsem}" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo "#................................................" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo "#  Load Softwares, Libraries and Modules" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo "#................................................" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo "module load ${module_rsem}" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 
 ## Write PBS command lines
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "#................................................" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "#  Run step" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "#................................................" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; echo 'echo "## Run RSEM calculate expression at" ; date ; echo' >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | cut -d"." -f1 | rev | cut -d"/" -f1 | rev` ; index=`grep -P "${path_file}\t" ${input} | cut -f2`; indexstem=`echo ${index} | rev | cut -d"/" -f1 | rev` ; mkdir -p ${outpath_GRADE2054_RSEM}; echo "rsem-calculate-expression --paired-end --bam --forward-prob 0 --no-bam-output -p ${ncpus} ${path_file} ${index} ${outpath_GRADE2054_RSEM}/rquant-${indexstem}_${file}" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo "#................................................" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo "#  Run step" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo "#................................................" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo 'echo "## Run RSEM calculate expression at" ; date ; echo' >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; index=`grep -P "${path_file}\t" ${input} | cut -f2`; indexstem=`echo ${index} | rev | cut -d"/" -f1 | rev` ; mkdir -p ${outpath_GRADE2054_RSEM}; echo "rsem-calculate-expression --paired-end --bam --forward-prob 0 --no-bam-output -p ${ncpus} ${path_file} ${index} ${outpath_GRADE2054_RSEM}/rquant-${indexstem}_${file}" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 
 #................................................
 #  Submit PBS jobs
