@@ -16,7 +16,7 @@ GRADE2 PBS 2.0 pipeline (General RNAseq Analysis for Differential Expression ver
 
 Usage: bash ipda_GRADE2_step053-to-pbs.sh -i "path/to/input/files" -p "PBS stem" -e "email" -m INT -c INT -w "HH:MM:SS"
 
-Resources baseline: -m 20 -c 5 -w "01:00:00"
+Resources baseline: -m 20 -c 2 -w "10:00:00"
 
 WARNING: Novosort uses more memory and CPUS than what is required.
 To avoid going over the resources asked, we only ask for
