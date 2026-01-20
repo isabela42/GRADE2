@@ -8,7 +8,7 @@ Based on
   - Mainá Bitar's 'GRADE (Basic Rnaseq Analysis IN) PBS'
   - Isabela Almeida's 'HyDRA (Hybrid de novo RNA assembly) pipeline'
 Created on Jun 13, 2024
-Last modified on December 19, 2025
+Last modified on January 20, 2026
 Version: ${version}
 
 Description: Write and submit PBS jobs for step 052 of the
@@ -32,6 +32,10 @@ Resources baseline: -m 1 -c 4 -w "02:00:00"
 
                             Col3:
                             path/from/working/dir/to/transcriptome/annotation.gtf
+
+                            Col4:
+                            single|paired
+                            Flag for single-end or paired-end reads. If Col4 is single, it will run with F1 only.
 
                             Same col1 stem cannot be used for different col2/col3 stems
 
@@ -241,7 +245,7 @@ cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_fil
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | rev | cut -d"/" -f1 | rev | cut -d"_" -f2-` ; echo "#................................................" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | rev | cut -d"/" -f1 | rev | cut -d"_" -f2-` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | rev | cut -d"/" -f1 | rev | cut -d"_" -f2-` ; echo 'echo "## Run SAMtools at" ; date ; echo' >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | rev | cut -d"/" -f1 | rev | cut -d"_" -f2-` ; common=`echo "${path_file}" | rev | cut -d"/" -f1 | rev | cut -d"_" -f1` ; mkdir -p ${outpath_GRADE2052_SAMtools}; echo "samtools view -@ ${ncpus} ${path_file}/${common}_${file}Aligned.toTranscriptome.out.bam -f 3 -b >> ${outpath_GRADE2052_SAMtools}/${file}.samtools.bam" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "${path_file}" | rev | cut -d"/" -f1 | rev | cut -d"_" -f2-` ; common=`echo "${path_file}" | rev | cut -d"/" -f1 | rev | cut -d"_" -f1` ; mkdir -p ${outpath_GRADE2052_SAMtools}; flag_reads=`grep -P "${path_file}\t" ${input} | cut -f4`; if [[ $flag_reads = "single" ]]; then echo "samtools view -@ ${ncpus} ${path_file}/${common}_${file}Aligned.toTranscriptome.out.bam -b >> ${outpath_GRADE2052_SAMtools}/${file}.samtools.bam"; else echo "samtools view -@ ${ncpus} ${path_file}/${common}_${file}Aligned.toTranscriptome.out.bam -f 3 -b >> ${outpath_GRADE2052_SAMtools}/${file}.samtools.bam"; fi >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 
 #................................................
 #  Submit PBS jobs
