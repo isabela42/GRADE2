@@ -8,7 +8,7 @@ Based on
   - Mainá Bitar's 'GRADE (Basic Rnaseq Analysis IN) PBS'
   - Isabela Almeida's 'HyDRA (Hybrid de novo RNA assembly) pipeline'
 Created on Jun 04, 2024
-Last modified on December 17, 2025
+Last modified on January 20, 2026
 Version: ${version}
 
 Description: Write and submit PBS jobs for step 051 of the
@@ -36,6 +36,10 @@ Resources baseline: -m 40 -c 6 -w "05:00:00"
                             of user desired transcriptome (e.g. gencode +
                             custom transcriptome in a single gtf file
                             Note: must be the same used to create the index
+
+                            Col4:
+                            single|paired
+                            Flag for single-end or paired-end reads. If Col4 is single, it will run with F1 only.
 
 -p <PBS stem>               Stem for PBS file names
 -e <email>                  Email for PBS job
@@ -243,7 +247,7 @@ cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | rev | cut -d'_' -f2-` ; echo "#................................................" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | rev | cut -d'_' -f2-` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | rev | cut -d'_' -f2-` ; echo 'echo "## Run STAR at" ; date ; echo' >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | rev | cut -d'_' -f2-` ; f1="${path_file}_R1.fq.gz"; f2="${path_file}_R2.fq.gz"; index=`grep -P "${path_file}\t" ${input} | cut -f2`; indexstem=`echo ${index} | rev | cut -d"/" -f1 | rev`; gtf=`grep -P "${path_file}\t" ${input} | cut -f3`; mkdir -p ${outpath_GRADE2051_STAR}/salign-${indexstem}_${file}; echo "STAR --runMode alignReads --readFilesIn ${f1} ${f2} --readFilesCommand zcat --outFileNamePrefix ${outpath_GRADE2051_STAR}/salign-${indexstem}_${file}/salign-${indexstem}_${file} --genomeDir ${index} --sjdbGTFfile ${gtf} --outSJfilterReads Unique --sjdbOverhang 100 --runThreadN ${ncpus} --genomeLoad NoSharedMemory --outFilterType BySJout --outFilterMultimapNmax 1 --outFilterMismatchNmax 999 --outFilterMismatchNoverLmax 0.1 --alignSJoverhangMin 8 --alignSJDBoverhangMin 3 --alignIntronMin 20 --chimSegmentMin 20 --outSAMattributes All --outSAMstrandField intronMotif --quantMode TranscriptomeSAM --outSAMtype BAM SortedByCoordinate" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | rev | cut -d'_' -f2-` ; f1="${path_file}_R1.fq.gz"; f2="${path_file}_R2.fq.gz"; index=`grep -P "${path_file}\t" ${input} | cut -f2`; indexstem=`echo ${index} | rev | cut -d"/" -f1 | rev`; gtf=`grep -P "${path_file}\t" ${input} | cut -f3`; mkdir -p ${outpath_GRADE2051_STAR}/salign-${indexstem}_${file}; flag_reads=``; if [[ $flag_reads = "single" ]]; then reads="${f1}"; else reads="${f1} ${f2}"; fi; echo "STAR --runMode alignReads --readFilesIn ${reads} --readFilesCommand zcat --outFileNamePrefix ${outpath_GRADE2051_STAR}/salign-${indexstem}_${file}/salign-${indexstem}_${file} --genomeDir ${index} --sjdbGTFfile ${gtf} --outSJfilterReads Unique --sjdbOverhang 100 --runThreadN ${ncpus} --genomeLoad NoSharedMemory --outFilterType BySJout --outFilterMultimapNmax 1 --outFilterMismatchNmax 999 --outFilterMismatchNoverLmax 0.1 --alignSJoverhangMin 8 --alignSJDBoverhangMin 3 --alignIntronMin 20 --chimSegmentMin 20 --outSAMattributes All --outSAMstrandField intronMotif --quantMode TranscriptomeSAM --outSAMtype BAM SortedByCoordinate" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 
 # Star command explained
 # genomeDir: path to the directory where genome files are stored (if runMode!=generateGenome) or will be generated (if runMode==generateGenome)
