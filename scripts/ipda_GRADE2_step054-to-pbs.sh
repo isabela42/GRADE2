@@ -8,7 +8,7 @@ Based on
   - Mainá Bitar's 'GRADE (Basic Rnaseq Analysis IN) PBS'
   - Isabela Almeida's 'HyDRA (Hybrid de novo RNA assembly) pipeline'
 Created on Jun 14, 2024
-Last modified on December 22, 2025
+Last modified on January 20, 2026
 Version: ${version}
 
 Description: Write and submit PBS jobs for step 054 of the
@@ -29,6 +29,10 @@ Resources baseline: -m 40 -c 12 -w "20:00:00"
 
                             Col2:
                             path/to/rsem/index_stem
+
+                            Col3:
+                            single|paired
+                            Flag for single-end or paired-end reads. If Col3 is single, it will run with F1 only.
 
                             Same col1 stem cannot be used for different col2 stems
 
@@ -238,7 +242,7 @@ cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo "#................................................" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; echo 'echo "## Run RSEM calculate expression at" ; date ; echo' >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; index=`grep -P "${path_file}\t" ${input} | cut -f2`; indexstem=`echo ${index} | rev | cut -d"/" -f1 | rev` ; mkdir -p ${outpath_GRADE2054_RSEM}; echo "rsem-calculate-expression --paired-end --bam --forward-prob 0 --no-bam-output -p ${ncpus} ${path_file} ${index} ${outpath_GRADE2054_RSEM}/rquant-${indexstem}_${file}" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo ${path_file} | rev | cut -d'/' -f1 | cut -d'.' -f3- | rev` ; index=`grep -P "${path_file}\t" ${input} | cut -f2`; indexstem=`echo ${index} | rev | cut -d"/" -f1 | rev` ; mkdir -p ${outpath_GRADE2054_RSEM}; flag_reads=`grep -P "${path_file}\t" ${input} | cut -f2`; if [[ $flag_reads = "single" ]]; then echo "rsem-calculate-expression --bam --forward-prob 0 --no-bam-output -p ${ncpus} ${path_file} ${index} ${outpath_GRADE2054_RSEM}/rquant-${indexstem}_${file}"; else echo "rsem-calculate-expression --paired-end --bam --forward-prob 0 --no-bam-output -p ${ncpus} ${path_file} ${index} ${outpath_GRADE2054_RSEM}/rquant-${indexstem}_${file}"; fi >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 
 #................................................
 #  Submit PBS jobs
