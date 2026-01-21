@@ -8,7 +8,7 @@ Based on
   - Mainá Bitar's 'GRADE (Basic Rnaseq Analysis IN) PBS'
   - Isabela Almeida's 'HyDRA (Hybrid de novo RNA assembly) pipeline'
 Created on Jun 13, 2024
-Last modified on January 20, 2026
+Last modified on January 21, 2026
 Version: ${version}
 
 Description: Write and submit PBS jobs for step 052 of the
@@ -24,7 +24,7 @@ Resources baseline: -m 1 -c 4 -w "02:00:00"
                             directory. This TSV file should contain:
                             
                             Col1:
-                            path/from/working/dir/to/grade061_alignment_STAR_DATE/stem
+                            path/from/working/dir/to/grade051_alignment_STAR_DATE/stem
                             of STAR alignment subfolder containg Aligned.toTranscriptome.out.bam file
 
                             Col2:

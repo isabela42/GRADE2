@@ -8,7 +8,7 @@ Based on
   - Mainá Bitar's 'GRADE (Basic Rnaseq Analysis IN) PBS'
   - Isabela Almeida's 'HyDRA (Hybrid de novo RNA assembly) pipeline'
 Created on Jun 14, 2024
-Last modified on January 20, 2026
+Last modified on January 21, 2026
 Version: ${version}
 
 Description: Write and submit PBS jobs for step 054 of the
@@ -24,7 +24,7 @@ Resources baseline: -m 40 -c 12 -w "20:00:00"
                             directory. This TSV file should contain:
                             
                             Col1:
-                            path/from/working/dir/to/grade072_alignment_Novosort_DATE/stem.novosort.bam
+                            path/from/working/dir/to/grade053_alignment_Novosort_DATE/stem.novosort.bam
                             full file paths
 
                             Col2:
