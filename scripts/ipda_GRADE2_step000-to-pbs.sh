@@ -8,7 +8,7 @@ Based on
   - Mainá Bitar's 'GRADE (Basic Rnaseq Analysis IN) PBS'
   - Isabela Almeida's 'HyDRA (Hybrid de novo RNA assembly) pipeline'
 Created on December 08, 2025
-Last modified on January 23, 2026
+Last modified on January 26, 2026
 Version: ${version}
 
 Description: Write and submit PBS jobs for step 000 of the
@@ -30,8 +30,8 @@ Resources baseline: -m 60 -c 1 -w "24:00:00"
                             /path/from/working/dir/to/ref.gtf
 
                             Col3:
-                            /path/from/working/dir/to/first.gft /path/from/working/dir/to/second.gft /path/from/working/dir/to/n.gft
-                            Space separated full paths to each gtf file to be merged
+                            /path/from/working/dir/to/inputs-gtf.text
+                            Line separated full paths to each gtf file to be merged
 
                             It does not matter if same stem 
                             appears more than once on this input file.
@@ -122,7 +122,7 @@ logfile=logfile_ipda_GRADE2_step000-to-pbs_${thislogdate}.txt
 #................................................
 
 # Bedtools 2.31.1:
-module_bedtools=gffcompare/0.12.6
+modiule_gffcompare=gffcompare/0.12.6
 
 #................................................
 #  Set and create output path
@@ -233,8 +233,7 @@ cut -f1 ${input} | sort | uniq | while read stem; do echo "#....................
 cut -f1 ${input} | sort | uniq | while read stem; do echo "#  Load Softwares, Libraries and Modules" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read stem; do echo "#................................................" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "module load ${module_bedtools}" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "module load ${module_samtools}" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do echo "module load ${modiule_gffcompare}" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 
 ## Write PBS command lines
@@ -267,8 +266,7 @@ sed -i 's,${walltime},'"${walltime}"',g' "$logfile"
 sed -i 's,${human_thislogdate},'"${human_thislogdate}"',g' "$logfile"
 sed -i 's,${thislogdate},'"${thislogdate}"',g' "$logfile"
 sed -i 's,${user},'"${user}"',g' "$logfile"
-sed -i 's,${module_bedtools},'"${module_bedtools}"',g' "$logfile"
-sed -i 's,${module_samtools},'"${module_samtools}"',g' "$logfile"
+sed -i 's,${modiule_gffcompare},'"${modiule_gffcompare}"',g' "$logfile"
 sed -i 's,${logfile},'"${logfile}"',g' "$logfile"
 sed -n -e :a -e '1,3!{P;N;D;};N;ba' $logfile > tmp ; mv tmp $logfile
 set +v
