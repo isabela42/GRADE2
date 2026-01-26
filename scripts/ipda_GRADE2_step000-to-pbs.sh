@@ -122,7 +122,7 @@ logfile=logfile_ipda_GRADE2_step000-to-pbs_${thislogdate}.txt
 #................................................
 
 # Bedtools 2.31.1:
-modiule_gffcompare=gffcompare/0.12.6
+module_gffcompare=gffcompare/0.12.6
 
 #................................................
 #  Set and create output path
@@ -132,7 +132,7 @@ modiule_gffcompare=gffcompare/0.12.6
 outpath_GRADE2000_mergeGFF="grade000_mergeGFF_gffcompare_${thislogdate}"
 
 ## Create output directories
-mkdir -p ${outpath_GRADE2000_MergeGFF}
+mkdir -p ${outpath_GRADE2000_mergeGFF}
 
 #................................................
 #  Print Execution info to user
@@ -233,7 +233,7 @@ cut -f1 ${input} | sort | uniq | while read stem; do echo "#....................
 cut -f1 ${input} | sort | uniq | while read stem; do echo "#  Load Softwares, Libraries and Modules" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read stem; do echo "#................................................" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "module load ${modiule_gffcompare}" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do echo "module load ${module_gffcompare}" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 
 ## Write PBS command lines
@@ -242,7 +242,7 @@ cut -f1 ${input} | sort | uniq | while read stem; do echo "#  Run step" >> ${pbs
 cut -f1 ${input} | sort | uniq | while read stem; do echo "#................................................" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read stem; do echo 'echo "## Run gffcompare at" ; date ; echo' >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read stem; do ref=`grep "${stem}" ${input} | cut -f2 | sort | uniq`; inputs=`grep "${stem}" ${input} | cut -f3 | sort | uniq`; echo "gffcompare -r ${ref} -p '${stem}' -o ${outpath_GRADE2000_MergeGFF}/${stem} -i ${inputs}" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do ref=`grep "${stem}" ${input} | cut -f2 | sort | uniq`; inputs=`grep "${stem}" ${input} | cut -f3 | sort | uniq`; echo "gffcompare -r ${ref} -p '${stem}' -o ${outpath_GRADE2000_mergeGFF}/${stem} -i ${inputs}" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 
 #................................................
 #  Submit PBS jobs
@@ -266,7 +266,7 @@ sed -i 's,${walltime},'"${walltime}"',g' "$logfile"
 sed -i 's,${human_thislogdate},'"${human_thislogdate}"',g' "$logfile"
 sed -i 's,${thislogdate},'"${thislogdate}"',g' "$logfile"
 sed -i 's,${user},'"${user}"',g' "$logfile"
-sed -i 's,${modiule_gffcompare},'"${modiule_gffcompare}"',g' "$logfile"
+sed -i 's,${module_gffcompare},'"${module_gffcompare}"',g' "$logfile"
 sed -i 's,${logfile},'"${logfile}"',g' "$logfile"
 sed -n -e :a -e '1,3!{P;N;D;};N;ba' $logfile > tmp ; mv tmp $logfile
 set +v
