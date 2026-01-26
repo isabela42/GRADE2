@@ -8,7 +8,7 @@ Based on
   - Mainá Bitar's 'GRADE (Basic Rnaseq Analysis IN) PBS'
   - Isabela Almeida's 'HyDRA (Hybrid de novo RNA assembly) pipeline'
 Created on Jun 18, 2024
-Last modified on January 21, 2026
+Last modified on January 26, 2026
 Version: ${version}
 
 Description: Write and submit PBS jobs for step 055 of the
@@ -24,7 +24,15 @@ Resources baseline: -m 2 -c 1 -w "10:00:00"
                             directory. This TSV file should contain:
                             
                             Col1:
-                            path/from/working/dir/to/grade054_quant_RSEM_DATE/
+                            path/from/working/dir/to/grade054_quant_RSEM_DATE/rquant-stem_sampleID.isoforms.results
+
+                            Col2:
+                            sampleID
+                            as it appears in Col1
+
+                            Col3:
+                            expNAME
+                            e.g. ovarianRNAseq
 
 -p <PBS stem>               Stem for PBS file names
 -e <email>                  Email for PBS job
@@ -108,6 +116,16 @@ human_thislogdate=`date`
 logfile=logfile_ipda_GRADE2_step055-to-pbs_${thislogdate}.txt
 
 #................................................
+#  Set and create output path
+#................................................
+
+## Set stem for output directories
+outpath_GRADE2055_Bash="grade055_rquant_Bash_${thislogdate}"
+
+## Create output directories
+mkdir -p ${outpath_GRADE2055_Bash}
+
+#................................................
 #  Print Execution info to user
 #................................................
 
@@ -168,85 +186,88 @@ set -v
 #................................................
 
 ## Write PBS header
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "#!/bin/sh" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "##########################################################################" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "#" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "#  Script:  ${pbs_stem}_${folder_date}_${thislogdate}.pbs" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "#  Author:  Isabela Almeida" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "#  Created: ${human_thislogdate} at QIMR Berghofer (Brisbane, Australia) - VSC" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "#  Updated: ${human_thislogdate} at QIMR Berghofer (Brisbane, Australia) - VSC" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "#  Version: v01" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "#  Email:   ${email}" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "#" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "##########################################################################" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "#!/bin/sh" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "##########################################################################" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "#" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "#  Script:  ${pbs_stem}_${exp}_${thislogdate}.pbs" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "#  Author:  Isabela Almeida" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "#  Created: ${human_thislogdate} at QIMR Berghofer (Brisbane, Australia) - VSC" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "#  Updated: ${human_thislogdate} at QIMR Berghofer (Brisbane, Australia) - VSC" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "#  Version: v01" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "#  Email:   ${email}" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "#" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "##########################################################################" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
 
 ## Write PBS directives
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "#PBS -N ${pbs_stem}_${thislogdate}" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "#PBS -r n" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "#PBS -l mem=${mem}GB,walltime=${walltime},ncpus=${ncpus}" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "#PBS -m abe" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "#PBS -M ${email}" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "#PBS -N ${pbs_stem}_${thislogdate}" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "#PBS -r n" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "#PBS -l mem=${mem}GB,walltime=${walltime},ncpus=${ncpus}" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "#PBS -m abe" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "#PBS -M ${email}" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
 
 ## Write directory setting
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "#................................................" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "#  Set main working directory" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "#................................................" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "## Change to main directory" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo 'cd ${PBS_O_WORKDIR}' >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo 'echo ; echo "WARNING: The main directory for this run was set to ${PBS_O_WORKDIR}"; echo ' >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "#................................................" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "#  Set main working directory" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "#................................................" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "## Change to main directory" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo 'cd ${PBS_O_WORKDIR}' >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo 'echo ; echo "WARNING: The main directory for this run was set to ${PBS_O_WORKDIR}"; echo ' >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
 
 ## Write PBS command lines
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "#................................................" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "#  Run step" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "#................................................" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo 'echo "## Get expected counts tables at" ; date ; echo' >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "ls -d ${path_input}/rquant*isoforms.results | rev | cut -d"." -f3- | rev | while read folder; do seed=\`echo \${folder} | rev | cut -d\"/\" -f1 | rev | cut -d\"_\" -f4-\` ; echo -e "Transcript\t${seed}" >> \${folder}_ExpCounts; cut -f1,5 \${folder}.isoforms.results | tail -n+2 >> \${folder}_ExpCounts; done" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "first=\`ls -d ${path_input}/rquant*ExpCounts | head -n2 | head -n1\`; second=\`ls -d ${path_input}/rquant*ExpCounts | head -n2 | tail -n1\`; n=\`ls -d ${path_input}/rquant*ExpCounts | wc -l\`; ns=\`echo \"\${n}-2\" | bc\`; np=\`echo \"\${n}+1\" | bc\`" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "join -t\$'\t' \${first} \${second} >> ${path_input}/Seed_ExpCounts" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "ls -d ${path_input}/rquant*ExpCounts | tail -n\${ns} | while read folder; do mv ${path_input}/Seed_ExpCounts ${path_input}/Active_ExpCounts; join -t\$'\t' ${path_input}/Active_ExpCounts \${folder} >> ${path_input}/Seed_ExpCounts; done" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "mv ${path_input}/Seed_ExpCounts ${path_input}/Rsem_all_ExpCounts ; rm -f ${path_input}/Active_ExpCounts" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "#................................................" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "#  Run step" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "#................................................" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo 'echo "## Get Expected Counts tables at" ; date ; echo' >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "cut -f2 ${input} | head -n1 > ${outpath_GRADE2055_Bash}/header-expcnt.tmp" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "cut -f2 ${input} | tail -n+2 | paste ${outpath_GRADE2055_Bash}/header-expcnt.tmp - | sed 's/^/transcript\t/gene\t' > ${outpath_GRADE2055_Bash}/out-expcnt.tmp" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "sort -k1 \$(cut -f1-2 ${input} | head -n1) | cut -f1 > ${outpath_GRADE2055_Bash}/transcripts-expcnt.tmp" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "cat ${input} | while IFS=\$'\t' read -r filepath sampleid exp; do [[ -z \"\${filepath}\" || ! -f \"\${filepath}\" ]] && continue ; sort -k1 \${filepath} | cut -f5 > ${outpath_GRADE2055_Bash}/tmp-expcnt_\${sampleid} ; done" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "paste -d\$'\t' ${outpath_GRADE2055_Bash}/transcripts-expcnt.tmp ${outpath_GRADE2055_Bash}/tmp-expcnt_* > ${outpath_GRADE2055_Bash}/data-expcnt.tmp" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "cat ${outpath_GRADE2055_Bash}/out-expcnt.tmp ${outpath_GRADE2055_Bash}/data-expcnt.tmp > ${outpath_GRADE2055_Bash}/RSEM-${exp}_expected-count.tsv && rm -f ${outpath_GRADE2055_Bash}/header-expcnt.tmp ${outpath_GRADE2055_Bash}/data-expcnt.tmp ${outpath_GRADE2055_Bash}/out-expcnt.tmp ${outpath_GRADE2055_Bash}/transcripts-expcnt.tmp ${outpath_GRADE2055_Bash}/tmp-expcnt_* " >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
 
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo 'echo "## Sneak peak at expected counts table at" ; date ; echo' >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "head ${path_input}/Rsem_all_ExpCounts" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo 'echo "## Sneak peak at Expected Counts table at" ; date ; echo' >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "head ${outpath_GRADE2055_Bash}/RSEM-${exp}-all_expected-count.tsv" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
 
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo 'echo "## Get TPM tables at" ; date ; echo' >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "ls -d ${path_input}/rquant*isoforms.results | rev | cut -d"." -f3- | rev | while read folder; do seed=\`echo \${folder} | rev | cut -d\"/\" -f1 | rev | cut -d\"_\" -f4-\` ; echo -e "Transcript\t${seed}" >> \${folder}_TPM; cut -f1,6 \${folder}.isoforms.results | tail -n+2 >> \${folder}_TPM; done" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "first=\`ls -d ${path_input}/rquant*TPM | head -n2 | head -n1\`; second=\`ls -d ${path_input}/rquant*TPM | head -n2 | tail -n1\`; n=\`ls -d ${path_input}/rquant*TPM | wc -l\`; ns=\`echo \"\${n}-2\" | bc\`; np=\`echo \"\${n}+1\" | bc\`" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "join -t\$'\t' \${first} \${second} >> ${path_input}/Seed_TPM" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "ls -d ${path_input}/rquant*TPM | tail -n\${ns} | while read folder; do mv ${path_input}/Seed_TPM ${path_input}/Active_TPM; join -t\$'\t' ${path_input}/Active_TPM \${folder} >> ${path_input}/Seed_TPM; done" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "mv ${path_input}/Seed_TPM ${path_input}/Rsem_all_TPM ; rm -f ${path_input}/Active_TPM" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo 'echo "## Get TPM tables at" ; date ; echo' >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "cut -f2 ${input} | head -n1 > ${outpath_GRADE2055_Bash}/header-tpm.tmp" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "cut -f2 ${input} | tail -n+2 | paste ${outpath_GRADE2055_Bash}/header-tpm.tmp - | sed 's/^/transcript\t/gene\t' > ${outpath_GRADE2055_Bash}/out-tpm.tmp" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "sort -k1 \$(cut -f1-2 ${input} | head -n1) | cut -f1 > ${outpath_GRADE2055_Bash}/transcripts-tpm.tmp" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "cat ${input} | while IFS=\$'\t' read -r filepath sampleid exp; do [[ -z \"\${filepath}\" || ! -f \"\${filepath}\" ]] && continue ; sort -k1 \${filepath} | cut -f6 > ${outpath_GRADE2055_Bash}/tmp-tpm_\${sampleid} ; done" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "paste -d\$'\t' ${outpath_GRADE2055_Bash}/transcripts-tpm.tmp ${outpath_GRADE2055_Bash}/tmp-tpm_* > ${outpath_GRADE2055_Bash}/data-tpm.tmp" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "cat ${outpath_GRADE2055_Bash}/out-tpm.tmp ${outpath_GRADE2055_Bash}/data-tpm.tmp > ${outpath_GRADE2055_Bash}/RSEM-${exp}_tpm.tsv && rm -f ${outpath_GRADE2055_Bash}/header-tpm.tmp ${outpath_GRADE2055_Bash}/data-tpm.tmp ${outpath_GRADE2055_Bash}/out-tpm.tmp ${outpath_GRADE2055_Bash}/transcripts-tpm.tmp ${outpath_GRADE2055_Bash}/tmp-tpm_* " >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
 
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo 'echo "## Sneak peak at TPM counts table at" ; date ; echo' >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "head ${path_input}/Rsem_all_TPM" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo 'echo "## Sneak peak at TPM counts table at" ; date ; echo' >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "head ${outpath_GRADE2055_Bash}/RSEM-${exp}-all_tpm.tsv" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
 
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo 'echo "## Get FPKM tables at" ; date ; echo' >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "ls -d ${path_input}/rquant*isoforms.results | rev | cut -d"." -f3- | rev | while read folder; do seed=\`echo \${folder} | rev | cut -d\"/\" -f1 | rev | cut -d\"_\" -f4-\` ; echo -e "Transcript\t${seed}" >> \${folder}_FPKM; cut -f1,7 \${folder}.isoforms.results | tail -n+2 >> \${folder}_FPKM; done" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "first=\`ls -d ${path_input}/rquant*FPKM | head -n2 | head -n1\`; second=\`ls -d ${path_input}/rquant*FPKM | head -n2 | tail -n1\`; n=\`ls -d ${path_input}/rquant*FPKM | wc -l\`; ns=\`echo \"\${n}-2\" | bc\`; np=\`echo \"\${n}+1\" | bc\`" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "join -t\$'\t' \${first} \${second} >> ${path_input}/Seed_FPKM" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "ls -d ${path_input}/rquant*FPKM | tail -n\${ns} | while read folder; do mv ${path_input}/Seed_FPKM ${path_input}/Active_FPKM; join -t\$'\t' ${path_input}/Active_FPKM \${folder} >> ${path_input}/Seed_FPKM; done" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "mv ${path_input}/Seed_FPKM ${path_input}/Rsem_all_FPKM ; rm -f ${path_input}/Active_FPKM" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo 'echo "## Get FPKM tables at" ; date ; echo' >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "cut -f2 ${input} | head -n1 > ${outpath_GRADE2055_Bash}/header-fpkm.tmp" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "cut -f2 ${input} | tail -n+2 | paste ${outpath_GRADE2055_Bash}/header-fpkm.tmp - | sed 's/^/transcript\t/gene\t' > ${outpath_GRADE2055_Bash}/out-fpkm.tmp" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "sort -k1 \$(cut -f1-2 ${input} | head -n1) | cut -f1 > ${outpath_GRADE2055_Bash}/transcripts-fpkm.tmp" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "cat ${input} | while IFS=\$'\t' read -r filepath sampleid exp; do [[ -z \"\${filepath}\" || ! -f \"\${filepath}\" ]] && continue ; sort -k1 \${filepath} | cut -f7 > ${outpath_GRADE2055_Bash}/tmp-fpkm_\${sampleid} ; done" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "paste -d\$'\t' ${outpath_GRADE2055_Bash}/transcripts-fpkm.tmp ${outpath_GRADE2055_Bash}/tmp-fpkm_* > ${outpath_GRADE2055_Bash}/data-fpkm.tmp" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "cat ${outpath_GRADE2055_Bash}/out-fpkm.tmp ${outpath_GRADE2055_Bash}/data-fpkm.tmp > ${outpath_GRADE2055_Bash}/RSEM-${exp}_fpkm.tsv && rm -f ${outpath_GRADE2055_Bash}/header-fpkm.tmp ${outpath_GRADE2055_Bash}/data-fpkm.tmp ${outpath_GRADE2055_Bash}/out-fpkm.tmp ${outpath_GRADE2055_Bash}/transcripts-fpkm.tmp ${outpath_GRADE2055_Bash}/tmp-fpkm_* " >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
 
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo 'echo "## Sneak peak at FPKM counts table at" ; date ; echo' >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read path_input; do folder_date=`echo ${path_input} | rev | cut -d"_" -f1 | rev`; echo "head ${path_input}/Rsem_all_FPKM" >> ${pbs_stem}_${folder_date}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo 'echo "## Sneak peak at FPKM counts table at" ; date ; echo' >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "head ${outpath_GRADE2055_Bash}/RSEM-${exp}-all_fpkm.tsv" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
 
 #................................................
 #  Submit PBS jobs
 #................................................
 
 ## Submit PBS jobs 
-ls ${pbs_stem}_*${thislogdate}.pbs | while read pbs; do echo ; echo "#................................................" ; echo "# This is PBS: ${pbs}" ;  echo "#" ; echo "# main command line(s): $(tail -n26 ${pbs} | head -n1)" ; echo "#                       $(tail -n25 ${pbs} | head -n1)" ; echo "#                       $(tail -n28 ${pbs} | head -n1)" ; echo "#                       $(tail -n27 ${pbs} | head -n1)" ; echo "#                       $(tail -n26 ${pbs} | head -n1)" ; echo "#                       $(tail -n25 ${pbs} | head -n1)" ; echo "#                       $(tail -n24 ${pbs} | head -n1)" ; echo "#                       $(tail -n18 ${pbs} | head -n1)" ; echo "#                       $(tail -n17 ${pbs} | head -n1)" ; echo "#                       $(tail -n16 ${pbs} | head -n1)" ; echo "#                       $(tail -n15 ${pbs} | head -n1)" ; echo "#                       $(tail -n14 ${pbs} | head -n1)" ; echo "#                       $(tail -n8 ${pbs} | head -n1)" ; echo "#                       $(tail -n7 ${pbs} | head -n1)" ; echo "#                       $(tail -n6 ${pbs} | head -n1)" ; echo "#                       $(tail -n5 ${pbs} | head -n1)" ; echo "#                       $(tail -n4 ${pbs} | head -n1)" ; echo "#" ; echo "# now submitting PBS" ; echo "qsub ${pbs}" ; qsub ${pbs} ; echo "#................................................" ; done
+ls ${pbs_stem}_*${thislogdate}.pbs | while read pbs; do echo ; echo "#................................................" ; echo "# This is PBS: ${pbs}" ;  echo "#" ; echo "# main command line(s): $(tail -n31 ${pbs} | head -n1)" ; echo "#                       $(tail -n30 ${pbs} | head -n1)" ; echo "#                       $(tail -n29 ${pbs} | head -n1)" ; echo "#                       $(tail -n28 ${pbs} | head -n1)" ; echo "#                       $(tail -n27 ${pbs} | head -n1)" ; echo "#                       $(tail -n26 ${pbs} | head -n1)" ; echo "#                       $(tail -n20 ${pbs} | head -n1)" ; echo "#                       $(tail -n19 ${pbs} | head -n1)" ; echo "#                       $(tail -n18 ${pbs} | head -n1)" ; echo "#                       $(tail -n17 ${pbs} | head -n1)" ; echo "#                       $(tail -n16 ${pbs} | head -n1)" ; echo "#                       $(tail -n15 ${pbs} | head -n1)" ; echo "#                       $(tail -n9 ${pbs} | head -n1)" ; echo "#                       $(tail -n8 ${pbs} | head -n1)" ; echo "#                       $(tail -n7 ${pbs} | head -n1)" ; echo "#                       $(tail -n6 ${pbs} | head -n1)" ; echo "#                       $(tail -n5 ${pbs} | head -n1)" ; echo "#                       $(tail -n4 ${pbs} | head -n1)" ; echo "#" ; echo "# now submitting PBS" ; echo "qsub ${pbs}" ; qsub ${pbs} ; echo "#................................................" ; done
 
 date ## Status of all user jobs (including GRADE2 step 055 jobs) at
 qstat -u "$user"
@@ -262,6 +283,7 @@ sed -i 's,${walltime},'"${walltime}"',g' "$logfile"
 sed -i 's,${human_thislogdate},'"${human_thislogdate}"',g' "$logfile"
 sed -i 's,${thislogdate},'"${thislogdate}"',g' "$logfile"
 sed -i 's,${user},'"${user}"',g' "$logfile"
+sed -i 's,${outpath_GRADE2055_Bash},'"${outpath_GRADE2055_Bash}"',g' "$logfile"
 sed -i 's,${logfile},'"${logfile}"',g' "$logfile"
 sed -n -e :a -e '1,3!{P;N;D;};N;ba' $logfile > tmp ; mv tmp $logfile
 set +v
