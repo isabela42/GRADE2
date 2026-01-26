@@ -237,7 +237,7 @@ cut -f1 ${input} | sort | uniq | while read stem; do echo "module load ${module_
 cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 
 ## Write PBS command lines
-cut -f1 ${input} | sort | uniq | while read stem; do echo "#................................................" >> ${pbs_strem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do echo "#................................................" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read stem; do echo "#  Run step" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read stem; do echo "#................................................" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
