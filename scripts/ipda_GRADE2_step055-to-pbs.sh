@@ -8,7 +8,7 @@ Based on
   - Mainá Bitar's 'GRADE (Basic Rnaseq Analysis IN) PBS'
   - Isabela Almeida's 'HyDRA (Hybrid de novo RNA assembly) pipeline'
 Created on Jun 18, 2024
-Last modified on January 26, 2026
+Last modified on January 27, 2026
 Version: ${version}
 
 Description: Write and submit PBS jobs for step 055 of the
@@ -201,7 +201,7 @@ cut -f3 ${input} | sort | uniq | while read exp; do echo "######################
 cut -f3 ${input} | sort | uniq | while read exp; do echo "" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
 
 ## Write PBS directives
-cut -f3 ${input} | sort | uniq | while read exp; do echo "#PBS -N ${pbs_stem}_${thislogdate}" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "#PBS -N ${pbs_stem}_${exp}_${thislogdate}" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
 cut -f3 ${input} | sort | uniq | while read exp; do echo "#PBS -r n" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
 cut -f3 ${input} | sort | uniq | while read exp; do echo "#PBS -l mem=${mem}GB,walltime=${walltime},ncpus=${ncpus}" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
 cut -f3 ${input} | sort | uniq | while read exp; do echo "#PBS -m abe" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
@@ -225,49 +225,34 @@ cut -f3 ${input} | sort | uniq | while read exp; do echo "#  Run step" >> ${pbs_
 cut -f3 ${input} | sort | uniq | while read exp; do echo "#................................................" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
 cut -f3 ${input} | sort | uniq | while read exp; do echo "" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
 cut -f3 ${input} | sort | uniq | while read exp; do echo 'echo "## Get Expected Counts tables at" ; date ; echo' >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
-cut -f3 ${input} | sort | uniq | while read exp; do echo "cut -f2 ${input} | head -n1 > ${outpath_GRADE2055_Bash}/header-expcnt.tmp" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
-cut -f3 ${input} | sort | uniq | while read exp; do echo "cut -f2 ${input} | tail -n+2 | paste ${outpath_GRADE2055_Bash}/header-expcnt.tmp - | sed 's/^/transcript\t/gene\t' > ${outpath_GRADE2055_Bash}/out-expcnt.tmp" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
-cut -f3 ${input} | sort | uniq | while read exp; do echo "sort -k1 \$(cut -f1-2 ${input} | head -n1) | cut -f1 > ${outpath_GRADE2055_Bash}/transcripts-expcnt.tmp" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "cut -f2 ${input} | tr '\n' '\t' | sed 's/^/transcript\tgene\t/' > ${outpath_GRADE2055_Bash}/out-expcnt.tmp" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "sort -k1 \$(cut -f1 ${input} | head -n1) | cut -f1-2 > ${outpath_GRADE2055_Bash}/transcripts-expcnt.tmp" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
 cut -f3 ${input} | sort | uniq | while read exp; do echo "cat ${input} | while IFS=\$'\t' read -r filepath sampleid exp; do [[ -z \"\${filepath}\" || ! -f \"\${filepath}\" ]] && continue ; sort -k1 \${filepath} | cut -f5 > ${outpath_GRADE2055_Bash}/tmp-expcnt_\${sampleid} ; done" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
-cut -f3 ${input} | sort | uniq | while read exp; do echo "paste -d\$'\t' ${outpath_GRADE2055_Bash}/transcripts-expcnt.tmp ${outpath_GRADE2055_Bash}/tmp-expcnt_* > ${outpath_GRADE2055_Bash}/data-expcnt.tmp" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
-cut -f3 ${input} | sort | uniq | while read exp; do echo "cat ${outpath_GRADE2055_Bash}/out-expcnt.tmp ${outpath_GRADE2055_Bash}/data-expcnt.tmp > ${outpath_GRADE2055_Bash}/RSEM-${exp}_expected-count.tsv && rm -f ${outpath_GRADE2055_Bash}/header-expcnt.tmp ${outpath_GRADE2055_Bash}/data-expcnt.tmp ${outpath_GRADE2055_Bash}/out-expcnt.tmp ${outpath_GRADE2055_Bash}/transcripts-expcnt.tmp ${outpath_GRADE2055_Bash}/tmp-expcnt_* " >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
-cut -f3 ${input} | sort | uniq | while read exp; do echo "" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
-
-cut -f3 ${input} | sort | uniq | while read exp; do echo 'echo "## Sneak peak at Expected Counts table at" ; date ; echo' >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
-cut -f3 ${input} | sort | uniq | while read exp; do echo "head ${outpath_GRADE2055_Bash}/RSEM-${exp}-all_expected-count.tsv" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "n=100 ; current="${outpath_GRADE2055_Bash}/transcripts-expcnt.tmp" ; files=(\$(ls ${outpath_GRADE2055_Bash}/tmp-expcnt_* 2>/dev/null )) ; for ((i=0; i<\${#files[@]}; i+=\$n)); do paste -d\$'\t' ${outpath_GRADE2055_Bash}/\$current "\${files[@]:i:\$n}" > ${outpath_GRADE2055_Bash}/data-expcnt.tmp.\$\$ ; mv ${outpath_GRADE2055_Bash}/data-expcnt.tmp.\$\$ ${outpath_GRADE2055_Bash}/\$current ; done" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "cat ${outpath_GRADE2055_Bash}/out-expcnt.tmp ${outpath_GRADE2055_Bash}/transcripts-expcnt.tmp > ${outpath_GRADE2055_Bash}/RSEM-${exp}_expcnt.tsv && rm -f ${outpath_GRADE2055_Bash}/out-expcnt.tmp ${outpath_GRADE2055_Bash}/transcripts-expcnt.tmp ${outpath_GRADE2055_Bash}/tmp-expcnt_* " >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
 cut -f3 ${input} | sort | uniq | while read exp; do echo "" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
 
 cut -f3 ${input} | sort | uniq | while read exp; do echo 'echo "## Get TPM tables at" ; date ; echo' >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
-cut -f3 ${input} | sort | uniq | while read exp; do echo "cut -f2 ${input} | head -n1 > ${outpath_GRADE2055_Bash}/header-tpm.tmp" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
-cut -f3 ${input} | sort | uniq | while read exp; do echo "cut -f2 ${input} | tail -n+2 | paste ${outpath_GRADE2055_Bash}/header-tpm.tmp - | sed 's/^/transcript\t/gene\t' > ${outpath_GRADE2055_Bash}/out-tpm.tmp" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
-cut -f3 ${input} | sort | uniq | while read exp; do echo "sort -k1 \$(cut -f1-2 ${input} | head -n1) | cut -f1 > ${outpath_GRADE2055_Bash}/transcripts-tpm.tmp" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "cut -f2 ${input} | tr '\n' '\t' | sed 's/^/transcript\tgene\t/' > ${outpath_GRADE2055_Bash}/out-tpm.tmp" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "sort -k1 \$(cut -f1 ${input} | head -n1) | cut -f1-2 > ${outpath_GRADE2055_Bash}/transcripts-tpm.tmp" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
 cut -f3 ${input} | sort | uniq | while read exp; do echo "cat ${input} | while IFS=\$'\t' read -r filepath sampleid exp; do [[ -z \"\${filepath}\" || ! -f \"\${filepath}\" ]] && continue ; sort -k1 \${filepath} | cut -f6 > ${outpath_GRADE2055_Bash}/tmp-tpm_\${sampleid} ; done" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
-cut -f3 ${input} | sort | uniq | while read exp; do echo "paste -d\$'\t' ${outpath_GRADE2055_Bash}/transcripts-tpm.tmp ${outpath_GRADE2055_Bash}/tmp-tpm_* > ${outpath_GRADE2055_Bash}/data-tpm.tmp" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
-cut -f3 ${input} | sort | uniq | while read exp; do echo "cat ${outpath_GRADE2055_Bash}/out-tpm.tmp ${outpath_GRADE2055_Bash}/data-tpm.tmp > ${outpath_GRADE2055_Bash}/RSEM-${exp}_tpm.tsv && rm -f ${outpath_GRADE2055_Bash}/header-tpm.tmp ${outpath_GRADE2055_Bash}/data-tpm.tmp ${outpath_GRADE2055_Bash}/out-tpm.tmp ${outpath_GRADE2055_Bash}/transcripts-tpm.tmp ${outpath_GRADE2055_Bash}/tmp-tpm_* " >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
-cut -f3 ${input} | sort | uniq | while read exp; do echo "" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
-
-cut -f3 ${input} | sort | uniq | while read exp; do echo 'echo "## Sneak peak at TPM counts table at" ; date ; echo' >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
-cut -f3 ${input} | sort | uniq | while read exp; do echo "head ${outpath_GRADE2055_Bash}/RSEM-${exp}-all_tpm.tsv" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "n=100 ; current="${outpath_GRADE2055_Bash}/transcripts-tpm.tmp" ; files=(\$(ls ${outpath_GRADE2055_Bash}/tmp-tpm_* 2>/dev/null )) ; for ((i=0; i<\${#files[@]}; i+=\$n)); do paste -d\$'\t' ${outpath_GRADE2055_Bash}/\$current "\${files[@]:i:\$n}" > ${outpath_GRADE2055_Bash}/data-tpm.tmp.\$\$ ; mv ${outpath_GRADE2055_Bash}/data-tpm.tmp.\$\$ ${outpath_GRADE2055_Bash}/\$current ; done" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "cat ${outpath_GRADE2055_Bash}/out-tpm.tmp ${outpath_GRADE2055_Bash}/transcripts-tpm.tmp > ${outpath_GRADE2055_Bash}/RSEM-${exp}_tpm.tsv && rm -f ${outpath_GRADE2055_Bash}/out-tpm.tmp ${outpath_GRADE2055_Bash}/transcripts-tpm.tmp ${outpath_GRADE2055_Bash}/tmp-tpm_* " >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
 cut -f3 ${input} | sort | uniq | while read exp; do echo "" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
 
 cut -f3 ${input} | sort | uniq | while read exp; do echo 'echo "## Get FPKM tables at" ; date ; echo' >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
-cut -f3 ${input} | sort | uniq | while read exp; do echo "cut -f2 ${input} | head -n1 > ${outpath_GRADE2055_Bash}/header-fpkm.tmp" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
-cut -f3 ${input} | sort | uniq | while read exp; do echo "cut -f2 ${input} | tail -n+2 | paste ${outpath_GRADE2055_Bash}/header-fpkm.tmp - | sed 's/^/transcript\t/gene\t' > ${outpath_GRADE2055_Bash}/out-fpkm.tmp" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
-cut -f3 ${input} | sort | uniq | while read exp; do echo "sort -k1 \$(cut -f1-2 ${input} | head -n1) | cut -f1 > ${outpath_GRADE2055_Bash}/transcripts-fpkm.tmp" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "cut -f2 ${input} | tr '\n' '\t' | sed 's/^/transcript\tgene\t/' > ${outpath_GRADE2055_Bash}/out-fpkm.tmp" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "sort -k1 \$(cut -f1 ${input} | head -n1) | cut -f1-2 > ${outpath_GRADE2055_Bash}/transcripts-fpkm.tmp" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
 cut -f3 ${input} | sort | uniq | while read exp; do echo "cat ${input} | while IFS=\$'\t' read -r filepath sampleid exp; do [[ -z \"\${filepath}\" || ! -f \"\${filepath}\" ]] && continue ; sort -k1 \${filepath} | cut -f7 > ${outpath_GRADE2055_Bash}/tmp-fpkm_\${sampleid} ; done" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
-cut -f3 ${input} | sort | uniq | while read exp; do echo "paste -d\$'\t' ${outpath_GRADE2055_Bash}/transcripts-fpkm.tmp ${outpath_GRADE2055_Bash}/tmp-fpkm_* > ${outpath_GRADE2055_Bash}/data-fpkm.tmp" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
-cut -f3 ${input} | sort | uniq | while read exp; do echo "cat ${outpath_GRADE2055_Bash}/out-fpkm.tmp ${outpath_GRADE2055_Bash}/data-fpkm.tmp > ${outpath_GRADE2055_Bash}/RSEM-${exp}_fpkm.tsv && rm -f ${outpath_GRADE2055_Bash}/header-fpkm.tmp ${outpath_GRADE2055_Bash}/data-fpkm.tmp ${outpath_GRADE2055_Bash}/out-fpkm.tmp ${outpath_GRADE2055_Bash}/transcripts-fpkm.tmp ${outpath_GRADE2055_Bash}/tmp-fpkm_* " >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
-cut -f3 ${input} | sort | uniq | while read exp; do echo "" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
-
-cut -f3 ${input} | sort | uniq | while read exp; do echo 'echo "## Sneak peak at FPKM counts table at" ; date ; echo' >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
-cut -f3 ${input} | sort | uniq | while read exp; do echo "head ${outpath_GRADE2055_Bash}/RSEM-${exp}-all_fpkm.tsv" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "n=100 ; current="${outpath_GRADE2055_Bash}/transcripts-fpkm.tmp" ; files=(\$(ls ${outpath_GRADE2055_Bash}/tmp-fpkm_* 2>/dev/null )) ; for ((i=0; i<\${#files[@]}; i+=\$n)); do paste -d\$'\t' ${outpath_GRADE2055_Bash}/\$current "\${files[@]:i:\$n}" > ${outpath_GRADE2055_Bash}/data-fpkm.tmp.\$\$ ; mv ${outpath_GRADE2055_Bash}/data-fpkm.tmp.\$\$ ${outpath_GRADE2055_Bash}/\$current ; done" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "cat ${outpath_GRADE2055_Bash}/out-fpkm.tmp ${outpath_GRADE2055_Bash}/transcripts-fpkm.tmp > ${outpath_GRADE2055_Bash}/RSEM-${exp}_fpkm.tsv && rm -f ${outpath_GRADE2055_Bash}/out-fpkm.tmp ${outpath_GRADE2055_Bash}/transcripts-fpkm.tmp ${outpath_GRADE2055_Bash}/tmp-fpkm_* " >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
 
 #................................................
 #  Submit PBS jobs
 #................................................
 
 ## Submit PBS jobs 
-ls ${pbs_stem}_*${thislogdate}.pbs | while read pbs; do echo ; echo "#................................................" ; echo "# This is PBS: ${pbs}" ;  echo "#" ; echo "# main command line(s): $(tail -n31 ${pbs} | head -n1)" ; echo "#                       $(tail -n30 ${pbs} | head -n1)" ; echo "#                       $(tail -n29 ${pbs} | head -n1)" ; echo "#                       $(tail -n28 ${pbs} | head -n1)" ; echo "#                       $(tail -n27 ${pbs} | head -n1)" ; echo "#                       $(tail -n26 ${pbs} | head -n1)" ; echo "#                       $(tail -n20 ${pbs} | head -n1)" ; echo "#                       $(tail -n19 ${pbs} | head -n1)" ; echo "#                       $(tail -n18 ${pbs} | head -n1)" ; echo "#                       $(tail -n17 ${pbs} | head -n1)" ; echo "#                       $(tail -n16 ${pbs} | head -n1)" ; echo "#                       $(tail -n15 ${pbs} | head -n1)" ; echo "#                       $(tail -n9 ${pbs} | head -n1)" ; echo "#                       $(tail -n8 ${pbs} | head -n1)" ; echo "#                       $(tail -n7 ${pbs} | head -n1)" ; echo "#                       $(tail -n6 ${pbs} | head -n1)" ; echo "#                       $(tail -n5 ${pbs} | head -n1)" ; echo "#                       $(tail -n4 ${pbs} | head -n1)" ; echo "#" ; echo "# now submitting PBS" ; echo "qsub ${pbs}" ; qsub ${pbs} ; echo "#................................................" ; done
+ls ${pbs_stem}_*${thislogdate}.pbs | while read pbs; do echo ; echo "#................................................" ; echo "# This is PBS: ${pbs}" ;  echo "#" ; echo "# main command line(s): $(tail -n17 ${pbs} | head -n1)" ; echo "#                       $(tail -n16 ${pbs} | head -n1)" ; echo "#                       $(tail -n15 ${pbs} | head -n1)" ; echo "#                       $(tail -n14 ${pbs} | head -n1)" ; echo "#                       $(tail -n13 ${pbs} | head -n1)" ; echo "#                       $(tail -n11 ${pbs} | head -n1)" ; echo "#                       $(tail -n10 ${pbs} | head -n1)" ; echo "#                       $(tail -n9 ${pbs} | head -n1)" ; echo "#                       $(tail -n8 ${pbs} | head -n1)" ; echo "#                       $(tail -n7 ${pbs} | head -n1)" ; echo "#                       $(tail -n5 ${pbs} | head -n1)" ; echo "#                       $(tail -n4 ${pbs} | head -n1)" ; echo "#                       $(tail -n3 ${pbs} | head -n1)" ; echo "#                       $(tail -n2 ${pbs} | head -n1)" ; echo "#                       $(tail -n1 ${pbs} | head -n1)" ; echo "#" ; echo "# now submitting PBS" ; echo "qsub ${pbs}" ; qsub ${pbs} ; echo "#................................................" ; done
 
 date ## Status of all user jobs (including GRADE2 step 055 jobs) at
 qstat -u "$user"
