@@ -8,7 +8,7 @@ Based on
   - Mainá Bitar's 'GRADE (Basic Rnaseq Analysis IN) PBS'
   - Isabela Almeida's 'HyDRA (Hybrid de novo RNA assembly) pipeline'
 Created on Jun 18, 2024
-Last modified on January 27, 2026
+Last modified on January 28, 2026
 Version: ${version}
 
 Description: Write and submit PBS jobs for step 055 of the
@@ -228,7 +228,7 @@ cut -f3 ${input} | sort | uniq | while read exp; do echo 'echo "## Get Expected 
 cut -f3 ${input} | sort | uniq | while read exp; do echo "cut -f2 ${input} | tr '\n' '\t' | sed 's/^/transcript\tgene\t/' > ${outpath_GRADE2055_Bash}/out-expcnt.tmp" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
 cut -f3 ${input} | sort | uniq | while read exp; do echo "sort -k1 \$(cut -f1 ${input} | head -n1) | cut -f1-2 > ${outpath_GRADE2055_Bash}/transcripts-expcnt.tmp" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
 cut -f3 ${input} | sort | uniq | while read exp; do echo "cat ${input} | while IFS=\$'\t' read -r filepath sampleid exp; do [[ -z \"\${filepath}\" || ! -f \"\${filepath}\" ]] && continue ; sort -k1 \${filepath} | cut -f5 > ${outpath_GRADE2055_Bash}/tmp-expcnt_\${sampleid} ; done" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
-cut -f3 ${input} | sort | uniq | while read exp; do echo "n=100 ; current="${outpath_GRADE2055_Bash}/transcripts-expcnt.tmp" ; files=(\$(ls ${outpath_GRADE2055_Bash}/tmp-expcnt_* 2>/dev/null )) ; for ((i=0; i<\${#files[@]}; i+=\$n)); do paste -d\$'\t' ${outpath_GRADE2055_Bash}/\$current "\${files[@]:i:\$n}" > ${outpath_GRADE2055_Bash}/data-expcnt.tmp.\$\$ ; mv ${outpath_GRADE2055_Bash}/data-expcnt.tmp.\$\$ ${outpath_GRADE2055_Bash}/\$current ; done" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "n=100 ; current="${outpath_GRADE2055_Bash}/transcripts-expcnt.tmp" ; files=(\$(ls ${outpath_GRADE2055_Bash}/tmp-expcnt_* 2>/dev/null )) ; for ((i=0; i<\${#files[@]}; i+=\$n)); do paste -d\$'\t' \$current "\${files[@]:i:\$n}" > ${outpath_GRADE2055_Bash}/data-expcnt.tmp.\$\$ ; mv ${outpath_GRADE2055_Bash}/data-expcnt.tmp.\$\$ \$current ; done" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
 cut -f3 ${input} | sort | uniq | while read exp; do echo "cat ${outpath_GRADE2055_Bash}/out-expcnt.tmp ${outpath_GRADE2055_Bash}/transcripts-expcnt.tmp > ${outpath_GRADE2055_Bash}/RSEM-${exp}_expcnt.tsv && rm -f ${outpath_GRADE2055_Bash}/out-expcnt.tmp ${outpath_GRADE2055_Bash}/transcripts-expcnt.tmp ${outpath_GRADE2055_Bash}/tmp-expcnt_* " >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
 cut -f3 ${input} | sort | uniq | while read exp; do echo "" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
 
@@ -236,7 +236,7 @@ cut -f3 ${input} | sort | uniq | while read exp; do echo 'echo "## Get TPM table
 cut -f3 ${input} | sort | uniq | while read exp; do echo "cut -f2 ${input} | tr '\n' '\t' | sed 's/^/transcript\tgene\t/' > ${outpath_GRADE2055_Bash}/out-tpm.tmp" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
 cut -f3 ${input} | sort | uniq | while read exp; do echo "sort -k1 \$(cut -f1 ${input} | head -n1) | cut -f1-2 > ${outpath_GRADE2055_Bash}/transcripts-tpm.tmp" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
 cut -f3 ${input} | sort | uniq | while read exp; do echo "cat ${input} | while IFS=\$'\t' read -r filepath sampleid exp; do [[ -z \"\${filepath}\" || ! -f \"\${filepath}\" ]] && continue ; sort -k1 \${filepath} | cut -f6 > ${outpath_GRADE2055_Bash}/tmp-tpm_\${sampleid} ; done" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
-cut -f3 ${input} | sort | uniq | while read exp; do echo "n=100 ; current="${outpath_GRADE2055_Bash}/transcripts-tpm.tmp" ; files=(\$(ls ${outpath_GRADE2055_Bash}/tmp-tpm_* 2>/dev/null )) ; for ((i=0; i<\${#files[@]}; i+=\$n)); do paste -d\$'\t' ${outpath_GRADE2055_Bash}/\$current "\${files[@]:i:\$n}" > ${outpath_GRADE2055_Bash}/data-tpm.tmp.\$\$ ; mv ${outpath_GRADE2055_Bash}/data-tpm.tmp.\$\$ ${outpath_GRADE2055_Bash}/\$current ; done" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "n=100 ; current="${outpath_GRADE2055_Bash}/transcripts-tpm.tmp" ; files=(\$(ls ${outpath_GRADE2055_Bash}/tmp-tpm_* 2>/dev/null )) ; for ((i=0; i<\${#files[@]}; i+=\$n)); do paste -d\$'\t' \$current "\${files[@]:i:\$n}" > ${outpath_GRADE2055_Bash}/data-tpm.tmp.\$\$ ; mv ${outpath_GRADE2055_Bash}/data-tpm.tmp.\$\$ \$current ; done" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
 cut -f3 ${input} | sort | uniq | while read exp; do echo "cat ${outpath_GRADE2055_Bash}/out-tpm.tmp ${outpath_GRADE2055_Bash}/transcripts-tpm.tmp > ${outpath_GRADE2055_Bash}/RSEM-${exp}_tpm.tsv && rm -f ${outpath_GRADE2055_Bash}/out-tpm.tmp ${outpath_GRADE2055_Bash}/transcripts-tpm.tmp ${outpath_GRADE2055_Bash}/tmp-tpm_* " >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
 cut -f3 ${input} | sort | uniq | while read exp; do echo "" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
 
@@ -244,7 +244,7 @@ cut -f3 ${input} | sort | uniq | while read exp; do echo 'echo "## Get FPKM tabl
 cut -f3 ${input} | sort | uniq | while read exp; do echo "cut -f2 ${input} | tr '\n' '\t' | sed 's/^/transcript\tgene\t/' > ${outpath_GRADE2055_Bash}/out-fpkm.tmp" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
 cut -f3 ${input} | sort | uniq | while read exp; do echo "sort -k1 \$(cut -f1 ${input} | head -n1) | cut -f1-2 > ${outpath_GRADE2055_Bash}/transcripts-fpkm.tmp" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
 cut -f3 ${input} | sort | uniq | while read exp; do echo "cat ${input} | while IFS=\$'\t' read -r filepath sampleid exp; do [[ -z \"\${filepath}\" || ! -f \"\${filepath}\" ]] && continue ; sort -k1 \${filepath} | cut -f7 > ${outpath_GRADE2055_Bash}/tmp-fpkm_\${sampleid} ; done" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
-cut -f3 ${input} | sort | uniq | while read exp; do echo "n=100 ; current="${outpath_GRADE2055_Bash}/transcripts-fpkm.tmp" ; files=(\$(ls ${outpath_GRADE2055_Bash}/tmp-fpkm_* 2>/dev/null )) ; for ((i=0; i<\${#files[@]}; i+=\$n)); do paste -d\$'\t' ${outpath_GRADE2055_Bash}/\$current "\${files[@]:i:\$n}" > ${outpath_GRADE2055_Bash}/data-fpkm.tmp.\$\$ ; mv ${outpath_GRADE2055_Bash}/data-fpkm.tmp.\$\$ ${outpath_GRADE2055_Bash}/\$current ; done" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
+cut -f3 ${input} | sort | uniq | while read exp; do echo "n=100 ; current="${outpath_GRADE2055_Bash}/transcripts-fpkm.tmp" ; files=(\$(ls ${outpath_GRADE2055_Bash}/tmp-fpkm_* 2>/dev/null )) ; for ((i=0; i<\${#files[@]}; i+=\$n)); do paste -d\$'\t' \$current "\${files[@]:i:\$n}" > ${outpath_GRADE2055_Bash}/data-fpkm.tmp.\$\$ ; mv ${outpath_GRADE2055_Bash}/data-fpkm.tmp.\$\$ \$current ; done" >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
 cut -f3 ${input} | sort | uniq | while read exp; do echo "cat ${outpath_GRADE2055_Bash}/out-fpkm.tmp ${outpath_GRADE2055_Bash}/transcripts-fpkm.tmp > ${outpath_GRADE2055_Bash}/RSEM-${exp}_fpkm.tsv && rm -f ${outpath_GRADE2055_Bash}/out-fpkm.tmp ${outpath_GRADE2055_Bash}/transcripts-fpkm.tmp ${outpath_GRADE2055_Bash}/tmp-fpkm_* " >> ${pbs_stem}_${exp}_${thislogdate}.pbs ; done
 
 #................................................
