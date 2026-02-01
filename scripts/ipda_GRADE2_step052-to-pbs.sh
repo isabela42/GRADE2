@@ -8,7 +8,7 @@ Based on
   - Mainá Bitar's 'GRADE (Basic Rnaseq Analysis IN) PBS'
   - Isabela Almeida's 'HyDRA (Hybrid de novo RNA assembly) pipeline'
 Created on Jun 13, 2024
-Last modified on January 21, 2026
+Last modified on Feb 01, 2026
 Version: ${version}
 
 Description: Write and submit PBS jobs for step 052 of the
@@ -30,8 +30,6 @@ Resources baseline: -m 1 -c 4 -w "02:00:00"
                             Col2:
                             single|paired
                             Flag for single-end or paired-end reads. If Col4 is single, it will run with F1 only.
-
-                            Same col1 stem cannot be used for different col2/col3 stems
 
 -p <PBS stem>               Stem for PBS file names
 -e <email>                  Email for PBS job
