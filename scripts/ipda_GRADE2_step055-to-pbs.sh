@@ -8,7 +8,7 @@ Based on
   - Mainá Bitar's 'GRADE (Basic Rnaseq Analysis IN) PBS'
   - Isabela Almeida's 'HyDRA (Hybrid de novo RNA assembly) pipeline'
 Created on Jun 18, 2024
-Last modified on Feb 04, 2026
+Last modified on Feb 05, 2026
 Version: ${version}
 
 Description: Write and submit PBS jobs for step 055 of the
@@ -16,7 +16,7 @@ GRADE2 PBS 2.0 pipeline (General RNAseq Analysis for Differential Expression ver
 
 Usage: bash ipda_GRADE2_step055-to-pbs.sh -i "path/to/input/files" -p "PBS stem" -e "email" -m INT -c INT -w "HH:MM:SS"
 
-Resources baseline: -m 2 -c 1 -w "10:00:00"
+Resources baseline: -m 1 -c 1 -w "20:00:00" #max recources usage with over 7k samples to compile
 
 ## Input:
 
