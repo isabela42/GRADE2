@@ -262,9 +262,9 @@ cut -f1 ${input} | sort | uniq | while read plot; do echo "#  Set main working d
 cut -f1 ${input} | sort | uniq | while read plot; do echo "#................................................" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "## Change to main directory" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo 'cd ${PBS_O_WORKDIR}' >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo 'cd $PWD' >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo 'echo ; echo "WARNING: The main directory for this run was set to ${PBS_O_WORKDIR}"; echo ' >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo 'echo ; echo "WARNING: The main directory for this run was set to $PWD"; echo ' >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
 
 ## Write load modules
@@ -301,7 +301,7 @@ cut -f1 ${input} | sort | uniq | while read plot; do echo "library(matrixStats) 
 cut -f1 ${input} | sort | uniq | while read plot; do echo "library(viridis)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# Set input files directory" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "dir <- \"${PBS_O_WORKDIR}\"" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "dir <- \"$PWD\"" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# =============================================================================" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# 1. LOAD DATA" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
@@ -375,7 +375,7 @@ cut -f1 ${input} | sort | uniq | while read plot; do echo "    shape = guide_leg
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  )" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# Save plot" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "ggsave(file.path(\"${PBS_O_WORKDIR}/${outpath_GRADE2081_R}/${plot}\"), plot = pca, width = 8, height = 8, dpi = 300)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "ggsave(file.path(\"$PWD/${outpath_GRADE2081_R}/${plot}\"), plot = pca, width = 8, height = 8, dpi = 300)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# File was succesfully written to ${pbs_stem}_${plot}_${thislogdate}.r" >> ${pbs_stem}_${plot}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.pbs; done
 
