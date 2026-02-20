@@ -313,6 +313,7 @@ cut -f1 ${input} | sort | uniq | while read plot; do counts=`grep "${plot}" ${in
 #counts <- fread(file.path(dir, "grade055_rquant_Bash_04022026141102AEST/RSEM-hydra-rnaseq_tpm-headerfixed.tsv"), data.table=FALSE)  # Use fread for speed if data.table available
 cut -f1 ${input} | sort | uniq | while read plot; do echo "counts <- counts %>% select(-2) # gene column" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 #counts_enst <- counts_full %>% filter(transcript %>% grepl("^ENST", .)) #counts_hydra <- counts_full %>% filter(transcript %>% grepl("^NODE", .))
+cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# Load sample metadata" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do metadata=`grep "${plot}" ${input} | cut -f3 | sort | uniq`; echo "coldata <- read.delim(file.path(\"${metadata}\"), sep=\"\t\", header=TRUE, row.names=1)  # rownames = sample names" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do condition=`grep "${plot}" ${input} | cut -f4 | sort | uniq`; echo "coldata\$${condition} <- factor(coldata\$${condition})  # Ensure condition is factor" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
