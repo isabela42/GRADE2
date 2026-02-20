@@ -307,15 +307,15 @@ cut -f1 ${input} | sort | uniq | while read plot; do echo "# ===================
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# 1. LOAD DATA" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# =============================================================================" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# Read only gene names + top columns first, then subset" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do counts=`grep "${stem}" ${input} | cut -f2 | sort | uniq`; echo "counts <- read.delim(file.path(\"${counts}\"), sep=\"\t\", header=TRUE, nrows=5)  # Check structure" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do counts=`grep "${plot}" ${input} | cut -f2 | sort | uniq`; echo "counts <- read.delim(file.path(\"${counts}\"), sep=\"\t\", header=TRUE, nrows=5)  # Check structure" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 #counts <- read.delim(file.path(dir, "grade055_rquant_Bash_04022026141102AEST/RSEM-hydra-rnaseq_tpm-headerfixed.tsv"), sep="\t", header=TRUE, nrows=5)  # Check structure
-cut -f1 ${input} | sort | uniq | while read plot; do counts=`grep "${stem}" ${input} | cut -f2 | sort | uniq`; echo "counts <- fread(file.path(\"${counts}\"), data.table=FALSE)  # Use fread for speed if data.table available" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do counts=`grep "${plot}" ${input} | cut -f2 | sort | uniq`; echo "counts <- fread(file.path(\"${counts}\"), data.table=FALSE)  # Use fread for speed if data.table available" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 #counts <- fread(file.path(dir, "grade055_rquant_Bash_04022026141102AEST/RSEM-hydra-rnaseq_tpm-headerfixed.tsv"), data.table=FALSE)  # Use fread for speed if data.table available
 cut -f1 ${input} | sort | uniq | while read plot; do echo "counts <- counts %>% select(-2) # gene column" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 #counts_enst <- counts_full %>% filter(transcript %>% grepl("^ENST", .)) #counts_hydra <- counts_full %>% filter(transcript %>% grepl("^NODE", .))
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# Load sample metadata" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do metadata=`grep "${stem}" ${input} | cut -f3 | sort | uniq`; echo "coldata <- read.delim(file.path(\"${metadata}\"), sep=\"\t\", header=TRUE, row.names=1)  # rownames = sample names" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do condition=`grep "${stem}" ${input} | cut -f4 | sort | uniq`; echo "coldata\$${condition} <- factor(coldata\$${condition})  # Ensure condition is factor" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do metadata=`grep "${plot}" ${input} | cut -f3 | sort | uniq`; echo "coldata <- read.delim(file.path(\"${metadata}\"), sep=\"\t\", header=TRUE, row.names=1)  # rownames = sample names" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do condition=`grep "${plot}" ${input} | cut -f4 | sort | uniq`; echo "coldata\$${condition} <- factor(coldata\$${condition})  # Ensure condition is factor" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# Match colnames(counts) with rownames(coldata)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "common_samples <- intersect(colnames(counts)[-1], rownames(coldata))  # Skip gene column - usefull for subsetting data" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
@@ -337,7 +337,7 @@ cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${pl
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# =============================================================================" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# 3. SELECT TOP VARIABLE GENES (crucial for 10GB+ large sample sets)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# =============================================================================" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do topvar=`grep "${stem}" ${input} | cut -f5 | sort | uniq`; echo "top_var <- ${topvar}  # Adjust: 1000-5000 usually enough for PCA/heatmap" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do topvar=`grep "${plot}" ${input} | cut -f5 | sort | uniq`; echo "top_var <- ${topvar}  # Adjust: 1000-5000 usually enough for PCA/heatmap" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "row_vars <- rowVars(as.matrix(norm_counts))" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "top_genes <- order(row_vars, decreasing = TRUE)[1:top_var]" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "norm_top <- norm_counts[top_genes, ]  # e.g. ~2000 x N_samples matrix (manageable)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
@@ -353,12 +353,12 @@ cut -f1 ${input} | sort | uniq | while read plot; do echo "# PCA plot" >> ${pbs_
 cut -f1 ${input} | sort | uniq | while read plot; do echo "pca_df <- data.frame(" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  PC1 = pca_data\$x[,1]," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  PC2 = pca_data\$x[,2]," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do condition=`grep "${stem}" ${input} | cut -f4 | sort | uniq`; echo "  condition = coldata\$${condition}," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do condition=`grep "${plot}" ${input} | cut -f4 | sort | uniq`; echo "  condition = coldata\$${condition}," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  name = rownames(coldata)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo ")" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# Plot system" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do shapes=`grep "${stem}" ${input} | cut -f6 | sort | uniq`; echo "shape_vals <- c(${shapes})" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do shapes=`grep "${plot}" ${input} | cut -f6 | sort | uniq`; echo "shape_vals <- c(${shapes})" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "pca <- ggplot(pca_df, aes(PC1, PC2, color = condition, shape = condition)) +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  geom_point(size = 3, alpha = 0.8, stroke = 0.5) +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
