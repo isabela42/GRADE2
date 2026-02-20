@@ -23,7 +23,8 @@ Resources baseline: -m 15 -c 1 -w "00:30:00" #max recources usage with over 7k s
                             directory. This TSV file should contain:
                             
                             Col1:
-                            stem for analysis
+                            plot-name
+                            Plots will be saved on grade081_pca_R_DATE/plot-name.pdf
 
                             Col2:
                             /path/from/working/dir/to/grade*_DATE/*-stem_*.tsv
@@ -48,10 +49,6 @@ Resources baseline: -m 15 -c 1 -w "00:30:00" #max recources usage with over 7k s
                             SHAPES
                             For example: 1, 2, 0, 5, 6, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14
                             See detailed explanation below.
-
-                            Col7:
-                            plot-name
-                            Plots will be saved on grade081_pca_R_DATE/plot-name.pdf
 
 -p <PBS stem>               Stem for PBS file names
 -e <email>                  Email for PBS job
@@ -90,7 +87,7 @@ The is a limitation on the number of shapes to use. These are 80 examples of dif
                                                      # 18 diamond; 19 solid small circle; 20 bullet
 21, 22, 23, 24, 25,                                  # filled with outline - 21 circle; 22 square; 23 diamond; 
                                                      # 24 triangle up; 25 triangle down
-\"+\", \"-\", \"*\", \".\", \"o\", \"x\", \"#\", \"%\", \"&\", \"=\",  # ASCII symbols - plus, minus, star, dot,
+\"+\", \"-\", \"*\", \".\", \"o\", \"x\", \"#\", \"%\", \"&\", \"=\",   # ASCII symbols - plus, minus, star, dot,
                                                      # circle, cross, hash, percent, ampersand, equals
 \"@\", \"[\", \"]\", \"{\", \"}\"                              # extra ASCII symbols
 
@@ -230,148 +227,148 @@ set -v
 #................................................
 
 ## Write PBS header
-cut -f1 ${input} | sort | uniq | while read stem; do echo "#!/bin/sh" >> ${pbs_stem}_${stem}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "##########################################################################" >> ${pbs_stem}_${stem}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "#" >> ${pbs_stem}_${stem}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "#  Script:  ${pbs_stem}_${stem}_${thislogdate}.pbs" >> ${pbs_stem}_${stem}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "#  Author:  Isabela Almeida" >> ${pbs_stem}_${stem}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "#  Created: ${human_thislogdate} at QIMR Berghofer (Brisbane, Australia) - VSC" >> ${pbs_stem}_${stem}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "#  Updated: ${human_thislogdate} at QIMR Berghofer (Brisbane, Australia) - VSC" >> ${pbs_stem}_${stem}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "#  Version: v01" >> ${pbs_stem}_${stem}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "#  Email:   ${email}" >> ${pbs_stem}_${stem}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "#" >> ${pbs_stem}_${stem}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "##########################################################################" >> ${pbs_stem}_${stem}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs ; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "#!/bin/sh" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "##########################################################################" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "#" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "#  Script:  ${pbs_stem}_${plot}_${thislogdate}.pbs" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "#  Author:  Isabela Almeida" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "#  Created: ${human_thislogdate} at QIMR Berghofer (Brisbane, Australia) - VSC" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "#  Updated: ${human_thislogdate} at QIMR Berghofer (Brisbane, Australia) - VSC" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "#  Version: v01" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "#  Email:   ${email}" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "#" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "##########################################################################" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
 
 ## Write PBS directives
-cut -f1 ${input} | sort | uniq | while read stem; do echo "#PBS -N ${pbs_stem}_${stem}_${thislogdate}" >> ${pbs_stem}_${stem}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "#PBS -r n" >> ${pbs_stem}_${stem}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "#PBS -l mem=${mem}GB,walltime=${walltime},ncpus=${ncpus}" >> ${pbs_stem}_${stem}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "#PBS -m abe" >> ${pbs_stem}_${stem}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "#PBS -M ${email}" >> ${pbs_stem}_${stem}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs ; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "#PBS -N ${pbs_stem}_${plot}_${thislogdate}" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "#PBS -r n" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "#PBS -l mem=${mem}GB,walltime=${walltime},ncpus=${ncpus}" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "#PBS -m abe" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "#PBS -M ${email}" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
 
 ## Write directory setting
-cut -f1 ${input} | sort | uniq | while read stem; do echo "#................................................" >> ${pbs_stem}_${stem}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "#  Set main working directory" >> ${pbs_stem}_${stem}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "#................................................" >> ${pbs_stem}_${stem}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "## Change to main directory" >> ${pbs_stem}_${stem}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo 'cd ${PBS_O_WORKDIR}' >> ${pbs_stem}_${stem}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo 'echo ; echo "WARNING: The main directory for this run was set to ${PBS_O_WORKDIR}"; echo ' >> ${pbs_stem}_${stem}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs ; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "#................................................" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "#  Set main working directory" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "#................................................" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "## Change to main directory" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo 'cd ${PBS_O_WORKDIR}' >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo 'echo ; echo "WARNING: The main directory for this run was set to ${PBS_O_WORKDIR}"; echo ' >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
 
 ## Write R file
-cut -f1 ${input} | sort | uniq | while read stem; do echo "#................................................" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "#  Write R file" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "#................................................" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "# Writing file to >> ${pbs_stem}_${stem}_${thislogdate}.r" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "# =============================================================================" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "# PCA and Heatmap/Hclust plots for RNA-seq TPM data" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "# =============================================================================" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "# Load required libraries" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "library(dplyr)" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "library(data.table)" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "library(ggplot2)" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "library(pheatmap)" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "library(RColorBrewer)" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "library(ggrepel)" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "library(cluster)" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "library(factoextra)" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "library(dendextend)" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "library(DESeq2)  # For rlog/vst (if counts); skip if already TPM log2" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "library(matrixStats)  # For rowVars" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "library(viridis)" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "# Set input files directory" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "dir <- \"${PBS_O_WORKDIR}\"" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "# =============================================================================" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "# 1. LOAD DATA" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "# =============================================================================" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "# Read only gene names + top columns first, then subset" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do counts=`grep "${stem}" ${input} | cut -f2 | sort | uniq`; echo "counts <- read.delim(file.path(\"${counts}\"), sep=\"\t\", header=TRUE, nrows=5)  # Check structure" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "#................................................" >> ${pbs_stem}_${plot}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "#  Write R file" >> ${pbs_stem}_${plot}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "#................................................" >> ${pbs_stem}_${plot}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "# Writing file to >> ${pbs_stem}_${plot}_${thislogdate}.r" >> ${pbs_stem}_${plot}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "# =============================================================================" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "# PCA and Heatmap/Hclust plots for RNA-seq TPM data" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "# =============================================================================" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "# Load required libraries" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "library(dplyr)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "library(data.table)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "library(ggplot2)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "library(pheatmap)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "library(RColorBrewer)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "library(ggrepel)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "library(cluster)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "library(factoextra)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "library(dendextend)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "library(DESeq2)  # For rlog/vst (if counts); skip if already TPM log2" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "library(matrixStats)  # For rowVars" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "library(viridis)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "# Set input files directory" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "dir <- \"${PBS_O_WORKDIR}\"" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "# =============================================================================" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "# 1. LOAD DATA" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "# =============================================================================" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "# Read only gene names + top columns first, then subset" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do counts=`grep "${stem}" ${input} | cut -f2 | sort | uniq`; echo "counts <- read.delim(file.path(\"${counts}\"), sep=\"\t\", header=TRUE, nrows=5)  # Check structure" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 #counts <- read.delim(file.path(dir, "grade055_rquant_Bash_04022026141102AEST/RSEM-hydra-rnaseq_tpm-headerfixed.tsv"), sep="\t", header=TRUE, nrows=5)  # Check structure
-cut -f1 ${input} | sort | uniq | while read stem; do counts=`grep "${stem}" ${input} | cut -f2 | sort | uniq`; echo "counts <- fread(file.path(\"${counts}\"), data.table=FALSE)  # Use fread for speed if data.table available" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do counts=`grep "${stem}" ${input} | cut -f2 | sort | uniq`; echo "counts <- fread(file.path(\"${counts}\"), data.table=FALSE)  # Use fread for speed if data.table available" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 #counts <- fread(file.path(dir, "grade055_rquant_Bash_04022026141102AEST/RSEM-hydra-rnaseq_tpm-headerfixed.tsv"), data.table=FALSE)  # Use fread for speed if data.table available
-cut -f1 ${input} | sort | uniq | while read stem; do echo "counts <- counts %>% select(-2) # gene column" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "counts <- counts %>% select(-2) # gene column" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 #counts_enst <- counts_full %>% filter(transcript %>% grepl("^ENST", .)) #counts_hydra <- counts_full %>% filter(transcript %>% grepl("^NODE", .))
-cut -f1 ${input} | sort | uniq | while read stem; do echo "# Load sample metadata" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do metadata=`grep "${stem}" ${input} | cut -f3 | sort | uniq`; echo "coldata <- read.delim(file.path(\"${metadata}\"), sep=\"\t\", header=TRUE, row.names=1)  # rownames = sample names" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do condition=`grep "${stem}" ${input} | cut -f4 | sort | uniq`; echo "coldata\$${condition} <- factor(coldata\$${condition})  # Ensure condition is factor" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "# Match colnames(counts) with rownames(coldata)" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "common_samples <- intersect(colnames(counts)[-1], rownames(coldata))  # Skip gene column - usefull for subsetting data" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "counts_subset <- counts[, c("transcript", common_samples)]  # Only shared samples" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "coldata <- coldata[common_samples, ]" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "cat("Samples kept:", length(common_samples), "\n")" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "# =============================================================================" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "# 2. NORMALIZE (TPM assumed; use vst/rlog if raw counts)" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "# =============================================================================" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "# If already log2(TPM+1), skip normalization:" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "norm_counts <- log2(counts_subset[,-1] + 1)  # log2(TPM+1)" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "rownames(norm_counts) <- counts_subset\$transcript" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "# IF RAW COUNTS, uncomment:" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "# dds <- DESeqDataSetFromMatrix(countData = as.matrix(counts_subset[,-1]), colData = coldata, design = ~ condition)" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "# norm_counts <- vst(dds, blind=TRUE)  # Variance stabilizing, memory efficient" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "# =============================================================================" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "# 3. SELECT TOP VARIABLE GENES (crucial for 10GB+ large sample sets)" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "# =============================================================================" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do topvar=`grep "${stem}" ${input} | cut -f5 | sort | uniq`; echo "top_var <- ${topvar}  # Adjust: 1000-5000 usually enough for PCA/heatmap" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "row_vars <- rowVars(as.matrix(norm_counts))" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "top_genes <- order(row_vars, decreasing = TRUE)[1:top_var]" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "norm_top <- norm_counts[top_genes, ]  # e.g. ~2000 x N_samples matrix (manageable)" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "cat("Top variable genes selected:", nrow(norm_top), "\n")" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "# =============================================================================" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "# 4. PCA ANALYSIS" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "# =============================================================================" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "pca_data <- prcomp(t(norm_top), scale. = TRUE)  # Transpose: samples x genes" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "percentVar <- round(100 * summary(pca_data)\$importance[2, 1:2])" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "# PCA plot" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "pca_df <- data.frame(" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "  PC1 = pca_data\$x[,1]," >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "  PC2 = pca_data\$x[,2]," >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do condition=`grep "${stem}" ${input} | cut -f4 | sort | uniq`; echo "  condition = coldata\$${condition}," >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "  name = rownames(coldata)" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo ")" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "# Plot system" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do shapes=`grep "${stem}" ${input} | cut -f6 | sort | uniq`; echo "shape_vals <- c(${shapes})" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "pca <- ggplot(pca_df, aes(PC1, PC2, color = condition, shape = condition)) +" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "  geom_point(size = 3, alpha = 0.8, stroke = 0.5) +" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "  xlab(paste0("PC1: ", percentVar[1], "% variance")) +" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "  ylab(paste0("PC2: ", percentVar[2], "% variance")) +" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "  scale_shape_manual(values = shape_vals) +" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "  coord_fixed() +" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "  theme(aspect.ratio = 1) +" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "  scale_color_viridis_d() +" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "  guides(" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "    color = guide_legend(override.aes = list(shape = shape_vals, size = 4))," >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "    shape = guide_legend(override.aes = list(size = 4))" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "  )" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "# Save plot" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do plot=`grep "${stem}" ${input} | cut -f7 | sort | uniq`; echo "ggsave(file.path(\"${outpath_GRADE2081_R}/${plot}\"), plot = pca, width = 8, height = 8, dpi = 300)" >> ${pbs_stem}_${stem}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "# File was succesfully written to ${pbs_stem}_${stem}_${thislogdate}.r" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "# Load sample metadata" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do metadata=`grep "${stem}" ${input} | cut -f3 | sort | uniq`; echo "coldata <- read.delim(file.path(\"${metadata}\"), sep=\"\t\", header=TRUE, row.names=1)  # rownames = sample names" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do condition=`grep "${stem}" ${input} | cut -f4 | sort | uniq`; echo "coldata\$${condition} <- factor(coldata\$${condition})  # Ensure condition is factor" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "# Match colnames(counts) with rownames(coldata)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "common_samples <- intersect(colnames(counts)[-1], rownames(coldata))  # Skip gene column - usefull for subsetting data" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "counts_subset <- counts[, c("transcript", common_samples)]  # Only shared samples" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "coldata <- coldata[common_samples, ]" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "cat("Samples kept:", length(common_samples), "\n")" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "# =============================================================================" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "# 2. NORMALIZE (TPM assumed; use vst/rlog if raw counts)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "# =============================================================================" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "# If already log2(TPM+1), skip normalization:" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "norm_counts <- log2(counts_subset[,-1] + 1)  # log2(TPM+1)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "rownames(norm_counts) <- counts_subset\$transcript" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "# IF RAW COUNTS, uncomment:" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "# dds <- DESeqDataSetFromMatrix(countData = as.matrix(counts_subset[,-1]), colData = coldata, design = ~ condition)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "# norm_counts <- vst(dds, blind=TRUE)  # Variance stabilizing, memory efficient" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "# =============================================================================" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "# 3. SELECT TOP VARIABLE GENES (crucial for 10GB+ large sample sets)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "# =============================================================================" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do topvar=`grep "${stem}" ${input} | cut -f5 | sort | uniq`; echo "top_var <- ${topvar}  # Adjust: 1000-5000 usually enough for PCA/heatmap" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "row_vars <- rowVars(as.matrix(norm_counts))" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "top_genes <- order(row_vars, decreasing = TRUE)[1:top_var]" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "norm_top <- norm_counts[top_genes, ]  # e.g. ~2000 x N_samples matrix (manageable)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "cat("Top variable genes selected:", nrow(norm_top), "\n")" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "# =============================================================================" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "# 4. PCA ANALYSIS" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "# =============================================================================" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "pca_data <- prcomp(t(norm_top), scale. = TRUE)  # Transpose: samples x genes" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "percentVar <- round(100 * summary(pca_data)\$importance[2, 1:2])" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "# PCA plot" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "pca_df <- data.frame(" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "  PC1 = pca_data\$x[,1]," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "  PC2 = pca_data\$x[,2]," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do condition=`grep "${stem}" ${input} | cut -f4 | sort | uniq`; echo "  condition = coldata\$${condition}," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "  name = rownames(coldata)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo ")" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "# Plot system" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do shapes=`grep "${stem}" ${input} | cut -f6 | sort | uniq`; echo "shape_vals <- c(${shapes})" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "pca <- ggplot(pca_df, aes(PC1, PC2, color = condition, shape = condition)) +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "  geom_point(size = 3, alpha = 0.8, stroke = 0.5) +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "  xlab(paste0("PC1: ", percentVar[1], "% variance")) +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "  ylab(paste0("PC2: ", percentVar[2], "% variance")) +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "  scale_shape_manual(values = shape_vals) +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "  coord_fixed() +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "  theme(aspect.ratio = 1) +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "  scale_color_viridis_d() +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "  guides(" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "    color = guide_legend(override.aes = list(shape = shape_vals, size = 4))," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "    shape = guide_legend(override.aes = list(size = 4))" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "  )" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "# Save plot" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "ggsave(file.path(\"${outpath_GRADE2081_R}/${plot}\"), plot = pca, width = 8, height = 8, dpi = 300)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "# File was succesfully written to ${pbs_stem}_${plot}_${thislogdate}.r" >> ${pbs_stem}_${plot}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.pbs; done
 
 ## Write PBS command lines
-cut -f1 ${input} | sort | uniq | while read stem; do echo "#................................................" >> ${pbs_stem}_${stem}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "#  Run step" >> ${pbs_stem}_${stem}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "#................................................" >> ${pbs_stem}_${stem}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo 'echo "## Run R script at" ; date ; echo' >> ${pbs_stem}_${stem}_${thislogdate}.pbs ; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo "Rscript ${pbs_stem}_${stem}_${thislogdate}.r" >> ${pbs_stem}_${stem}_${thislogdate}.pbs ; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "#................................................" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "#  Run step" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "#................................................" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo 'echo "## Run R script at" ; date ; echo' >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "Rscript ${pbs_stem}_${plot}_${thislogdate}.r" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
 
 
 #................................................
