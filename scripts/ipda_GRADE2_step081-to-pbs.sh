@@ -15,7 +15,7 @@ GRADE2 PBS 2.0 pipeline (General RNAseq Analysis for Differential Expression ver
 
 Usage: bash ipda_GRADE2_081-to-pbs.sh -i "path/to/input/files" -p "PBS stem" -e "email" -m INT -c INT -w "HH:MM:SS"
 
-Resources baseline: -m 1 -c 1 -w "20:00:00" #max recources usage with over 7k samples to compile
+Resources baseline: -m 15 -c 1 -w "00:30:00" #max recources usage with over 7k samples to compile
 
 ## Input:
 
@@ -77,7 +77,7 @@ Pipeline description:
 #   081 Plot counts (1pca, 2heatmap)
 
 Example of variations of shapes to use - col6 with one line info, comm+space sepparated:
-16, 17, 15, 18, 1, 2, 0, 5, 6, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 19, 20, 21, 22, 23, 24, 25, "\*"
+16, 17, 15, 18, 1, 2, 0, 5, 6, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 19, 20, 21, 22, 23, 24, 25, \"*\"
 1, 2, 0, 5, 6, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14
 
 The is a limitation on the number of shapes to use. These are 80 examples of different shapes:
@@ -90,15 +90,15 @@ The is a limitation on the number of shapes to use. These are 80 examples of dif
                                                      # 18 diamond; 19 solid small circle; 20 bullet
 21, 22, 23, 24, 25,                                  # filled with outline - 21 circle; 22 square; 23 diamond; 
                                                      # 24 triangle up; 25 triangle down
-"+", "-", "\*", ".", "o", "x", "#", "%", "\&", "=",  # ASCII symbols - plus, minus, star, dot,
+\"+\", \"-\", \"*\", \".\", \"o\", \"x\", \"#\", \"%\", \"&\", \"=\",  # ASCII symbols - plus, minus, star, dot,
                                                      # circle, cross, hash, percent, ampersand, equals
-"@", "[", "]", "{", "}"                              # extra ASCII symbols
+\"@\", \"[\", \"]\", \"{\", \"}\"                              # extra ASCII symbols
 
-"A", "B", "C", "D", "E", "F", "G", "H", "I", "J",    # uppercase letters A-J
-"K", "L", "M", "N", "O", "P", "Q", "R", "S", "T",    # uppercase letters K-T
-"U", "V", "W", "X", "Y", "Z",                        # uppercase letters U-Z
-"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"     # digits
-"\u25B6", "\u25C0", "\u27B5"                         # Unicode - right triangle, left triangle, arrow
+\"A\", \"B\", \"C\", \"D\", \"E\", \"F\", \"G\", \"H\", \"I\", \"J\",    # uppercase letters A-J
+\"K\", \"L\", \"M\", \"N\", \"O\", \"P\", \"Q\", \"R\", \"S\", \"T\",    # uppercase letters K-T
+\"U\", \"V\", \"W\", \"X\", \"Y\", \"Z\",                        # uppercase letters U-Z
+\"0\", \"1\", \"2\", \"3\", \"4\", \"5\", \"6\", \"7\", \"8\", \"9\"     # digits
+\"\u25B6\", \"\u25C0\", \"\u27B5\"                         # Unicode - right triangle, left triangle, arrow
 
 Please contact Isabela Almeida at mb.isabela42@gmail.com if you encounter any problems.
 "
