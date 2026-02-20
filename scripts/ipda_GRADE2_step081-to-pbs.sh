@@ -320,7 +320,7 @@ cut -f1 ${input} | sort | uniq | while read plot; do condition=`grep "${plot}" $
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# Match colnames(counts) with rownames(coldata)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "common_samples <- intersect(colnames(counts)[-1], rownames(coldata))  # Skip gene column - usefull for subsetting data" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "counts_subset <- counts[, c("transcript", common_samples)]  # Only shared samples" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "counts_subset <- counts[, c(\"transcript\", common_samples)]  # Only shared samples" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "coldata <- coldata[common_samples, ]" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "cat("Samples kept:", length(common_samples), "\n")" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
