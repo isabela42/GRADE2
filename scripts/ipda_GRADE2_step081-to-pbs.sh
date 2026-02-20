@@ -50,6 +50,9 @@ Resources baseline: -m 15 -c 1 -w "00:30:00"
                             For example: 1, 2, 0, 5, 6, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14
                             See detailed explanation below.
 
+                            Col7:
+                            /path/from/working/dir/to/running/directory/
+
 -p <PBS stem>               Stem for PBS file names
 -e <email>                  Email for PBS job
 -m <INT>                    Memory INT required for PBS job in GB
@@ -301,7 +304,7 @@ cut -f1 ${input} | sort | uniq | while read plot; do echo "library(matrixStats) 
 cut -f1 ${input} | sort | uniq | while read plot; do echo "library(viridis)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# Set input files directory" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "dir <- \"${PBS_O_WORKDIR}\"" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do dir=`grep "${plot}" ${input} | cut -f7 | sort | uniq`; echo "dir <- \"${dir}\"" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# =============================================================================" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# 1. LOAD DATA" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
@@ -375,7 +378,7 @@ cut -f1 ${input} | sort | uniq | while read plot; do echo "    shape = guide_leg
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  )" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# Save plot" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "ggsave(file.path(dir, \"${outpath_GRADE2081_R}/${plot}\"), plot = pca, width = 8, height = 8, dpi = 300)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do dir=`grep "${plot}" ${input} | cut -f7 | sort | uniq`; echo "ggsave(file.path(\"${dir}/${outpath_GRADE2081_R}/${plot}\"), plot = pca, width = 8, height = 8, dpi = 300)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# File was succesfully written to ${pbs_stem}_${plot}_${thislogdate}.r" >> ${pbs_stem}_${plot}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.pbs; done
 
