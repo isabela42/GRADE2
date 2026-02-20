@@ -15,7 +15,7 @@ GRADE2 PBS 2.0 pipeline (General RNAseq Analysis for Differential Expression ver
 
 Usage: bash ipda_GRADE2_081-to-pbs.sh -i "path/to/input/files" -p "PBS stem" -e "email" -m INT -c INT -w "HH:MM:SS"
 
-Resources baseline: -m 15 -c 1 -w "00:30:00" #max recources usage with over 7k samples to compile
+Resources baseline: -m 15 -c 1 -w "00:30:00"
 
 ## Input:
 
@@ -157,6 +157,13 @@ human_thislogdate=`date`
 logfile=logfile_ipda_GRADE2_081-to-pbs_${thislogdate}.txt
 
 #................................................
+#  Required modules, softwares and libraries
+#................................................
+
+# RStudio 4.5.0
+module_R=R/4.5.0
+
+#................................................
 #  Set and create output path
 #................................................
 
@@ -259,6 +266,15 @@ cut -f1 ${input} | sort | uniq | while read plot; do echo 'cd ${PBS_O_WORKDIR}' 
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo 'echo ; echo "WARNING: The main directory for this run was set to ${PBS_O_WORKDIR}"; echo ' >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
+
+## Write load modules
+cut -f1 ${input} | sort | uniq | while read plot; do echo "#................................................" >> ${pbs_stem}_${plot}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "#  Load Softwares, Libraries and Modules" >> ${pbs_stem}_${plot}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "#................................................" >> ${pbs_stem}_${plot}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo 'echo "## Load tools"' >> ${pbs_stem}_${plot}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "module load ${module_R}" >> ${pbs_stem}_${plot}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.pbs; done
 
 ## Write R file
 cut -f1 ${input} | sort | uniq | while read plot; do echo "#................................................" >> ${pbs_stem}_${plot}_${thislogdate}.pbs; done
@@ -392,6 +408,7 @@ sed -i 's,${walltime},'"${walltime}"',g' "$logfile"
 sed -i 's,${human_thislogdate},'"${human_thislogdate}"',g' "$logfile"
 sed -i 's,${thislogdate},'"${thislogdate}"',g' "$logfile"
 sed -i 's,${user},'"${user}"',g' "$logfile"
+sed -i 's,${module_R},'"${module_R}"',g' "$logfile"
 sed -i 's,${outpath_GRADE2081_R},'"${outpath_GRADE2081_R}"',g' "$logfile"
 sed -i 's,${logfile},'"${logfile}"',g' "$logfile"
 sed -n -e :a -e '1,3!{P;N;D;};N;ba' $logfile > tmp ; mv tmp $logfile
