@@ -322,7 +322,7 @@ cut -f1 ${input} | sort | uniq | while read plot; do echo "# Match colnames(coun
 cut -f1 ${input} | sort | uniq | while read plot; do echo "common_samples <- intersect(colnames(counts)[-1], rownames(coldata))  # Skip gene column - usefull for subsetting data" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "counts_subset <- counts[, c(\"transcript\", common_samples)]  # Only shared samples" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "coldata <- coldata[common_samples, ]" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "cat("Samples kept:", length(common_samples), "\n")" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "cat(\"Samples kept:\", length(common_samples), \"\n\")" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# =============================================================================" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# 2. NORMALIZE (TPM assumed; use vst/rlog if raw counts)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
@@ -342,7 +342,7 @@ cut -f1 ${input} | sort | uniq | while read plot; do topvar=`grep "${plot}" ${in
 cut -f1 ${input} | sort | uniq | while read plot; do echo "row_vars <- rowVars(as.matrix(norm_counts))" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "top_genes <- order(row_vars, decreasing = TRUE)[1:top_var]" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "norm_top <- norm_counts[top_genes, ]  # e.g. ~2000 x N_samples matrix (manageable)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "cat("Top variable genes selected:", nrow(norm_top), "\n")" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "cat(\"Top variable genes selected:\", nrow(norm_top), \"\n\")" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# =============================================================================" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# 4. PCA ANALYSIS" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
@@ -363,8 +363,8 @@ cut -f1 ${input} | sort | uniq | while read plot; do shapes=`grep "${plot}" ${in
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "pca <- ggplot(pca_df, aes(PC1, PC2, color = condition, shape = condition)) +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  geom_point(size = 3, alpha = 0.8, stroke = 0.5) +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "  xlab(paste0("PC1: ", percentVar[1], "% variance")) +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "  ylab(paste0("PC2: ", percentVar[2], "% variance")) +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "  xlab(paste0(\"PC1: \", percentVar[1], \"% variance\")) +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "  ylab(paste0(\"PC2: \", percentVar[2], \"% variance\")) +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  scale_shape_manual(values = shape_vals) +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  coord_fixed() +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  theme(aspect.ratio = 1) +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
