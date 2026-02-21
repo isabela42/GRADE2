@@ -338,8 +338,6 @@ cut -f1 ${input} | sort | uniq | while read plot; do echo "  name = rownames(col
 cut -f1 ${input} | sort | uniq | while read plot; do echo ")" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# Plot system" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do shapes=`grep "${plot}" ${input} | cut -f6 | sort | uniq`; echo "shape_vals <- c(${shapes})" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "n_groups <- nlevels(factor(pca_df\$condition)) +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "pca <- ggplot(pca_df, aes(PC1, PC2, color = condition, shape = condition)) +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  geom_point(size = 3, alpha = 0.8, stroke = 0.5) +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
