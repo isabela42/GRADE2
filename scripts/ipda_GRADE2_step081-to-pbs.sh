@@ -46,11 +46,6 @@ Resources baseline: -m 15 -c 1 -w "00:30:00"
                             Top variable transcripts/genes to select for plot. Recommended a range between 1000-5000
 
                             Col6:
-                            SHAPES
-                            For example: 1, 2, 0, 5, 6, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14
-                            See detailed explanation below.
-
-                            Col7:
                             /path/from/working/dir/to/running/directory/
 
 -p <PBS stem>               Stem for PBS file names
@@ -76,11 +71,7 @@ Pipeline description:
 #   070 Differential Expression Analysis (1EdgeR)
 #   081 Plot counts (1pca, 2heatmap)
 
-Example of variations of shapes to use - col6 with one line info, comm+space sepparated:
-16, 17, 15, 18, 1, 2, 0, 5, 6, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 19, 20, 21, 22, 23, 24, 25, \"*\"
-1, 2, 0, 5, 6, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14
-
-The is a limitation on the number of shapes to use. These are 80 examples of different shapes:
+The is a limitation on the number of shapes to use. The script uses these in combination with a viridis colour palette:
 0, 1, 2, 5, 6,                                       # basic open shapes - 0 square; 1 circle; 2 triangle up; 
                                                      # 5 diamond; 6 triangle down
 3, 4, 7, 8, 9, 10, 11, 12, 13, 14,                   # line symbols - 3 +; 4 ×; 7 square×; 8 star;
@@ -89,16 +80,6 @@ The is a limitation on the number of shapes to use. These are 80 examples of dif
 15, 16, 17, 18, 19, 20,                              # filled solid shapes - 15 square; 16 circle; 17 triangle up;
                                                      # 18 diamond; 19 solid small circle; 20 bullet
 21, 22, 23, 24, 25,                                  # filled with outline - 21 circle; 22 square; 23 diamond; 
-                                                     # 24 triangle up; 25 triangle down
-\"+\", \"-\", \"*\", \".\", \"o\", \"x\", \"#\", \"%\", \"&\", \"=\",   # ASCII symbols - plus, minus, star, dot,
-                                                     # circle, cross, hash, percent, ampersand, equals
-\"@\", \"[\", \"]\", \"{\", \"}\"                              # extra ASCII symbols
-
-\"A\", \"B\", \"C\", \"D\", \"E\", \"F\", \"G\", \"H\", \"I\", \"J\",    # uppercase letters A-J
-\"K\", \"L\", \"M\", \"N\", \"O\", \"P\", \"Q\", \"R\", \"S\", \"T\",    # uppercase letters K-T
-\"U\", \"V\", \"W\", \"X\", \"Y\", \"Z\",                        # uppercase letters U-Z
-\"0\", \"1\", \"2\", \"3\", \"4\", \"5\", \"6\", \"7\", \"8\", \"9\"     # digits
-\"\u25B6\", \"\u25C0\", \"\u27B5\"                         # Unicode - right triangle, left triangle, arrow
 
 Please contact Isabela Almeida at mb.isabela42@gmail.com if you encounter any problems.
 "
@@ -359,16 +340,17 @@ cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${pl
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# Plot system" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do shapes=`grep "${plot}" ${input} | cut -f6 | sort | uniq`; echo "shape_vals <- c(${shapes})" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "n_groups <- nlevels(factor(pca_df\$condition)) +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "pca <- ggplot(pca_df, aes(PC1, PC2, color = condition, shape = condition)) +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  geom_point(size = 3, alpha = 0.8, stroke = 0.5) +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  xlab(paste0(\"PC1: \", percentVar[1], \"% variance\")) +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  ylab(paste0(\"PC2: \", percentVar[2], \"% variance\")) +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "  scale_shape_manual(values = shape_vals) +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "  scale_shape_manual(values = rep(0:25, length.out = n_groups)) +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  coord_fixed() +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  theme(aspect.ratio = 1) +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  scale_color_viridis_d() +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  guides(" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "    color = guide_legend(override.aes = list(shape = shape_vals, size = 4))," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "    color = guide_legend(override.aes = list(size = 4))," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "    shape = guide_legend(override.aes = list(size = 4))" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  )" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
