@@ -7,7 +7,7 @@ Written by Isabela Almeida
 Based on
   - Larissa Cassiano's PCA R script
 Created on 20 Feb, 2026
-Last modified on 20 Feb, 2026
+Last modified on 22 Feb, 2026
 Version: ${version}
 
 Description: Write and submit PBS jobs for step 081 of the
@@ -280,11 +280,6 @@ cut -f1 ${input} | sort | uniq | while read plot; do echo "module load ${module_
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.pbs; done
 
 ## Write R file
-cut -f1 ${input} | sort | uniq | while read plot; do echo "#................................................" >> ${pbs_stem}_${plot}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "#  Write R file" >> ${pbs_stem}_${plot}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "#................................................" >> ${pbs_stem}_${plot}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "# Writing file to >> ${pbs_stem}_${plot}_${thislogdate}.r" >> ${pbs_stem}_${plot}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# =============================================================================" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# PCA and Heatmap/Hclust plots for RNA-seq TPM data" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# =============================================================================" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
@@ -379,8 +374,6 @@ cut -f1 ${input} | sort | uniq | while read plot; do echo "  )" >> ${pbs_stem}_$
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# Save plot" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do dir=`grep "${plot}" ${input} | cut -f7 | sort | uniq`; echo "ggsave(file.path(\"${dir}/${outpath_GRADE2081_R}/${plot}.pdf\"), plot = pca, width = 8, height = 8, dpi = 300)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "# File was succesfully written to ${pbs_stem}_${plot}_${thislogdate}.r" >> ${pbs_stem}_${plot}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.pbs; done
 
 ## Write PBS command lines
 cut -f1 ${input} | sort | uniq | while read plot; do echo "#................................................" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
