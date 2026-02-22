@@ -345,7 +345,7 @@ cut -f1 ${input} | sort | uniq | while read plot; do echo "  xlab(paste0(\"PC1: 
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  ylab(paste0(\"PC2: \", percentVar[2], \"% variance\")) +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  scale_shape_manual(values = rep(0:25, length.out = n_groups)) +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  coord_fixed() +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "  theme(aspect.ratio = 1, legend.position = "bottom") +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "  theme(aspect.ratio = 1, legend.position = \"bottom\") +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  scale_color_viridis_d() +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  guides(" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "    color = guide_legend(override.aes = list(size = 4), ncol = 8)," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
