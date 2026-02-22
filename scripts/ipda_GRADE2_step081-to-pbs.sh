@@ -348,12 +348,12 @@ cut -f1 ${input} | sort | uniq | while read plot; do echo "  coord_fixed() +" >>
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  theme(aspect.ratio = 1, legend.position = \"bottom\") +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  scale_color_viridis_d() +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  guides(" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "    color = guide_legend(override.aes = list(size = 4), ncol = 8)," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "    shape = guide_legend(override.aes = list(size = 4), ncol = 8)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "    color = guide_legend(override.aes = list(size = 4), ncol = 5)," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "    shape = guide_legend(override.aes = list(size = 4), ncol = 5)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  )" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# Save plot" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do dir=`grep "${plot}" ${input} | cut -f6 | sort | uniq`; echo "ggsave(file.path(\"${dir}/${outpath_GRADE2081_R}/${plot}.pdf\"), plot = pca, width = 8, height = 8, dpi = 300)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do dir=`grep "${plot}" ${input} | cut -f6 | sort | uniq`; echo "ggsave(file.path(\"${dir}/${outpath_GRADE2081_R}/${plot}.pdf\"), plot = pca, width = 8, height = 15, dpi = 300)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 
 ## Write PBS command lines
 cut -f1 ${input} | sort | uniq | while read plot; do echo "#................................................" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
