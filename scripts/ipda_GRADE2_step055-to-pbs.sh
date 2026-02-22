@@ -16,7 +16,7 @@ GRADE2 PBS 2.0 pipeline (General RNAseq Analysis for Differential Expression ver
 
 Usage: bash ipda_GRADE2_step055-to-pbs.sh -i "path/to/input/files" -p "PBS stem" -e "email" -m INT -c INT -w "HH:MM:SS"
 
-Resources baseline: -m 1 -c 1 -w "20:00:00" #max recources usage with over 7k samples to compile
+Resources baseline: -m 10 -c 1 -w "20:00:00" #max recources usage with over 7k samples to compile
 
 ## Input:
 
