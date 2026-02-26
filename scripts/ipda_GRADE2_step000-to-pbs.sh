@@ -8,7 +8,7 @@ Based on
   - Mainá Bitar's 'GRADE (Basic Rnaseq Analysis IN) PBS'
   - Isabela Almeida's 'HyDRA (Hybrid de novo RNA assembly) pipeline'
 Created on December 08, 2025
-Last modified on January 26, 2026
+Last modified on Feb 26, 2026
 Version: ${version}
 
 Description: Write and submit PBS jobs for step 000 of the
@@ -57,6 +57,7 @@ Pipeline description:
 #   050 Align (1STAR, 2SAMtools, 3NovoSort) and quantify reads (4RSEM, 5BASH count tables)
 #   060 PSeudo align and quantify reads at isoform level (1Salmon, 2BASH count tables)
 #   070 Differential Expression Analysis (1EdgeR)
+#   081 Plot counts (1pca, 2heatmap)
 
 Please contact Isabela Almeida at mb.isabela42@gmail.com if you encounter any problems.
 "

@@ -6,8 +6,8 @@ echo "
 Written by Isabela Almeida
 Based on
   - Larissa Cassiano's PCA R script
-Created on 20 Feb, 2026
-Last modified on 22 Feb, 2026
+Created on Feb 20, 2026
+Last modified on Feb 26, 2026
 Version: ${version}
 
 Description: Write and submit PBS jobs for step 081 of the
@@ -66,10 +66,10 @@ Pipeline description:
 #   020 Trim reads of adapters (1Trimmomatic)
 #   030 Quality check trimmed files (1FastQC, 2MultiQC)
 #   040 Pseudo align and quantify reads (1Kallisto, 2BASH count tables)
-#-->050 Align (1STAR, 2SAMtools, 3NovoSort) and quantify reads (4RSEM, 5BASH count tables)
+#   050 Align (1STAR, 2SAMtools, 3NovoSort) and quantify reads (4RSEM, 5BASH count tables)
 #   060 PSeudo align and quantify reads at isoform level (1Salmon, 2BASH count tables)
 #   070 Differential Expression Analysis (1EdgeR)
-#   081 Plot counts (1pca, 2heatmap)
+#-->081 Plot counts (1pca, 2heatmap)
 
 The is a limitation on the number of shapes to use. The script uses these in combination with a viridis colour palette:
 0, 1, 2, 5, 6,                                       # basic open shapes - 0 square; 1 circle; 2 triangle up; 
