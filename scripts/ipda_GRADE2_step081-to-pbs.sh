@@ -407,6 +407,7 @@ cut -f1 ${input} | sort | uniq | while read plot; do condition=`grep "${plot}" $
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# Save heatmap" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do dir=`grep "${plot}" ${input} | cut -f6 | sort | uniq`; topvar=`grep "${plot}" ${input} | cut -f5 | sort | uniq`; echo "out_file <- file.path(\"${dir}/${outpath_GRADE2081_R}/${plot}.heatmap.pdf\")" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "pdf(out_file, width = 16, height = 50)  # width/height in inches" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "pheatmap(" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  norm_scaled," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  scale = \"row\",  # Already scaled, but confirms" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
@@ -421,6 +422,7 @@ cut -f1 ${input} | sort | uniq | while read plot; do echo "color = colorRampPale
 cut -f1 ${input} | sort | uniq | while read plot; do echo "fontsize_col = 8,  # Smaller font for many samples" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do topvar=`grep "${plot}" ${input} | cut -f5 | sort | uniq`;  echo "main = \"Top ${topvar} variable genes - Z-score\"" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo ")" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "dev.off()" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 
 ## Write PBS command lines
 cut -f1 ${input} | sort | uniq | while read plot; do echo "#................................................" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
