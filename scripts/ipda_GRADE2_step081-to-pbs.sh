@@ -7,7 +7,7 @@ Written by Isabela Almeida
 Based on
   - Larissa Cassiano's PCA R script
 Created on Feb 20, 2026
-Last modified on Feb 26, 2026
+Last modified on Mar 04, 2026
 Version: ${version}
 
 Description: Write and submit PBS jobs for step 081 of the
@@ -69,7 +69,7 @@ Pipeline description:
 #   050 Align (1STAR, 2SAMtools, 3NovoSort) and quantify reads (4RSEM, 5BASH count tables)
 #   060 PSeudo align and quantify reads at isoform level (1Salmon, 2BASH count tables)
 #   070 Differential Expression Analysis (1EdgeR)
-#-->081 Plot counts (1pca, 2heatmap)
+#-->081 Plot counts (1pca)
 
 The is a limitation on the number of shapes to use. The script uses these in combination with a viridis colour palette:
 0, 1, 2, 5, 6,                                       # basic open shapes - 0 square; 1 circle; 2 triangle up; 
@@ -323,6 +323,12 @@ cut -f1 ${input} | sort | uniq | while read plot; do echo "top_genes <- order(ro
 cut -f1 ${input} | sort | uniq | while read plot; do echo "norm_top <- norm_counts[top_genes, ]  # e.g. ~2000 x N_samples matrix (manageable)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "cat(\"Top variable genes selected:\", nrow(norm_top), \"\n\")" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "# Create and export variable IDs tables" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "export_top <- data.frame(transcript = rownames(norm_top), norm_top, row.names = NULL)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do dir=`grep "${plot}" ${input} | cut -f6 | sort | uniq`; topvar=`grep "${plot}" ${input} | cut -f5 | sort | uniq`; echo "write.table(export_top, file = file.path(\"${dir}/${outpath_GRADE2081_R}/${plot}.${topvar}var-log2TPM.tsv\"), sep = \"\t\", quote = FALSE, row.names = FALSE)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "variance_table <- data.frame(transcript = rownames(norm_counts), variance = row_vars)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do dir=`grep "${plot}" ${input} | cut -f6 | sort | uniq`; echo "write.table(variance_table, file = file.path(\"${dir}/${outpath_GRADE2081_R}/${plot}.all-variance.tsv\"), sep = \"\t\", quote = FALSE, row.names = FALSE)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# =============================================================================" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# 4. PCA ANALYSIS" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# =============================================================================" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
@@ -337,7 +343,7 @@ cut -f1 ${input} | sort | uniq | while read plot; do condition=`grep "${plot}" $
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  name = rownames(coldata)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo ")" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "# Plot system" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "# Plot condition" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "n_groups <- nlevels(factor(pca_df\$condition))" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "pca <- ggplot(pca_df, aes(PC1, PC2, color = condition, shape = condition)) +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  geom_point(size = 5, alpha = 0.8, stroke = 0.5) +" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
@@ -355,7 +361,66 @@ cut -f1 ${input} | sort | uniq | while read plot; do echo "    shape = guide_leg
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  )" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# Save plot" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do dir=`grep "${plot}" ${input} | cut -f6 | sort | uniq`; echo "ggsave(file.path(\"${dir}/${outpath_GRADE2081_R}/${plot}.pdf\"), plot = pca, width = 20, height = 20, dpi = 100)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do dir=`grep "${plot}" ${input} | cut -f6 | sort | uniq`; echo "ggsave(file.path(\"${dir}/${outpath_GRADE2081_R}/${plot}.pca.pdf\"), plot = pca, width = 20, height = 20, dpi = 100)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "# =============================================================================" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "# 5. HIERARCHICAL CLUSTERING + HEATMAP" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "# =============================================================================" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "# Prepare data for clustering (scale rows)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "norm_scaled <- t(scale(t(norm_top)))  # Z-score per gene across samples" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "# Distance & clustering" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "dist_mat <- dist(t(norm_scaled), method = \"euclidean\")" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "hclust_obj <- hclust(dist_mat, method = \"complete\")" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "set.seed(123)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "# Sample colors from coldata" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "auto_palette <- function(factor_vec) {" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "  factor_vec <- factor(factor_vec)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "  n <- nlevels(factor_vec)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "  levs <- levels(factor_vec)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "  if (n <= 8) {cols <- brewer.pal(max(3, n), \"Set2\")[1:n] # Small number of levels → qualitative Brewer" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "  } else if (n <= 20) { # Medium → Brewer Set3 or Paired" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "    cols <- brewer.pal(min(12, n), \"Set3\")" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "    if (n > 12) {" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "      cols <- hue_pal()(n)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "    }" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "  } else { # Large → Viridis (perceptually uniform)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "    cols <- viridis(n, option = \"turbo\")" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "  }" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "  setNames(cols, levs)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "}" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "annotation_colors <- lapply(" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "  coldata[, c("system", "group", "phenotype")]," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "  auto_palette" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo ")" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "# Reorder columns by system" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do condition=`grep "${plot}" ${input} | cut -f4 | sort | uniq`; echo "ord <- order(coldata\$${condition})" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "norm_scaled <- norm_scaled[, ord]" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "coldata <- coldata[ord, , drop = FALSE]" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "# Define condition colors" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do condition=`grep "${plot}" ${input} | cut -f4 | sort | uniq`; echo "conditon_cols <- setNames(viridisLite::viridis(nlevels(coldata\$${condition}), option = \"turbo\")," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do condition=`grep "${plot}" ${input} | cut -f4 | sort | uniq`; echo "                        levels(coldata\$${condition}))" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "# Save heatmap" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do dir=`grep "${plot}" ${input} | cut -f6 | sort | uniq`; topvar=`grep "${plot}" ${input} | cut -f5 | sort | uniq`; echo "out_file <- file.path(\"${dir}/${outpath_GRADE2081_R}/${plot}.heatmap.pdf\")" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "pheatmap(" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "  norm_scaled," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "  scale = "row",  # Already scaled, but confirms" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "  clustering_distance_rows = \"euclidean\"," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "  clustering_distance_cols = \"euclidean\"," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "  clustering_method = \"complete\"," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "  show_rownames = FALSE,  # Too many genes" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "  show_colnames = FALSE," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do condition=`grep "${plot}" ${input} | cut -f4 | sort | uniq`; echo "  annotation_col = coldata[, c(\"${condition}\"), drop=FALSE]," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do condition=`grep "${plot}" ${input} | cut -f4 | sort | uniq`; echo "  annotation_colors = list(${condition} = conditon_cols)," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "color = colorRampPalette(c(\"navy\", \"white\", \"firebrick3\"))(100)," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "fontsize_col = 8,  # Smaller font for many samples" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do topvar=`grep "${plot}" ${input} | cut -f5 | sort | uniq`;  echo "main = \"Top ${topvar} variable genes - Z-score\"" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo ")" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 
 ## Write PBS command lines
 cut -f1 ${input} | sort | uniq | while read plot; do echo "#................................................" >> ${pbs_stem}_${plot}_${thislogdate}.pbs ; done
