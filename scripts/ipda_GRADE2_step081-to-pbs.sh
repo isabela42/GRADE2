@@ -376,25 +376,16 @@ cut -f1 ${input} | sort | uniq | while read plot; do echo "hclust_obj <- hclust(
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "set.seed(123)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# Sample colors from coldata" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "auto_palette <- function(factor_vec) {" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "single_palette <- function(factor_vec) {" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  factor_vec <- factor(factor_vec)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "  n <- nlevels(factor_vec)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  levs <- levels(factor_vec)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "  if (n <= 8) {cols <- brewer.pal(max(3, n), \"Set2\")[1:n] # Small number of levels → qualitative Brewer" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "  } else if (n <= 20) { # Medium → Brewer Set3 or Paired" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "    cols <- brewer.pal(min(12, n), \"Set3\")" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "    if (n > 12) {" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "      cols <- scales::hue_pal()(n)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "    }" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "  } else { # Large → Viridis (perceptually uniform)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "    cols <- viridis(n, option = \"turbo\")" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "  }" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "  cols <- viridis::viridis(length(levs), option = \"turbo\")" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  setNames(cols, levs)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "}" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "annotation_colors <- lapply(" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "  coldata[, c(\"phenotype\", \"system\", \"group\", \"platform\")]," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "  auto_palette" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "  coldata[, c(\"phenotype\", \"system\", \"group\", \"platform\"), drop = FALSE]," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "  single_palette" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo ")" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# Reorder columns by system" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
@@ -417,7 +408,7 @@ cut -f1 ${input} | sort | uniq | while read plot; do echo "  clustering_distance
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  clustering_method = \"complete\"," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  show_rownames = FALSE,  # Too many genes" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  show_colnames = FALSE," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do condition=`grep "${plot}" ${input} | cut -f4 | sort | uniq`; echo "  coldata[, c(\"phenotype\", \"system\", \"group\", \"platform\")]," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do condition=`grep "${plot}" ${input} | cut -f4 | sort | uniq`; echo "  annotation_col = coldata[, c(\"phenotype\", \"system\", \"group\", \"platform\"), drop=FALSE]," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do condition=`grep "${plot}" ${input} | cut -f4 | sort | uniq`; echo "  annotation_colors = annotation_colors," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 #cut -f1 ${input} | sort | uniq | while read plot; do condition=`grep "${plot}" ${input} | cut -f4 | sort | uniq`; echo "  annotation_col = coldata[, c(\"${condition}\"), drop=FALSE]," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 #cut -f1 ${input} | sort | uniq | while read plot; do condition=`grep "${plot}" ${input} | cut -f4 | sort | uniq`; echo "  annotation_colors = list(${condition} = conditon_cols)," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
