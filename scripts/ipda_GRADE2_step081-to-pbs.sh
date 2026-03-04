@@ -392,7 +392,7 @@ cut -f1 ${input} | sort | uniq | while read plot; do echo "  setNames(cols, levs
 cut -f1 ${input} | sort | uniq | while read plot; do echo "}" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "annotation_colors <- lapply(" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "  coldata[, c(\"system\", \"group\", \"phenotype\")]," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "  coldata[, c(\"phenotype\", \"system\", \"group\", \"platform\")]," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  auto_palette" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo ")" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
@@ -416,8 +416,10 @@ cut -f1 ${input} | sort | uniq | while read plot; do echo "  clustering_distance
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  clustering_method = \"complete\"," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  show_rownames = FALSE,  # Too many genes" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  show_colnames = FALSE," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do condition=`grep "${plot}" ${input} | cut -f4 | sort | uniq`; echo "  annotation_col = coldata[, c(\"${condition}\"), drop=FALSE]," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do condition=`grep "${plot}" ${input} | cut -f4 | sort | uniq`; echo "  annotation_colors = list(${condition} = conditon_cols)," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do condition=`grep "${plot}" ${input} | cut -f4 | sort | uniq`; echo "  coldata[, c(\"phenotype\", \"system\", \"group\", \"platform\")]," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do condition=`grep "${plot}" ${input} | cut -f4 | sort | uniq`; echo "  annotation_colors = annotation_colors," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+#cut -f1 ${input} | sort | uniq | while read plot; do condition=`grep "${plot}" ${input} | cut -f4 | sort | uniq`; echo "  annotation_col = coldata[, c(\"${condition}\"), drop=FALSE]," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+#cut -f1 ${input} | sort | uniq | while read plot; do condition=`grep "${plot}" ${input} | cut -f4 | sort | uniq`; echo "  annotation_colors = list(${condition} = conditon_cols)," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "color = colorRampPalette(c(\"#000080\", \"white\", \"#8B0000\"))(100)," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "fontsize_col = 8,  # Smaller font for many samples" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do topvar=`grep "${plot}" ${input} | cut -f5 | sort | uniq`;  echo "main = \"Top ${topvar} variable genes - Z-score\"" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
