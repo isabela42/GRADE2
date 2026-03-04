@@ -273,6 +273,7 @@ cut -f1 ${input} | sort | uniq | while read plot; do echo "library(pheatmap)" >>
 cut -f1 ${input} | sort | uniq | while read plot; do echo "library(RColorBrewer)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "library(ggrepel)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "library(cluster)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "library(scales)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "library(factoextra)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "library(dendextend)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "library(DESeq2)  # For rlog/vst (if counts); skip if already TPM log2" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
