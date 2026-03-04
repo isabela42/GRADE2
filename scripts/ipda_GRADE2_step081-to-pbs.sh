@@ -418,7 +418,7 @@ cut -f1 ${input} | sort | uniq | while read plot; do echo "  show_rownames = FAL
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  show_colnames = FALSE," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do condition=`grep "${plot}" ${input} | cut -f4 | sort | uniq`; echo "  annotation_col = coldata[, c(\"${condition}\"), drop=FALSE]," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do condition=`grep "${plot}" ${input} | cut -f4 | sort | uniq`; echo "  annotation_colors = list(${condition} = conditon_cols)," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "color = colorRampPalette(c(\"navy\", \"white\", \"firebrick3\"))(100)," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "color = rev(colorRampPalette(brewer.pal(11, \"RdBu\"))(100))," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "fontsize_col = 8,  # Smaller font for many samples" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do topvar=`grep "${plot}" ${input} | cut -f5 | sort | uniq`;  echo "main = \"Top ${topvar} variable genes - Z-score\"" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo ")" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
