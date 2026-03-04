@@ -384,7 +384,7 @@ cut -f1 ${input} | sort | uniq | while read plot; do echo "  if (n <= 8) {cols <
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  } else if (n <= 20) { # Medium → Brewer Set3 or Paired" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "    cols <- brewer.pal(min(12, n), \"Set3\")" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "    if (n > 12) {" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "      cols <- hue_pal()(n)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "      cols <- scales::hue_pal()(n)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "    }" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  } else { # Large → Viridis (perceptually uniform)" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "    cols <- viridis(n, option = \"turbo\")" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
