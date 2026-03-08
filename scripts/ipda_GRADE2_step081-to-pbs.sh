@@ -71,7 +71,7 @@ Pipeline description:
 #   050 Align (1STAR, 2SAMtools, 3NovoSort) and quantify reads (4RSEM, 5BASH count tables)
 #   060 PSeudo align and quantify reads at isoform level (1Salmon, 2BASH count tables)
 #   070 Differential Expression Analysis (1EdgeR)
-#-->081 Plot counts and draw metrics (1pca, 2metrics)
+#-->080 Plot counts and draw metrics (1pca, 2metrics)
 
 The is a limitation on the number of shapes to use. The script uses these in combination with a viridis colour palette:
 0, 1, 2, 5, 6,                                       # basic open shapes - 0 square; 1 circle; 2 triangle up; 
