@@ -7,7 +7,7 @@ Written by Isabela Almeida
 Based on
   - Larissa Cassiano's PCA R script
 Created on Feb 20, 2026
-Last modified on Mar 04, 2026
+Last modified on Mar 09, 2026
 Version: ${version}
 
 Description: Write and submit PBS jobs for step 081 of the
@@ -35,7 +35,9 @@ Resources baseline: -m 100 -c 1 -w "00:30:00"
                             Note: this file must contain all samples to plot in col1, i.e. 
                             not necessairly all samples in Col2 file followed by a series
                             of columns with conditions to plot - could be just one, could
-                            be several. Please note condition to plot must be specified in Col4
+                            be several. Please note that the heatmap is ploted with phenotype, 
+                            system, group and platform. If these are not present in your metadata,
+                            please edit the R script commands.
 
                             Col4:
                             condition
@@ -69,7 +71,7 @@ Pipeline description:
 #   050 Align (1STAR, 2SAMtools, 3NovoSort) and quantify reads (4RSEM, 5BASH count tables)
 #   060 PSeudo align and quantify reads at isoform level (1Salmon, 2BASH count tables)
 #   070 Differential Expression Analysis (1EdgeR)
-#-->081 Plot counts (1pca)
+#-->081 Plot counts and draw metrics (1pca, 2metrics)
 
 The is a limitation on the number of shapes to use. The script uses these in combination with a viridis colour palette:
 0, 1, 2, 5, 6,                                       # basic open shapes - 0 square; 1 circle; 2 triangle up; 
