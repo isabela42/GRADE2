@@ -400,8 +400,8 @@ cut -f1 ${input} | sort | uniq | while read plot; do condition=`grep "${plot}" $
 cut -f1 ${input} | sort | uniq | while read plot; do condition=`grep "${plot}" ${input} | cut -f4 | sort | uniq`; echo "                        levels(coldata\$${condition}))" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# Save heatmap" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do dir=`grep "${plot}" ${input} | cut -f6 | sort | uniq`; topvar=`grep "${plot}" ${input} | cut -f5 | sort | uniq`; echo "out_file <- file.path(\"${dir}/${outpath_GRADE2081_R}/${plot}.heatmap.pdf\")" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "pdf(out_file)  # width/height in inches" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do dir=`grep "${plot}" ${input} | cut -f6 | sort | uniq`; topvar=`grep "${plot}" ${input} | cut -f5 | sort | uniq`; echo "out_file <- file.path(\"${dir}/${outpath_GRADE2081_R}/${plot}.heatmap.svg\")" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "svg(out_file)  # width/height in inches" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "pheatmap(" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  norm_scaled," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  scale = \"row\",  # Already scaled, but confirms" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
