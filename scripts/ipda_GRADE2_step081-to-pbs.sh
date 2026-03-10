@@ -140,7 +140,7 @@ done
 # and memory/CPU usage for all executions
 thislogdate=$(date +'%d%m%Y%H%M%S%Z')
 human_thislogdate=`date`
-logfile=logfile_ipda_GRADE2_081-to-pbs_${thislogdate}.txt
+logfile=logfile_ipda_GRADE2_step081-to-pbs_${thislogdate}.txt
 
 #................................................
 #  Required modules, softwares and libraries
