@@ -7,7 +7,7 @@ Written by Isabela Almeida
 Based on
   - Larissa Cassiano's PCA R script
 Created on Feb 20, 2026
-Last modified on Mar 10, 2026
+Last modified on Mar 11, 2026
 Version: ${version}
 
 Description: Write and submit PBS jobs for step 081 of the
@@ -433,8 +433,8 @@ cut -f1 ${input} | sort | uniq | while read plot; do echo "  raster_quality = 4"
 cut -f1 ${input} | sort | uniq | while read plot; do echo ")" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# Save heatmap" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do dir=`grep "${plot}" ${input} | cut -f6 | sort | uniq`; topvar=`grep "${plot}" ${input} | cut -f5 | sort | uniq`; echo "out_file <- file.path(\"${dir}/${outpath_GRADE2081_R}/${plot}.heatmap.svg\")" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "pdf(\"out_file\", width = 12, height = 25)  # width/height in inches" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do dir=`grep "${plot}" ${input} | cut -f6 | sort | uniq`; topvar=`grep "${plot}" ${input} | cut -f5 | sort | uniq`; echo "out_file <- file.path(\"${dir}/${outpath_GRADE2081_R}/${plot}.heatmap.pdf\")" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "pdf(out_file, width = 12, height = 25)  # width/height in inches" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "draw(" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  ht," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  heatmap_legend_side = \"bottom\"," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
