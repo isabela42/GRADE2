@@ -7,7 +7,7 @@ Written by Isabela Almeida
 Based on
   - Larissa Cassiano's PCA R script
 Created on Feb 20, 2026
-Last modified on Mar 11, 2026
+Last modified on Mar 13, 2026
 Version: ${version}
 
 Description: Write and submit PBS jobs for step 081 of the
@@ -36,7 +36,7 @@ Resources baseline: -m 100 -c 1 -w "00:30:00"
                             not necessairly all samples in Col2 file followed by a series
                             of columns with conditions to plot - could be just one, could
                             be several. Please note that the heatmap is ploted with phenotype, 
-                            system, group and platform. If these are not present in your metadata,
+                            system, sampletype and source. If these are not present in your metadata,
                             please edit the R script commands.
 
                             Col4:
@@ -388,7 +388,7 @@ cut -f1 ${input} | sort | uniq | while read plot; do echo "  setNames(cols, levs
 cut -f1 ${input} | sort | uniq | while read plot; do echo "}" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "annotation_colors <- lapply(" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "  coldata[, c(\"phenotype\", \"system\", \"group\", \"platform\"), drop = FALSE]," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "  coldata[, c(\"phenotype\", \"system\", \"sampletype\", \"source\"), drop = FALSE]," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  single_palette" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo ")" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
@@ -403,7 +403,7 @@ cut -f1 ${input} | sort | uniq | while read plot; do condition=`grep "${plot}" $
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "# Convert annotation dataframe" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "ha <- HeatmapAnnotation(" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-cut -f1 ${input} | sort | uniq | while read plot; do echo "  df = coldata[, c(\"platform\", \"group\", \"system\", \"phenotype\"), drop = FALSE]," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+cut -f1 ${input} | sort | uniq | while read plot; do echo "  df = coldata[, c(\"source\", \"sampletype\", \"system\", \"phenotype\"), drop = FALSE]," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "  col = annotation_colors" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo ")" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
@@ -449,7 +449,7 @@ cut -f1 ${input} | sort | uniq | while read plot; do echo "" >> ${pbs_stem}_${pl
 # cut -f1 ${input} | sort | uniq | while read plot; do echo "  clustering_method = \"complete\"," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 # cut -f1 ${input} | sort | uniq | while read plot; do echo "  show_rownames = FALSE,  # Too many genes" >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 # cut -f1 ${input} | sort | uniq | while read plot; do echo "  show_colnames = FALSE," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
-# cut -f1 ${input} | sort | uniq | while read plot; do condition=`grep "${plot}" ${input} | cut -f4 | sort | uniq`; echo "  annotation_col = coldata[, c(\"phenotype\", \"system\", \"group\", \"platform\"), drop=FALSE]," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
+# cut -f1 ${input} | sort | uniq | while read plot; do condition=`grep "${plot}" ${input} | cut -f4 | sort | uniq`; echo "  annotation_col = coldata[, c(\"phenotype\", \"system\", \"sampletype\", \"source\"), drop=FALSE]," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 # cut -f1 ${input} | sort | uniq | while read plot; do condition=`grep "${plot}" ${input} | cut -f4 | sort | uniq`; echo "  annotation_colors = annotation_colors," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 # #cut -f1 ${input} | sort | uniq | while read plot; do condition=`grep "${plot}" ${input} | cut -f4 | sort | uniq`; echo "  annotation_col = coldata[, c(\"${condition}\"), drop=FALSE]," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
 # #cut -f1 ${input} | sort | uniq | while read plot; do condition=`grep "${plot}" ${input} | cut -f4 | sort | uniq`; echo "  annotation_colors = list(${condition} = conditon_cols)," >> ${pbs_stem}_${plot}_${thislogdate}.r; done
