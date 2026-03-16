@@ -43,16 +43,15 @@ This repository contains the scripts used in our in-house RNAseq analysis pipeli
 
 Each script file foccus on one part of the analysis, from file preparation and quality assessment to differential expression.
 
-* Script 000: Index building (001 - Kallisto; 002 RSEM; 003 STAR)
-* Script 010: Quality check raw files (011 - FastQC; 012 - MultiQC)
-* Script 020: Trim reads of adapters (021 - Trimmomatic)
-* Script 030: Quality check raw files (031 - FastQC; 032 - MultiQC)
-* Script 040: Quantify reads (041 - Kallisto)
-* Script 050: Create Kallisto count tables (051 - Kallisto)
-* Script 060: Alignment (061 - STAR)
-* Script 070: Process alignment (071 - SAMtools; 072 - NovoSort)
-* Script 080: Quantify reads (081 - RSEM)
-* Script 100: Differential Expression Analysis (101 - EdgeR)
+* Script 000: Index building (0gffcompare, 1Kallisto, 2RSEM, 3STAR, 4Salmon)
+* Script 010: Quality check raw files (0Bedtools, 1FastQC, 2MultiQC)
+* Script 020: Trim reads of adapters (1Trimmomatic)
+* Script 030: Quality check trimmed files (1FastQC, 2MultiQC)
+* Script 040: Pseudo align and quantify reads (1Kallisto, 2BASH count tables)
+* Script 050: Align (1STAR, 2SAMtools, 3NovoSort) and quantify reads (4RSEM, 5BASH count tables)
+* Script 060: PSeudo align and quantify reads at isoform level (1Salmon, 2BASH count tables)
+* Script 070: Differential Expression Analysis (1EdgeR)
+* Script 080: Plot counts and draw metrics (1pca, 2metrics)
 
 <!-- GETTING STARTED -->
 ## Pipeline Prerequisites
