@@ -121,7 +121,7 @@ metadata$samples <- rownames(metadata)
 tnorm_counts <- left_join(tnorm_counts, metadata, by = c("samples" = "samples"))
 plot_heat <- tnorm_counts %>%
     group_by(.data[[plot_condition]], .data[[plot_sec_condition]]) %>%
-    summarise(expr = sum(.data[[outstem]], na.rm = TRUE), .groups = "drop")
+    summarise(expr = mean(.data[[outstem]], na.rm = TRUE), .groups = "drop")
 plot_heat <- plot_heat %>%
   complete(
     !!sym(plot_sec_condition),
