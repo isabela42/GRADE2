@@ -121,7 +121,7 @@ heatmap_plot <- function(df){
       frame.colour = "white"
   )) +
   labs(
-  fill = "log2(TPM + 1)\n(NA = grey)"
+  fill = "TPM\n(NA = grey)"
   ) +
   coord_fixed(ratio = 1) +
   theme_minimal() +
@@ -174,7 +174,7 @@ heatmap_plot <- function(df){
       frame.colour = "white"
   )) +
   labs(
-  fill = "log2(TPM + 1)"
+  fill = "TPM"
   ) +
   coord_fixed(ratio = 1) +
   theme_minimal() +
