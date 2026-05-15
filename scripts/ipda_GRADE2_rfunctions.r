@@ -90,7 +90,7 @@ beeswarm_plot <- function(df, plot_condition, outstem) {
 # ------------------------------------------------------------
 
 heatmap_plot <- function(df){
-  breaks <- c(0, 0.5, 1, 3, max(df$expr, na.rm = TRUE))
+  #breaks <- c(0, 0.5, 1, 3, max(df$expr, na.rm = TRUE))
 
   gtex_colors <- c(
     "#ffffcc",  # 0      pale yellow
@@ -100,18 +100,18 @@ heatmap_plot <- function(df){
     "#081d58"   # max    navy
   )
 
-  values <- scales::rescale(breaks)
+  #values <- scales::rescale(breaks)
 
   plot1 <- ggplot(plot_heat, aes(x = .data[[plot_condition]], y = .data[[plot_sec_condition]], fill = expr)) +
   geom_tile(color = "white", height = 1, width = 1, linewidth = 0.3) +
   scale_y_discrete(position = "right") +
   scale_fill_gradientn(
     colors = gtex_colors,
-    values = values,
-    limits = c(0, max(df$expr, na.rm = TRUE)),
-    oob = scales::squish,
-    breaks = breaks,
-    labels = scales::label_number(accuracy = 0.01),
+    #values = values,
+    #limits = c(0, max(df$expr, na.rm = TRUE)),
+    #oob = scales::squish,
+    #breaks = breaks,
+    #labels = scales::label_number(accuracy = 0.01),
     na.value = "grey92",
     guide = guide_colorbar(
       direction = "vertical",
@@ -161,11 +161,11 @@ heatmap_plot <- function(df){
   scale_y_discrete(position = "right") +
   scale_fill_gradientn(
     colors = gtex_colors,
-    values = values,
-    limits = c(0, max(df$expr, na.rm = TRUE)),
-    oob = scales::squish,
-    breaks = breaks,
-    labels = scales::label_number(accuracy = 0.01),
+    #values = values,
+    #limits = c(0, max(df$expr, na.rm = TRUE)),
+    #oob = scales::squish,
+    #breaks = breaks,
+    #labels = scales::label_number(accuracy = 0.01),
     guide = guide_colorbar(
       direction = "horizontal",
       barwidth = 10,
