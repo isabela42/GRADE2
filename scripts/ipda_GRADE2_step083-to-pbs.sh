@@ -3,7 +3,7 @@
 version="1.0.0"
 usage(){
 echo "
-Written by Isabela Almeida with inout from Larissa Cassiano
+Written by Isabela Almeida with input from Larissa Cassiano
 Created on May 13, 2026
 Last modified on May 15, 2026
 Version: ${version}
@@ -112,7 +112,7 @@ do
         w) walltime="${OPTARG}";;    # Clock walltime required for PBS job
         h) Help ; exit;;             # Print Help and exit
         v) echo "${version}"; exit;; # Print version and exit
-        ?) echo script usage: bash ipda_camels_step043-to-pbs.sh -i path/to/input/files -p PBS stem -e email -m INT -c INT -w "HH:MM:SS" >&2
+        ?) echo script usage: bash ipda_grade2_step083-to-pbs.sh -i path/to/input/files -p PBS stem -e email -m INT -c INT -w "HH:MM:SS" >&2
            exit;;
     esac
 done
@@ -127,17 +127,17 @@ done
 # and memory/CPU usage for all executions
 thislogdate=$(date +'%d%m%Y%H%M%S%Z')
 human_thislogdate=`date`
-logfile=logfile_ipda_camels043-to-pbs_${thislogdate}.txt
+logfile=logfile_ipda_GRADE2_step083-to-pbs_${thislogdate}.txt
 
 #................................................
 #  Set and create output path
 #................................................
 
 ## Set stem for output directories
-out_path_step083_plots="camels043_plots_BASH-R_${thislogdate}"
+outpath_GRADE2083_plots="grade083_gene-plots_R_${thislogdate}"
 
 ## Create output directories
-mkdir -p ${out_path_step083_plots}
+mkdir -p ${outpath_GRADE2083_plots}
 
 #................................................
 #  Required modules, softwares and libraries
@@ -151,7 +151,7 @@ module_R="R/4.5.0"
 #................................................
 
 date
-echo "## Executing bash ipda_camels_step043-to-pbs.sh"
+echo "## Executing bash ipda_grade2_step083-to-pbs.sh"
 echo "## This execution PID: ${pid}"
 echo
 echo "## Given inputs:"
@@ -165,7 +165,7 @@ echo "## PBS job walltime required:   ${walltime}"
 echo
 echo "## Outputs created:"
 echo
-echo "## Output files saved to:       ${out_path_step083_plots}"
+echo "## Output files saved to:       ${outpath_GRADE2083_plots}"
 echo "## logfile will be saved as:    ${logfile}"
 echo
 
@@ -183,7 +183,7 @@ echo
 exec &> "${logfile}"
 
 date
-echo "## Executing bash ipda_camels_step043-to-pbs.sh"
+echo "## Executing bash ipda_grade2_step083-to-pbs.sh"
 echo "## This execution PID: ${pid}"
 echo
 echo "## Given inputs:"
@@ -197,7 +197,7 @@ echo "## PBS job walltime required:   ${walltime}"
 echo
 echo "## Outputs created:"
 echo
-echo "## Output files saved to:       ${out_path_step083_plots}"
+echo "## Output files saved to:       ${outpath_GRADE2083_plots}"
 echo "## This is logfile:             ${logfile}"
 
 set -v
@@ -255,7 +255,7 @@ cut -f1 ${input} | sort | uniq | while read stem; do echo "#  Run step" >> ${pbs
 cut -f1 ${input} | sort | uniq | while read stem; do echo "#................................................" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read stem; do echo 'echo "## Plot per ID at" ; date ; echo' >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read stem; do counts=`grep "${stem}" ${input} | cut -f2 | sort | uniq`; metadata=`grep "${stem}" ${input} | cut -f3 | sort | uniq`; condition=`grep "${stem}" ${input} | cut -f4 | sort | uniq`; seccondition=`grep "${stem}" ${input} | cut -f5 | sort | uniq`; rscript=`grep "${stem}" ${input} | cut -f6 | sort | uniq`; rfunctions=`grep "${stem}" ${input} | cut -f7 | sort | uniq`; echo "Rscript ${rscript} --inputc ${counts} --inputm ${metadata} --condition ${condition} --seccondition ${seccondition} --outdir ${out_path_step083_plots}/ --outstem ${stem} --function ${rfunctions}" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do counts=`grep "${stem}" ${input} | cut -f2 | sort | uniq`; metadata=`grep "${stem}" ${input} | cut -f3 | sort | uniq`; condition=`grep "${stem}" ${input} | cut -f4 | sort | uniq`; seccondition=`grep "${stem}" ${input} | cut -f5 | sort | uniq`; rscript=`grep "${stem}" ${input} | cut -f6 | sort | uniq`; rfunctions=`grep "${stem}" ${input} | cut -f7 | sort | uniq`; echo "Rscript ${rscript} --inputc ${counts} --inputm ${metadata} --condition ${condition} --seccondition ${seccondition} --outdir ${outpath_GRADE2083_plots}/ --outstem ${stem} --function ${rfunctions}" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 
 #................................................
 #  Submit PBS jobs
@@ -264,7 +264,7 @@ cut -f1 ${input} | sort | uniq | while read stem; do counts=`grep "${stem}" ${in
 ## Submit PBS jobs 
 ls ${pbs_stem}_*${thislogdate}.pbs | while read pbs; do echo ; echo "#................................................" ; echo "# This is PBS: ${pbs}" ;  echo "#" ; echo "# main command line(s): $(tail -n1 ${pbs})" ; echo "#" ; echo "# now submitting PBS" ; echo "qsub ${pbs}" ; qsub ${pbs} ; echo "#................................................" ; done
 
-date ## Status of all user jobs (including CAMeLS step 033 jobs) at
+date ## Status of all user jobs (including GRADE2 step 083 jobs) at
 qstat -u "$user"
 
 # This will remove $VARNAMES from output file with the actual $VARVALUE
@@ -279,7 +279,7 @@ sed -i 's,${human_thislogdate},'"${human_thislogdate}"',g' "$logfile"
 sed -i 's,${thislogdate},'"${thislogdate}"',g' "$logfile"
 sed -i 's,${user},'"${user}"',g' "$logfile"
 sed -i 's,${module_R},'"${module_R}"',g' "$logfile"
-sed -i 's,${out_path_step083_plots},'"${out_path_step083_plots}"',g' "$logfile"
+sed -i 's,${outpath_GRADE2083_plots},'"${outpath_GRADE2083_plots}"',g' "$logfile"
 sed -i 's,${logfile},'"${logfile}"',g' "$logfile"
 sed -n -e :a -e '1,3!{P;N;D;};N;ba' $logfile > tmp ; mv tmp $logfile
 set +v

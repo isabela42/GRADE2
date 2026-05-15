@@ -9,7 +9,7 @@ functions <- args[which(args == "--function") + 1]
 
 print_help <- function() {
   cat("
-Written by Isabela Almeida with inout from Larissa Cassiano
+Written by Isabela Almeida with input from Larissa Cassiano
 Created on May 13, 2026
 Last modified on May 15, 2026
 Version: 1.0.0
