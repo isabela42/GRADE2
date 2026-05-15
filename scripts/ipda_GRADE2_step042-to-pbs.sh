@@ -5,7 +5,6 @@ usage(){
 echo "
 Written by Isabela Almeida
 Based on
-  - Mainá Bitar's 'GRADE (Basic Rnaseq Analysis IN) PBS'
   - Isabela Almeida's 'HyDRA (Hybrid de novo RNA assembly) pipeline'
 Created on Jun 03, 2024
 Last modified on Mar 09, 2026

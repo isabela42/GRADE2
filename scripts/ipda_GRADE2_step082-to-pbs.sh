@@ -5,10 +5,9 @@ usage(){
 echo "
 Written by Isabela Almeida
 Based on
-  - Mainá Bitar's 'GRADE (Basic Rnaseq Analysis IN) PBS'
   - Isabela Almeida's 'HyDRA (Hybrid de novo RNA assembly) pipeline'
 Created on Mar 09, 2024
-Last modified on Mar 13, 2026
+Last modified on May 15, 2026
 Version: ${version}
 
 Description: Write and submit PBS jobs for step 082 of the
