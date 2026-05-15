@@ -140,4 +140,4 @@ ggsave(file.path(out_beeswarm), plot = beeswarm, width = 20, height = 5, dpi = 1
 
 ## Heatmap
 heatmap <- heatmap_plot(plot_heat)
-ggsave(file.path(out_heatmap), plot = heatmap, width = 20, height = 5, dpi = 100)
+ggsave(file.path(out_heatmap), plot = heatmap, width = 20, height = 20, dpi = 100)
