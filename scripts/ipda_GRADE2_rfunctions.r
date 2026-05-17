@@ -3,7 +3,7 @@
 # ============================================================
 # Written by Isabela Almeida
 # Created on May 13, 2026
-# Last modified on May 15, 2026
+# Last modified on May 17, 2026
 # Version: 1.0.0
 #
 # DESCRIPTION: Plot functions
@@ -121,7 +121,7 @@ heatmap_plot <- function(df){
       frame.colour = "white"
   )) +
   labs(
-  fill = "TPM\n(NA = grey)"
+  fill = "log2(TPM + 1)\n(NA = grey)"
   ) +
   coord_fixed(ratio = 1) +
   theme_minimal() +
@@ -174,7 +174,7 @@ heatmap_plot <- function(df){
       frame.colour = "white"
   )) +
   labs(
-  fill = "TPM"
+  fill = "log2(TPM + 1)"
   ) +
   coord_fixed(ratio = 1) +
   theme_minimal() +

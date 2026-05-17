@@ -11,7 +11,7 @@ print_help <- function() {
   cat("
 Written by Isabela Almeida with input from Larissa Cassiano
 Created on May 13, 2026
-Last modified on May 15, 2026
+Last modified on May 17, 2026
 Version: 1.0.0
 
 Description: Write and submit PBS jobs for step 055 of the
@@ -113,8 +113,8 @@ counts_subset <- counts[, c("transcript", common_samples), drop = FALSE] # Only 
 metadata <- metadata[common_samples, , drop = FALSE]
 
 # Calculate log2(tpm + 1) for plotting
-#norm_counts <- log2(counts_subset[, -1] + 1)
-norm_counts <- counts_subset[, -1]
+norm_counts <- log2(counts_subset[, -1] + 1)
+#norm_counts <- counts_subset[, -1]
 rownames(norm_counts) <- counts_subset$transcript
 tnorm_counts <- as.data.frame(t(norm_counts))
 tnorm_counts$samples <- rownames(tnorm_counts)
