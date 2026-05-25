@@ -247,7 +247,7 @@ box_plot_all <- function(df, plot_condition, outstem) {
 box_plot_facet <- function(df, plot_condition, outstem) {
   plot <- ggplot(df, aes(x = .data[[plot_condition]], y = .data[[outstem]])) +
   geom_boxplot(fill = "deepskyblue4", alpha=1, color = "black", size = 0.3) +
-  facet_wrap(~ category) +
+  facet_wrap(~ category, scales = "free_x") +
   labs(
     x = plot_condition,
     y = "log2(TPM+1)"
@@ -278,7 +278,7 @@ beeswarm_plot_facet <- function(df, plot_condition, outstem) {
   plot <- ggplot(df, aes(x = .data[[plot_condition]], y = .data[[outstem]])) +
   geom_boxplot(fill = "deepskyblue4", alpha=1, color = "black", size = 0.3) +
   geom_quasirandom(color = "black", size = 1, alpha = 0.7, width = 0.2) +
-  facet_wrap(~ category) +
+  facet_wrap(~ category, scales = "free_x") +
   labs(
     x = plot_condition,
     y = "log2(TPM+1)"
@@ -336,7 +336,7 @@ heatmap_plot_facet <- function(df){
       ticks = TRUE,
       frame.colour = "white"
   )) +
-  facet_wrap(~ category) +
+  facet_wrap(~ category, scales = "free_x") +
   labs(
   fill = "log2(TPM + 1)\n(NA = grey)"
   ) +
@@ -390,7 +390,7 @@ heatmap_plot_facet <- function(df){
       ticks = TRUE,
       frame.colour = "white"
   )) +
-  facet_wrap(~ category) +
+  facet_wrap(~ category, scales = "free_x") +
   labs(
   fill = "log2(TPM + 1)"
   ) +
