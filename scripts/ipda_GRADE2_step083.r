@@ -68,7 +68,6 @@ out_heatmap <- file.path(outdir, paste0(outstem, ".", plot_condition, ".heatmap.
 
 out_boxplotfacet <- file.path(outdir, paste0(outstem, ".", plot_condition, ".boxplot-facet.pdf"))
 out_beeswarmfacet <- file.path(outdir, paste0(outstem, ".", plot_condition, ".beeswarm-facet.pdf"))
-out_heatmapfacet <- file.path(outdir, paste0(outstem, ".", plot_condition, ".heatmap-facet.pdf"))
 
 ## Import data/metadata
 counts <- fread(file.path(input_counts), data.table=FALSE)  # Use fread for speed if data.table available
@@ -152,6 +151,3 @@ ggsave(file.path(out_beeswarmfacet), plot = beeswarm_facet, width = 20, height =
 ## Heatmap
 heatmap <- heatmap_plot(plot_heat)
 ggsave(file.path(out_heatmap), plot = heatmap, width = 20, height = 20, dpi = 100)
-
-heatmap_facet <- heatmap_plot_facet(plot_heat)
-ggsave(file.path(out_heatmapfacet), plot = heatmap_facet, width = 20, height = 20, dpi = 100)
