@@ -11,7 +11,7 @@ print_help <- function() {
   cat("
 Written by Isabela Almeida with input from Larissa Cassiano
 Created on May 13, 2026
-Last modified on May 17, 2026
+Last modified on May 25, 2026
 Version: 1.0.0
 
 Description: Write and submit PBS jobs for step 055 of the
@@ -65,6 +65,10 @@ library(ggbeeswarm)
 out_boxplot <- file.path(outdir, paste0(outstem, ".", plot_condition, ".boxplot.pdf"))
 out_beeswarm <- file.path(outdir, paste0(outstem, ".", plot_condition, ".beeswarm.pdf"))
 out_heatmap <- file.path(outdir, paste0(outstem, ".", plot_condition, ".heatmap.pdf"))
+
+out_boxplotfacet <- file.path(outdir, paste0(outstem, ".", plot_condition, ".boxplot-facet.pdf"))
+out_beeswarmfacet <- file.path(outdir, paste0(outstem, ".", plot_condition, ".beeswarm-facet.pdf"))
+out_heatmapfacet <- file.path(outdir, paste0(outstem, ".", plot_condition, ".heatmap-facet.pdf"))
 
 ## Import data/metadata
 counts <- fread(file.path(input_counts), data.table=FALSE)  # Use fread for speed if data.table available
@@ -135,10 +139,19 @@ source(functions)
 boxplot <- box_plot(tnorm_counts, plot_condition, outstem)
 ggsave(file.path(out_boxplot), plot = boxplot, width = 20, height = 5, dpi = 100)
 
+boxplot_facet <- box_plot_facet(tnorm_counts, plot_condition, outstem)
+ggsave(file.path(out_boxplotfacet), plot = boxplot_facet, width = 20, height = 5, dpi = 100)
+
 ## Beeswarm
 beeswarm <- beeswarm_plot(tnorm_counts, plot_condition, outstem)
 ggsave(file.path(out_beeswarm), plot = beeswarm, width = 20, height = 5, dpi = 100)
 
+beeswarm_facet <- beeswarm_plot_facet(tnorm_counts, plot_condition, outstem)
+ggsave(file.path(out_beeswarmfacet), plot = beeswarm_facet, width = 20, height = 5, dpi = 100)
+
 ## Heatmap
 heatmap <- heatmap_plot(plot_heat)
 ggsave(file.path(out_heatmap), plot = heatmap, width = 20, height = 20, dpi = 100)
+
+heatmap_facet <- heatmap_plot_facet(plot_heat)
+ggsave(file.path(out_heatmapfacet), plot = heatmap_facet, width = 20, height = 20, dpi = 100)
