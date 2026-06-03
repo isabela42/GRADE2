@@ -5,7 +5,7 @@ usage(){
 echo "
 Written by Isabela Almeida with input from Larissa Cassiano
 Created on May 13, 2026
-Last modified on May 15, 2026
+Last modified on Jun 03, 2026
 Version: ${version}
 
 Description: Write and submit PBS jobs for step 055 of the
@@ -255,7 +255,7 @@ cut -f1 ${input} | sort | uniq | while read stem; do echo "#  Run step" >> ${pbs
 cut -f1 ${input} | sort | uniq | while read stem; do echo "#................................................" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read stem; do echo 'echo "## Plot per ID at" ; date ; echo' >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read stem; do counts=`grep "${stem}" ${input} | cut -f2 | sort | uniq`; metadata=`grep "${stem}" ${input} | cut -f3 | sort | uniq`; condition=`grep "${stem}" ${input} | cut -f4 | sort | uniq`; seccondition=`grep "${stem}" ${input} | cut -f5 | sort | uniq`; rscript=`grep "${stem}" ${input} | cut -f6 | sort | uniq`; rfunctions=`grep "${stem}" ${input} | cut -f7 | sort | uniq`; echo "Rscript ${rscript} --inputc ${counts} --inputm ${metadata} --condition ${condition} --seccondition ${seccondition} --outdir ${outpath_GRADE2083_plots}/ --outstem ${stem} --function ${rfunctions}" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do counts=`grep "${stem}" ${input} | cut -f2 | sort | uniq`; metadata=`grep "${stem}" ${input} | cut -f3 | sort | uniq`; condition=`grep "${stem}" ${input} | cut -f4 | sort | uniq`; seccondition=`grep "${stem}" ${input} | cut -f5 | sort | uniq`; rscript=`grep "${stem}" ${input} | cut -f6 | sort | uniq`; rfunctions=`grep "${stem}" ${input} | cut -f7 | sort | uniq`; echo "Rscript ${rscript} --inputc ${counts} --inputm ${metadata} --condition ${condition} --seccondition ${seccondition} --outdir ${outpath_GRADE2083_plots}/ --outstem \"${stem}\" --function ${rfunctions}" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 
 #................................................
 #  Submit PBS jobs
