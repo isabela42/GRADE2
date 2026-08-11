@@ -8,7 +8,7 @@ Based on
   - Mainá Bitar's 'GRADE (Basic Rnaseq Analysis IN) PBS'
   - Isabela Almeida's 'HyDRA (Hybrid de novo RNA assembly) pipeline'
 Created on Jun 13, 2024
-Last modified on Mar 09, 2026
+Last modified on Aug 11, 2026
 Version: ${version}
 
 Description: Write and submit PBS jobs for step 052 of the
@@ -29,7 +29,7 @@ Resources baseline: -m 1 -c 4 -w "02:00:00"
 
                             Col2:
                             single|paired
-                            Flag for single-end or paired-end reads. If Col4 is single, it will run with F1 only.
+                            Flag for single-end or paired-end reads. If Col4 is single, it won't run -f 3.
 
 -p <PBS stem>               Stem for PBS file names
 -e <email>                  Email for PBS job
@@ -117,8 +117,8 @@ logfile=logfile_ipda_GRADE2_step052-to-pbs_${thislogdate}.txt
 #  Required modules, softwares and libraries
 #................................................
 
-# SAMtools 1.3
-module_samtools=samtools/1.3
+# SAMtools 1.9
+module_samtools=samtools/1.9
 
 #................................................
 #  Set and create output path
