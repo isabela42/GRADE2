@@ -5,7 +5,7 @@ usage(){
 echo "
 Written by Isabela Almeida with input from Larissa Cassiano
 Created on Aug 11, 2026
-Last modified on Aug 14, 2026
+Last modified on Aug 17, 2026
 Version: ${version}
 
 Description: Write and submit PBS jobs for step 091 of the
@@ -243,7 +243,7 @@ cut -f1 ${input} | sort | uniq | while read stem; do echo "#  Run step" >> ${pbs
 cut -f1 ${input} | sort | uniq | while read stem; do echo "#................................................" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read stem; do echo 'echo "## Write het ref and alt allele counts at" ; date ; echo' >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read stem; do file=`grep "${stem}" ${input} | cut -f2 | sort | uniq`; ref=`grep "${stem}" ${input} | cut -f3 | sort | uniq`; echo "bcftools mpileup --threads ${ncpus} -d0 -Ou -Q 20 -q 20 -f ${ref} ${file} | bcftools call --threads ${ncpus} -m -Ob -a GQ,GP | bcftools query -i 'GT=\"het\"' -f '%CHROM\t%POS\t%REF\t%ALT[\t%GT\t%AD\t%GQ\t%GP]\n' | awk -F'\t' 'BEGIN{OFS=\"\t\"; print \"CHROM\", \"SAMPLE\", \"ID\", \"REF_COUNT\", \"TOTAL_COUNT\", \"GROUP\", \"GQ\", \"P_HOM_REF\", \"P_HET\", \"P_HOM_ALT\"}} {split(\$4, alt, \",\"); split(\$6, ad, \",\"); gq = \$7; split(\$8, gp, \",\"); if (length(alt) == 1 && alt[1] != \"<*>\") {print \$1, \"${stem}\", \$1\":\"\$2, ad[1], ad[1] + ad[2], \$1, gq, gp[1], gp[2], gp[3]}}' >> ${outpath_GRADE2091_ase}/${stem}.het.full.counts ; cut -f1-6 ${outpath_GRADE2091_ase}/${stem}.het.full.counts > ${outpath_GRADE2091_ase}/${stem}.het.4asep.counts" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do file=`grep "${stem}" ${input} | cut -f2 | sort | uniq`; ref=`grep "${stem}" ${input} | cut -f3 | sort | uniq`; echo "bcftools mpileup --threads ${ncpus} -d0 -Ou -Q 20 -q 20 -f ${ref} ${file} | bcftools call --threads ${ncpus} -m -Ob -a GQ,GP | bcftools query -i 'GT=\"het\"' -f '%CHROM\t%POS\t%REF\t%ALT[\t%GT\t%AD\t%GQ\t%GP]\n' | awk -F'\t' 'BEGIN{OFS=\"\t\"; print \"CHROM\", \"SAMPLE\", \"ID\", \"REF_COUNT\", \"TOTAL_COUNT\", \"GROUP\", \"GQ\", \"P_HOM_REF\", \"P_HET\", \"P_HOM_ALT\"} {split(\$4, alt, \",\"); split(\$6, ad, \",\"); gq = \$7; split(\$8, gp, \",\"); if (length(alt) == 1 && alt[1] != \"<*>\") {print \$1, \"${stem}\", \$1\":\"\$2, ad[1], ad[1] + ad[2], \$1, gq, gp[1], gp[2], gp[3]}}' >> ${outpath_GRADE2091_ase}/${stem}.het.full.counts ; cut -f1-6 ${outpath_GRADE2091_ase}/${stem}.het.full.counts > ${outpath_GRADE2091_ase}/${stem}.het.4asep.counts" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 
 #................................................
 #  Submit PBS jobs
