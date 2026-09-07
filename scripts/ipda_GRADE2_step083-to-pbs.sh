@@ -8,7 +8,7 @@ Created on May 13, 2026
 Last modified on Jun 03, 2026
 Version: ${version}
 
-Description: Write and submit PBS jobs for step 055 of the
+Description: Write and submit PBS jobs for step 083 of the
 GRADE2 PBS 2.0 pipeline (General RNAseq Analysis for Differential Expression version 2).
 
 Usage: bash ipda_GRADE2_step083-to-pbs.sh -i "path/to/input/files" -p "PBS stem" -e "email" -m INT -c INT -w "HH:MM:SS"
