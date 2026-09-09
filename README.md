@@ -90,9 +90,7 @@ Contributions are what make the open source community such an amazing place to b
 <!-- CONTACT -->
 ## Contact
 
-Isabela Almeida - mb.isabela42@gmail.com
-
-Project Link: [https://github.com/isabela42/GRADE2](https://github.com/isabela42/GRADE2)
+Please contact [Isabela Almeida](mailto:mb.isabela42@gmail.com) if you have any enquires.
 
 <!-- LICENSE -->
 ## License
