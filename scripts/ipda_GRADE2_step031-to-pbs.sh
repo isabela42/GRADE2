@@ -27,12 +27,10 @@ Resources baseline: -m 10 -c 1 -w "02:00:00"
                             path/from/working/dir/to/grade021_trim-adapters_Trimmomatic_DATE/adapter-trimmed_stem
                             of both _R1.f* and _R2.f* files in individual lines
                             and no full stops.
-                            Extensions accepted: .fastq.gz/fq.gz/fastq/fq; _1/2_*/_R1/2_*
 
                             Col2:
                             path/from/working/dir/to/grade021_trim-adapters_Trimmomatic_DATE/adapter-trimmed_stem_R1.f* (line 1)
                             path/from/working/dir/to/grade021_trim-adapters_Trimmomatic_DATE/adapter-trimmed_stem_R2.f* (line 2)
-                            Extensions accepted: .fastq.gz/fq.gz/fastq/fq; _1/2_*/_R1/2_*
 
                             It does not matter if same stem 
                             appears more than once on this input file.
@@ -245,7 +243,7 @@ cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "#................................................" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo "" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; echo 'echo "## Run FastQC at" ; date ; echo' >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; f1=(${path_file}*_{R1,1}*.cor.fq); f2=(${path_file}*_{R2,2}*.cor.fq); echo "fastqc -t ${ncpus} --outdir ${outpath_GRADE2031_FastQC} ${f1} ${f2} --memory 10000" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read path_file; do file=`echo "$(basename "${path_file%%.*}" | sed 's/\(.*\)\..*/\1/')" | sed 's/\*//g'` ; f1=`grep -F "${path_file}" ${input} | cut -f2 | head -n1`; f2=`grep -F "${path_file}" ${input} | cut -f2 | tail -n1`; echo "fastqc -t ${ncpus} --outdir ${outpath_GRADE2031_FastQC} ${f1} ${f2} --memory 10000" >> ${pbs_stem}_${file}_${thislogdate}.pbs; done
 
 #................................................
 #  Submit PBS jobs
