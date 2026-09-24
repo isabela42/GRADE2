@@ -459,7 +459,7 @@ annotate_qlfo_ensemblr <- function(qlft, anno) {
   qlfo
 }
 
-plot_pca <- function(y, grps, ctr, outstem, outdir) {
+plot_pca <- function(y, grps, ctr, outstem, outdir, level) {
   log2cpm <- as.data.frame(edgeR::cpm(y, normalized.lib.sizes=TRUE,
                                        log=TRUE, prior.count=2))
   rv  <- matrixStats::rowVars(as.matrix(log2cpm))
@@ -503,7 +503,7 @@ plot_pca <- function(y, grps, ctr, outstem, outdir) {
     labs(x=NULL, y="% Variance explained", title="Scree plot") +
     theme_classic()
 
-  pdf(file.path(outdir, paste0(outstem, ".", ctr, ".pca.pdf")), width=7, height=6)
+  pdf(file.path(outdir, paste0(outstem, ".", level, ".", ctr, ".pca.pdf")), width=7, height=6)
     print(p_pca)
     print(p_scree)
   dev.off()
@@ -511,7 +511,7 @@ plot_pca <- function(y, grps, ctr, outstem, outdir) {
 }
 
 
-plot_volcano <- function(qlfo, ctr, outstem, outdir, label_mode) {
+plot_volcano <- function(qlfo, ctr, outstem, outdir, label_mode, level) {
   n_up   <- sum(qlfo$diffexpressed=="UP",   na.rm=TRUE)
   n_down <- sum(qlfo$diffexpressed=="DOWN",  na.rm=TRUE)
 
@@ -559,13 +559,13 @@ plot_volcano <- function(qlfo, ctr, outstem, outdir, label_mode) {
     theme_classic() +
     theme(legend.position="right")
 
-  pdf(file.path(outdir, paste0(outstem, ".", ctr, ".volcano.pdf")), width=9, height=6)
+  pdf(file.path(outdir, paste0(outstem, ".", level, ".", ctr, ".volcano.pdf")), width=9, height=6)
     print(p)
   dev.off()
   cat("## Volcano saved:", stem, "\n")
 }
 
-run_fgsea <- function(qlfo, ctr, outstem, input_gmt, outdir) {
+run_fgsea <- function(qlfo, ctr, outstem, input_gmt, outdir, level) {
   log_vec        <- qlfo$logFC
   names(log_vec) <- qlfo$SYMBOL
   log_vec        <- log_vec[!is.na(names(log_vec)) & is.finite(log_vec)]
@@ -622,7 +622,7 @@ run_fgsea <- function(qlfo, ctr, outstem, input_gmt, outdir) {
             panel.grid.major.x=element_line(color="grey85"))
 
     h <- max(6, nrow(plot_df) * 0.38 + 2)
-    pdf(file.path(outdir, paste0(outstem, ".", ctr, ".", db, ".fgsea.pdf")), width=11, height=h)
+    pdf(file.path(outdir, paste0(outstem, ".", level, ".", ctr, ".", db, ".fgsea.pdf")), width=11, height=h)
       print(p_path)
     dev.off()
     cat("##", db, "dotplot saved\n")
@@ -668,7 +668,7 @@ plot_heatmap <- function(tpmcnt, groups_vec, genesets, qlfo_list,
   )
   col_ann <- data.frame(condition=groups_vec, row.names=colnames(tpm_mat))
 
-  make_heatmap <- function(mat, row_ann, stem_suffix, path_lvls, substem) {
+  make_heatmap <- function(mat, row_ann, stem_suffix, path_lvls, substem, level) {
     zv  <- apply(mat, 1, var) == 0
     mat <- mat[!zv, , drop=FALSE]
     if (nrow(mat) < 2) { cat("## WARNING: Too few rows for heatmap", stem_suffix, "\n"); return() }
@@ -687,7 +687,7 @@ plot_heatmap <- function(tpmcnt, groups_vec, genesets, qlfo_list,
     if (length(p_cols) > 0) ann_colors$pathway <- p_cols
 
     h    <- max(8, nrow(mat) * 0.28 + 3)
-    pdf(file.path(outdir, paste0(outstem, ".", substem, ".", stem_suffix, ".heatmap.pdf")), width=11, height=h)
+    pdf(file.path(outdir, paste0(outstem, ".", level, ".", substem, ".", stem_suffix, ".heatmap.pdf")), width=11, height=h)
       pheatmap(
         mat                      = mat,
         scale                    = "row",
@@ -729,7 +729,7 @@ plot_heatmap <- function(tpmcnt, groups_vec, genesets, qlfo_list,
         dplyr::select(pathway)
       make_heatmap(mat, row_ann,
                    paste0(paste(path_sets, collapse="-"), "_pathways"),
-                   path_sets, substem)
+                   path_sets, substem, level)
     }
   }
 
@@ -750,7 +750,7 @@ plot_heatmap <- function(tpmcnt, groups_vec, genesets, qlfo_list,
       mat          <- tpm_mat[genes_found[genes_found %in% rownames(tpm_mat)], , drop=FALSE]
       row_ann      <- data.frame(pathway=rep("top10DEG", nrow(mat)),
                                  row.names=rownames(mat))
-      make_heatmap(mat, row_ann, "top10DEG", "top10DEG", substem)
+      make_heatmap(mat, row_ann, "top10DEG", "top10DEG", substem, level)
     }
   }
 }

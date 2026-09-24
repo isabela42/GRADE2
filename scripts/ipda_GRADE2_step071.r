@@ -88,12 +88,6 @@ library(tidyr)
 library(tibble)
 library(RColorBrewer)
 
-## Set input/output paths
-out_fulltablemerged <- file.path(outdir, paste0(outstem, ".full-table-merged.tsv"))
-out_demerged <- file.path(outdir, paste0(outstem, ".DE-all-merged.tsv"))
-out_deupmerged <- file.path(outdir, paste0(outstem, ".DE-up-merged.tsv"))
-out_dedownmerged <- file.path(outdir, paste0(outstem, ".DE-down-merged.tsv"))
-
 ## Groups, sets, labels and thresholds
 groups_raw      <- strsplit(groups, ",")[[1]]
 contrasts_list  <- strsplit(contrasts, ",")[[1]]
@@ -227,13 +221,13 @@ for (ctr in contrasts_list) {
     res  <- run_edger(counts_raw, groups_raw, ctr)
     qlfo <- annotate_qlfo(res$qlft, anno, level)
     stem <- paste0(outstem, "_", level, "_", ctr)
-    write.table(qlfo, file.path(outdir, paste0(outstem, ".", ctr, ".full-table.tsv")), quote=FALSE, row.names=FALSE, sep="\t")
-    write.table(qlfo[qlfo$diffexpressed != "NO", ], file.path(outdir, paste0(outstem, ".", ctr, ".DE-all.tsv")), quote=FALSE, row.names=FALSE, sep="\t")
-    write.table(qlfo[qlfo$diffexpressed == "UP", ], file.path(outdir, paste0(outstem, ".", ctr, ".DE-up.tsv")), quote=FALSE, row.names=FALSE, sep="\t")
-    write.table(qlfo[qlfo$diffexpressed == "DOWN", ], file.path(outdir, paste0(outstem, ".", ctr, ".DE-down.tsv")), quote=FALSE, row.names=FALSE, sep="\t")
-    plot_pca(res$y, groups_raw[groups_raw %in% strsplit(ctr,"_vs_")[[1]]], ctr, outstem, outdir)
-    plot_volcano(qlfo, ctr, outstem, outdir, volcano_label)
-    run_fgsea(qlfo, ctr, outstem, input_gmt, outdir)
+    write.table(qlfo, file.path(outdir, paste0(outstem, ".", level, ".", ctr, ".full-table.tsv")), quote=FALSE, row.names=FALSE, sep="\t")
+    write.table(qlfo[qlfo$diffexpressed != "NO", ], file.path(outdir, paste0(outstem, ".", level, ".", ctr, ".DE-all.tsv")), quote=FALSE, row.names=FALSE, sep="\t")
+    write.table(qlfo[qlfo$diffexpressed == "UP", ], file.path(outdir, paste0(outstem, ".", level, ".", ctr, ".DE-up.tsv")), quote=FALSE, row.names=FALSE, sep="\t")
+    write.table(qlfo[qlfo$diffexpressed == "DOWN", ], file.path(outdir, paste0(outstem, ".", level, ".", ctr, ".DE-down.tsv")), quote=FALSE, row.names=FALSE, sep="\t")
+    plot_pca(res$y, groups_raw[groups_raw %in% strsplit(ctr,"_vs_")[[1]]], ctr, outstem, outdir, level)
+    plot_volcano(qlfo, ctr, outstem, outdir, volcano_label, level)
+    run_fgsea(qlfo, ctr, outstem, input_gmt, outdir, level)
     parts <- strsplit(ctr, "_vs_")[[1]]
     g_subs <- groups_raw[groups_raw %in% parts]
     keep <- groups_raw %in% parts
@@ -246,16 +240,15 @@ for (ctr in merge_contrasts) {
     res  <- run_edger(counts_raw, groups_merged, ctr)
     qlfo <- annotate_qlfo(res$qlft, anno, level)
     stem <- paste0(outstem, "_", level, "_", ctr, "_merged")
-    write.table(qlfo, out_fulltablemerged <- file.path(outdir, paste0(outstem, ".full-table-merged.tsv"))
-, quote=FALSE, row.names=FALSE, sep="\t")
-    write.table(qlfo[qlfo$diffexpressed != "NO", ], out_demerged, quote=FALSE, row.names=FALSE, sep="\t")
-    write.table(qlfo[qlfo$diffexpressed == "UP", ], out_deupmerged, quote=FALSE, row.names=FALSE, sep="\t")
-    write.table(qlfo[qlfo$diffexpressed == "DOWN", ], out_dedownmerged, quote=FALSE, row.names=FALSE, sep="\t")
+    write.table(qlfo, file.path(outdir, paste0(outstem, ".", level, ".", ctr,".full-table.tsv")), quote=FALSE, row.names=FALSE, sep="\t")
+    write.table(qlfo[qlfo$diffexpressed != "NO", ], file.path(outdir, paste0(outstem, ".", level, ".", ctr, ".DE-all.tsv")), quote=FALSE, row.names=FALSE, sep="\t")
+    write.table(qlfo[qlfo$diffexpressed == "UP", ], file.path(outdir, paste0(outstem, ".", level, ".", ctr, ".DE-up.tsv")), quote=FALSE, row.names=FALSE, sep="\t")
+    write.table(qlfo[qlfo$diffexpressed == "DOWN", ], file.path(outdir, paste0(outstem, ".", level, ".", ctr, ".DE-down.tsv")), quote=FALSE, row.names=FALSE, sep="\t")
     parts  <- strsplit(ctr,"_vs_")[[1]]
     g_subs <- groups_merged[groups_merged %in% parts]
-    plot_pca(res$y, g_subs, ctr, outstem, outdir)
-    plot_volcano(qlfo, ctr, outstem, outdir, volcano_label)
-    run_fgsea(qlfo, ctr, outstem, input_gmt, outdir)
+    plot_pca(res$y, g_subs, ctr, outstem, outdir, level)
+    plot_volcano(qlfo, ctr, outstem, outdir, volcano_label, level)
+    run_fgsea(qlfo, ctr, outstem, input_gmt, outdir, level)
     all_qlfo[[paste0(ctr,"_merged")]] <- qlfo
 }
 
