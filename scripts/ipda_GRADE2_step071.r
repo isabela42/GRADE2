@@ -252,7 +252,7 @@ for (ctr in merge_contrasts) {
     all_qlfo[[paste0(ctr,"_merged")]] <- qlfo
 }
 
-plot_heatmap(tpmcnt, groups_raw, genesets, all_qlfo, outstem, level, outdir, annotpm, "merged")
+plot_heatmap(tpmcnt, groups_raw, genesets, all_qlfo, outstem, level, outdir, annotpm, ctr)
 
 
 # ── Save environment ───────────────────────────────────────────────────────────
