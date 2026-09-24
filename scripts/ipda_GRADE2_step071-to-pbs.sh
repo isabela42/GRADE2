@@ -168,7 +168,7 @@ logfile=logfile_ipda_GRADE2_step071-to-pbs_${thislogdate}.txt
 #................................................
 
 ## Set stem for output directories
-outpath_GRADE2071_plots="grade071_DE-pathway-plots_R_${thislogdate}"
+outpath_GRADE2071_plots="grade071_DE-Pathway_EdgeR-FGSEA_${thislogdate}"
 
 ## Create output directories
 mkdir -p ${outpath_GRADE2071_plots}
