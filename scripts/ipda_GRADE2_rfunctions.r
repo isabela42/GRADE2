@@ -586,7 +586,7 @@ run_fgsea <- function(qlfo, ctr, outstem, input_gmt, outdir, level) {
     set.seed(42)
     res <- fgsea::fgsea(pathways=pathways, stats=log_vec, minSize=15, maxSize=500)
     res <- res[order(res$padj), ]
-    write.table(as.data.frame(res) %>% dplyr::select(-leadingEdge), file.path(outdir, paste0(outstem, ".", ctr, ".", db, ".fgsea.tsv")),
+    write.table(as.data.frame(res) %>% dplyr::select(-leadingEdge), file.path(outdir, paste0(outstem, ".", level, ".", ctr, ".", db, ".fgsea.tsv")),
       quote=FALSE, row.names=FALSE, sep="\t")
 
     res_sig <- res[!is.na(res$padj) & res$padj < 0.05, ]
