@@ -3,7 +3,7 @@
 # ============================================================
 # Written by Isabela Almeida
 # Created on May 13, 2026
-# Last modified on Sep 24, 2026
+# Last modified on Nov 04, 2026
 # Version: 1.0.0
 #
 # DESCRIPTION: GRADE2 R FUNCTIONS
@@ -785,4 +785,472 @@ run_edger <- function(counts_mat, groups, contrast_str) {
   qlft$AdjPValue <- p.adjust(p, method="BH", n=ngenes)
 
   list(qlft=qlft, y=y)
+}
+
+## 083 plots
+## ---------------------------------------------------------------- utilities
+# Split a comma-separated string into a clean character vector ("" -> character(0))
+split_terms <- function(x) {
+  if (is.null(x) || length(x) == 0 || is.na(x)) return(character(0))
+  x <- trimws(strsplit(x, ",")[[1]])
+  x[nzchar(x)]
+}
+ 
+# Open a PDF, run code, and ALWAYS close the device (even on error)
+with_pdf <- function(file, width, height, code) {
+  pdf(file, width = width, height = height)
+  on.exit(dev.off(), add = TRUE)
+  force(code)
+  invisible(file)
+}
+ 
+# Drop metadata rows whose any column matches one of the terms
+exclude_samples <- function(metadata, terms) {
+  if (length(terms) == 0) return(metadata)
+  row_txt <- do.call(paste, c(metadata, sep = " | "))
+  drop <- grepl(paste(terms, collapse = "|"), row_txt, ignore.case = TRUE)
+  message("Excluding ", sum(drop), " samples matching: ", paste(terms, collapse = ", "))
+  metadata[!drop, , drop = FALSE]
+}
+ 
+## ---------------------------------------------------------------- STAR logs
+read_star_log <- function(log_file){
+  cols <- c("input_reads", "read_length", "unique_reads", "unique_map_pct", "multi_reads", "multimapped_pct",
+            "too_many_loci_reads", "too_many_loci_pct", "unmapped_mismatch_reads", "unmapped_mismatch_pct",
+            "unmapped_short_reads", "unmapped_short_pct", "unmapped_other_reads", "unmapped_other_pct",
+            "chimeric_reads", "chimeric_pct")
+  if (!file.exists(log_file)) {
+    warning("STAR log not found: ", log_file)
+    return(as.data.frame(setNames(as.list(rep(NA_real_, length(cols))), cols)))
+  }
+  x <- readLines(log_file)
+  get_val <- function(pattern){
+    hit <- grep(pattern, x, value = TRUE)
+    if(length(hit) == 0) {return(NA)}
+    trimws(sub(".*\\|", "", hit[1]))
+  }
+  pct <- function(pattern){as.numeric(gsub("%", "", get_val(pattern)))}
+  num <- function(pattern){as.numeric(gsub(",", "", get_val(pattern)))}
+  data.frame(
+    input_reads              = num("Number of input reads"),
+    read_length              = num("Average input read length"),
+    unique_reads             = num("Uniquely mapped reads number"),
+    unique_map_pct           = pct("Uniquely mapped reads %"),
+    multi_reads              = num("Number of reads mapped to multiple loci"),
+    multimapped_pct          = pct("% of reads mapped to multiple loci"),
+    too_many_loci_reads      = num("Number of reads mapped to too many loci"),
+    too_many_loci_pct        = pct("% of reads mapped to too many loci"),
+    unmapped_mismatch_reads  = num("Number of reads unmapped: too many mismatches"),
+    unmapped_mismatch_pct    = pct("% of reads unmapped: too many mismatches"),
+    unmapped_short_reads     = num("Number of reads unmapped: too short"),
+    unmapped_short_pct       = pct("% of reads unmapped: too short"),
+    unmapped_other_reads     = num("Number of reads unmapped: other"),
+    unmapped_other_pct       = pct("% of reads unmapped: other"),
+    chimeric_reads           = num("Number of chimeric reads"),
+    chimeric_pct             = pct("% of chimeric reads")
+  )
+}
+ 
+# Table of STAR metrics per sample (one row per metadata row)
+build_star_qc <- function(metadata, star_dir) {
+  metadata %>%
+    mutate(log_file = file.path(star_dir, paste0("salign-star-index_", sequencing.id),
+                                paste0("salign-star-index_", sequencing.id, "Log.final.out"))) %>%
+    rowwise() %>% mutate(qc = list(read_star_log(log_file))) %>% ungroup() %>% tidyr::unnest(qc)
+}
+ 
+## ---------------------------------------------------------------- themes / plots
+my_theme <- function(axis_x_size = 8, axis_y_size = 8, axis_title_size = 12, strip_size = 12, legend_size = 12, panel_spacing = 1){
+    theme_bw() +
+    theme(
+        panel.spacing = unit(panel_spacing, "lines"),
+        axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5, size = axis_x_size),
+        axis.text.y = element_text(size = axis_y_size),
+        axis.title.x = element_text(size = axis_title_size),
+        axis.title.y = element_text(size = axis_title_size),
+        plot.title = element_text(size = 12, face = "bold"),
+        legend.title = element_text(size = legend_size),
+        legend.text = element_text(size = legend_size),
+        strip.text = element_text(size = strip_size, face = "bold")
+    )
+}
+ 
+metadata_barplot_facet <- function(df, x_condition, y_condition, fill_condition = NULL) {
+  if (is.null(fill_condition)) {
+    plot_df <- df %>% count(.data[[y_condition]], .data[[x_condition]]) %>%
+      mutate(x_ordered = tidytext::reorder_within(.data[[x_condition]], -n, .data[[y_condition]]))
+    plot <- ggplot(plot_df, aes(x = x_ordered, y = n)) +
+    geom_col(fill = "#003557", alpha=1, color = "black") +
+    geom_text(aes(label = n), vjust = -0.2, size = 3) +
+    scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
+    tidytext::scale_x_reordered(expand = c(0, 0))
+  } else {
+    plot_df <- df %>% count(.data[[y_condition]], .data[[x_condition]], .data[[fill_condition]]) %>%
+      group_by(.data[[y_condition]], .data[[x_condition]]) %>%
+      mutate(total_n = sum(n), n_segments = n()) %>%
+      ungroup() %>% mutate(x_ordered = factor(.data[[x_condition]], levels = sort(unique(df[[x_condition]]))))
+    plot <- ggplot(plot_df, aes(x = x_ordered, y = n, fill = .data[[fill_condition]])) +
+    geom_col(position = "fill", color = "black", linewidth = 0.2) +
+    geom_text(aes(label = ifelse(n > 10 | n_segments == 1, n, "")), position = position_fill(vjust = 0.5), size = 2.5, color = "white") +
+    scale_y_continuous(labels = scales::percent)
+  }
+  plot <- plot +
+    facet_grid(cols = vars(.data[[y_condition]]), scales = "free_x", space = "free_x") +
+    paletteer::scale_fill_paletteer_d("ggsci::category20b_d3") +
+    labs(x = x_condition, y = ifelse(is.null(fill_condition), "Samples", "Sample proportion"), fill = fill_condition) +
+    theme_bw() +
+    theme(
+      panel.spacing = unit(1, "lines"),
+      axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5, size = 8),
+      axis.text.y = element_text(size = 8, margin = margin(r = 0)),
+      axis.title.x = element_blank(),
+      axis.title.y = element_text(size = 12),
+      plot.title = element_text(size = 12, face = "bold"),
+      legend.title = element_text(size = 12),
+      legend.text  = element_text(size = 12),
+      strip.text = element_text(size = 12, face = "bold")
+    )
+  return(plot)
+}
+ 
+histogram_plot <- function(df, condition, wrap = NULL, title, scales = NULL, log10 = FALSE, bins = 50){
+    plot <- ggplot(df, aes(x = .data[[condition]])) +
+    geom_histogram(fill = "#003557", bins = bins)
+    if(log10){plot <- plot + scale_x_log10()}
+    if(!is.null(wrap)){plot <- plot + facet_wrap(wrap, scales = scales)}
+    plot + ggtitle(title) + my_theme()
+}
+ 
+barplot_distribution <- function(df, conditionX, conditionY = NULL, wrap = NULL, title, scales = "fixed"){
+    if(is.null(conditionY)){
+        plot <- ggplot(df, aes(x = .data[[conditionX]])) + geom_bar(fill = "#003557")
+    } else {
+        plot <- ggplot(df, aes(x = .data[[conditionX]], y = .data[[conditionY]])) + geom_col(fill = "#003557")}
+    if(!is.null(wrap)){plot <- plot + facet_wrap(wrap, scales = scales)}
+    plot + ggtitle(title) + my_theme()
+}
+ 
+boxplot_distribution <- function(df, conditionX, conditionY = NULL, wrap = NULL, title, scales = "fixed"){
+    if(is.null(conditionY)){
+        plot <- ggplot(df, aes(x = .data[[conditionX]])) + geom_boxplot(fill = "#003557")
+    } else {
+        plot <- ggplot(df, aes(x = .data[[conditionX]], y = .data[[conditionY]])) + geom_boxplot(fill = "#003557")}
+    if(!is.null(wrap)){plot <- plot + facet_wrap(wrap, scales = scales)}
+    plot + ggtitle(title) + my_theme()
+}
+ 
+scatter_plot <- function(df, conditionX, conditionY, gridcol = NULL, gridrow = NULL, shape = NULL, title, log10_x = FALSE){
+    plot <- ggplot(df, aes(x = .data[[conditionX]], y = .data[[conditionY]]))
+    if (!is.null(shape)) {plot <- plot +
+        geom_point(aes(shape = .data[[shape]]), color = "#003557", alpha = 0.5, size = 2) +
+        scale_shape_manual(values = rep_len(0:14, dplyr::n_distinct(df[[shape]])))   # recycles if > 15 levels
+    } else {plot <- plot + geom_point(color = "#003557", alpha = 0.5)}
+    if(log10_x){plot <- plot + scale_x_log10()}
+    if(!is.null(gridrow) && !is.null(gridcol)){plot <- plot +
+        facet_grid(rows = vars(.data[[gridrow]]), cols = vars(.data[[gridcol]]))
+    } else if(!is.null(gridcol)){plot <- plot + facet_grid(cols = vars(.data[[gridcol]]))}
+    plot + ggtitle(title) + my_theme()
+}
+ 
+violin_distribution <- function(df, conditionX, conditionY, gridrow = NULL, gridcol = NULL, title, scales = "fixed", show_n = FALSE,
+                                plot_width = 11.67, max_n_size = 3, min_n_size = 1.2, max_strip_size = 12, min_strip_size = 4) {
+  plot <- ggplot(df, aes(x = .data[[conditionX]], y = .data[[conditionY]])) +
+    geom_violin(fill = "#003557", alpha = 0.7, color = "black", scale = "width") +
+    geom_boxplot(width = 0.1) +
+    ggbeeswarm::geom_quasirandom(color = "black", size = 0.5, alpha = 0.2, width = 0.2)
+ 
+  # --- Estimate layout: violins per column panel, and inches available per violin / per panel
+  free_x <- !is.null(gridcol) && scales %in% c("free", "free_x")
+  n_x_all <- length(unique(df[[conditionX]]))
+  if (is.null(gridcol)) {
+    xk <- n_x_all
+    col_names <- NULL
+  } else {
+    col_vals <- droplevels(factor(df[[gridcol]]))
+    col_names <- levels(col_vals)
+    xk <- vapply(col_names, function(cn) length(unique(df[[conditionX]][which(col_vals == cn)])), integer(1))
+    if (!free_x) xk[] <- n_x_all
+  }
+  usable_w <- max(plot_width - 1.2 - ifelse(is.null(gridrow), 0, 0.5) - 0.2 * (length(xk) - 1), 1)
+  slot_w  <- usable_w / sum(xk + 1.2)   # inches per violin
+  panel_w <- slot_w * (xk + 1.2)        # inches per column panel
+ 
+  # --- Column strip titles sized to fit their panel
+  use_h4x <- !is.null(gridcol) && requireNamespace("ggh4x", quietly = TRUE)
+  if (!is.null(gridcol)) {
+    strip_sizes <- pmin(max_strip_size, pmax(min_strip_size, 0.9 * panel_w * 72.27 / (nchar(col_names) * 0.62)))
+  }
+  facet_fun <- if (use_h4x) {
+    function(...) ggh4x::facet_grid2(..., strip = ggh4x::strip_themed(text_x = ggh4x::elem_list_text(size = strip_sizes)))
+  } else {
+    facet_grid
+  }
+ 
+  if (!is.null(gridrow) && !is.null(gridcol)) {
+    plot <- plot + facet_fun(rows = vars(.data[[gridrow]]), cols = vars(.data[[gridcol]]), scales = scales, space = scales)
+  } else if (!is.null(gridrow)) {
+    plot <- plot + facet_grid(rows = vars(.data[[gridrow]]))
+  } else if (!is.null(gridcol)) {
+    plot <- plot + facet_fun(cols = vars(.data[[gridcol]]), scales = scales, space = scales)
+  }
+ 
+  # --- n labels: skipped when mean is 0, size scaled to the space available per violin
+  if (show_n) {
+    group_vars <- c(conditionX, gridrow, gridcol)
+    counts_df <- df %>% group_by(across(all_of(group_vars))) %>%
+      summarise(n = n(),
+                mean_y = mean(.data[[conditionY]], na.rm = TRUE),
+                ymax = suppressWarnings(max(.data[[conditionY]], na.rm = TRUE)),
+                .groups = "drop") %>%
+      filter(is.finite(mean_y), mean_y != 0)
+    if (nrow(counts_df) > 0) {
+      n_size <- min(max_n_size, max(min_n_size, 40 * slot_w / max(nchar(counts_df$n))))
+      plot <- plot +
+        geom_text(data = counts_df, aes(x = .data[[conditionX]], y = ymax, label = n),
+                  inherit.aes = FALSE, size = n_size, vjust = -1, check_overlap = TRUE) +
+        scale_y_continuous(expand = expansion(mult = c(0.05, 0.15)))
+    }
+  }
+ 
+  plot <- plot + labs(x = conditionX, y = title) + my_theme()
+  # Fallback if ggh4x is not installed: one strip size for all columns (the smallest needed)
+  if (!is.null(gridcol) && !use_h4x) plot <- plot + theme(strip.text.x = element_text(size = min(strip_sizes)))
+  return(plot)
+}
+ 
+## ---------------------------------------------------------------- plot_df preparation
+# plot_group = phenotype, replaced by phenotype.subtype for rows matching a highlight term;
+# highlighted groups come first in the factor levels (in term order).
+add_plot_group <- function(df, highlight_terms, type_levels) {
+  df$plot_group <- df$phenotype
+  if (length(highlight_terms) > 0) {
+    hits <- grepl(paste(highlight_terms, collapse = "|"), df$phenotype, ignore.case = TRUE)
+    df$plot_group[hits] <- df$phenotype.subtype[hits]
+  }
+  highlight_levels <- c()
+  for (term in highlight_terms) {
+    tmp <- df %>% filter(grepl(term, phenotype, ignore.case = TRUE)) %>% pull(plot_group) %>% unique() %>% sort()
+    highlight_levels <- c(highlight_levels, tmp)
+  }
+  other_levels <- setdiff(sort(unique(df$plot_group)), highlight_levels)
+  df$plot_group <- factor(df$plot_group, levels = unique(c(highlight_levels, other_levels)))
+  # Unknown types are appended instead of silently becoming NA
+  df$type <- factor(as.character(df$type), levels = union(type_levels, unique(as.character(df$type))))
+  df$type <- droplevels(df$type)
+  df
+}
+ 
+prep_identity <- function(df, terms, treat_col = "treatment") {
+  df <- df[df$type == "cell-line", ]
+  tr <- as.character(df[[treat_col]])
+  df$treatment_status <- factor(ifelse(is.na(tr) | trimws(tr) %in% c("", "NA"), "untreated", "treated"),
+                                levels = c("untreated", "treated"))
+  df$identity <- as.character(df$phenotype.identity)
+  hl <- c()
+  for (term in terms) hl <- c(hl, sort(unique(df$identity[grepl(term, df$phenotype, ignore.case = TRUE)])))
+  hl <- unique(hl)
+  df$identity <- factor(df$identity, levels = c(hl, setdiff(sort(unique(df$identity)), hl)))
+  df
+}
+ 
+## ---------------------------------------------------------------- STAR QC pdf
+# Each plot gets its own page height; pages are joined with pdfunite (poppler-utils)
+save_plot_list_pdf <- function(plots, heights, file, width = 8.27) {
+  tmpdir <- tempfile("star_pages_"); dir.create(tmpdir)
+  on.exit(unlink(tmpdir, recursive = TRUE), add = TRUE)
+  pdfs <- file.path(tmpdir, sprintf("%02d_%s.pdf", seq_along(plots), names(plots)))
+  for (i in seq_along(plots)) ggsave(filename = pdfs[i], plot = plots[[i]], width = width, height = heights[[names(plots)[i]]])
+  if (nzchar(Sys.which("pdfunite"))) {
+    status <- system2("pdfunite", c(shQuote(pdfs), shQuote(file)))
+    if (status != 0) warning("pdfunite failed for ", file)
+  } else {
+    warning("pdfunite not found in PATH; writing individual pages next to ", file)
+    file.copy(pdfs, dirname(file), overwrite = TRUE)
+  }
+  invisible(file)
+}
+ 
+## ---------------------------------------------------------------- expression plots
+plot_feature_pdf <- function(feature, file_stem, plot_df, outdir, outstem, types, highlight_terms) {
+  df <- plot_df
+  df$feature_value <- df[[feature]]
+  ylab <- "log2(tpm + 1)"
+  with_pdf(paste0(outdir, "/", outstem, ".violin.", file_stem, ".pdf"), width = 11.67, height = 5, {
+    print(violin_distribution(df, conditionX = "plot_group", conditionY = "feature_value", gridcol = "category", scales = "free_x", title = ylab, show_n = TRUE) +
+      ggtitle(paste(feature, "- all types combined")))
+    id_df <- prep_identity(df, highlight_terms)
+    if (nrow(id_df) > 0) print(violin_distribution(id_df, conditionX = "identity", conditionY = "feature_value", gridrow = "treatment_status", title = ylab, show_n = TRUE, plot_width = 24) +
+      ggtitle(paste(feature, "- cell-line names")))
+    for (t in types) {
+      sub_df <- df[df$type == t, ]
+      if (nrow(sub_df) == 0) next
+      print(violin_distribution(sub_df, conditionX = "plot_group", conditionY = "feature_value", gridcol = "category", gridrow = NULL, scales = "free_x", title = ylab, show_n = TRUE) +
+        ggtitle(paste(feature, "-", as.character(t))))
+    }
+  })
+}
+ 
+plot_mean_pdf <- function(plot_df, feature_labels, file, types, highlight_terms) {
+  plot_df$feature_mean <- rowMeans(plot_df[, feature_labels, drop = FALSE], na.rm = TRUE)
+  ttl <- "mean log2(tpm + 1) expression"
+  with_pdf(file, width = 11.67, height = 5, {
+    print(violin_distribution(plot_df, conditionX = "plot_group", conditionY = "feature_mean", gridcol = "category", scales = "free_x", title = ttl, show_n = TRUE) +
+      ggtitle("All types combined"))
+    id_df <- prep_identity(plot_df, highlight_terms)
+    if (nrow(id_df) > 0) print(violin_distribution(id_df, conditionX = "identity", conditionY = "feature_mean", gridrow = "treatment_status", title = ttl, show_n = TRUE, plot_width = 24) +
+      ggtitle("cell-line names"))
+    for (t in types) {
+      sub_df <- plot_df[plot_df$type == t, ]
+      if (nrow(sub_df) == 0) next
+      print(violin_distribution(sub_df, conditionX = "plot_group", conditionY = "feature_mean", gridcol = "category", gridrow = NULL, scales = "free_x", title = ttl, show_n = TRUE) +
+        ggtitle(as.character(t)))
+    }
+  })
+}
+ 
+## ---------------------------------------------------------------- heatmap
+heatmap_palettes <- list(
+  # Sequential (use with scale = "none", i.e. absolute log2(tpm + 1))
+  blues  = colorRampPalette(c("#F7FBFF", "#C6DBEF", "#6BAED6", "#2171B5", "#08306B"))(100),
+  gtex   = colorRampPalette(c("#FFFFFF", "#DCE9F5", "#7FB2DA", "#2E75B6", "#0B2C5A"))(100),
+  mako   = viridis::mako(100, direction = -1),
+  ylgnbu = colorRampPalette(RColorBrewer::brewer.pal(9, "YlGnBu"))(100),
+  # Diverging (use with scale = "row", i.e. z-scores centred on 0)
+  div      = colorRampPalette(c("#2166AC", "#F7F7F7", "#B2182B"))(100),
+  div_blue = colorRampPalette(c("#08306B", "#4292C6", "#F7FBFF", "#FDD49E", "#B30000"))(100)
+)
+ 
+plot_heatmap <- function(plot_df, feature_labels, file, pal = heatmap_palettes$div_blue) {
+  grp <- plot_df %>%
+    group_by(category, plot_group) %>%
+    summarise(n_samples = n(), across(all_of(feature_labels), ~ median(.x, na.rm = TRUE)), .groups = "drop")
+  heat_mat <- t(as.matrix(grp[, feature_labels]))           # rows = features, cols = groups
+  colnames(heat_mat) <- make.unique(as.character(grp$plot_group))
+  anno <- data.frame(category = grp$category, n_samples = grp$n_samples, row.names = colnames(heat_mat))
+  heat_mat <- heat_mat[apply(heat_mat, 1, var, na.rm = TRUE) > 0, , drop = FALSE]  # no-variance features can't be row-scaled/clustered
+  if (nrow(heat_mat) < 2 || ncol(heat_mat) < 2) {
+    message("Heatmap skipped: need >= 2 variable features and >= 2 groups (have ", nrow(heat_mat), " x ", ncol(heat_mat), ")")
+    return(invisible(NULL))
+  }
+  with_pdf(file, width = max(8, 0.12 * ncol(heat_mat) + 4), height = 0.18 * nrow(heat_mat) + 4,
+    pheatmap::pheatmap(heat_mat, annotation_col = anno, scale = "row", clustering_method = "ward.D2", fontsize_row = 8, fontsize_col = 6,
+                       border_color = NA, angle_col = 90, color = pal, main = "Median log2(tpm + 1) per plot_group (row z-score)"))
+}
+ 
+## ---------------------------------------------------------------- dot plot
+dot_plot <- function(df, group_col, title, feature_labels, min_n = 3, tpm_cut = 0.5, facet_row = NULL, facet_col = "category") {
+  dot_df <- df %>%
+    pivot_longer(all_of(feature_labels), names_to = "feature", values_to = "expr") %>%
+    group_by(across(all_of(c(group_col, facet_row, facet_col))), feature) %>%
+    summarise(frac = mean(expr >= log2(tpm_cut + 1)), med = median(expr), n = n(), .groups = "drop") %>%
+    filter(n >= min_n)
+  if (nrow(dot_df) == 0) return(NULL)
+  dot_df$feature <- factor(dot_df$feature, levels = rev(feature_labels))   # first feature at the top
+ 
+  p <- ggplot(dot_df, aes(.data[[group_col]], feature, size = frac, colour = med)) +
+    geom_point() +
+    scale_colour_gradientn(colours = c("white", "#4575B4", "#D73027"), name = "median of log2(tpm + 1)\nall samples") +
+    scale_size(range = c(0.3, 5), limits = c(0, 1), name = paste0("fraction\nTPM >= ", tpm_cut)) +
+    labs(x = group_col, y = NULL) +
+    my_theme() +
+    theme(panel.background = element_rect(fill = "grey92"), panel.grid.major = element_line(colour = "white")) +
+    ggtitle(title)
+  if (!is.null(facet_row) || !is.null(facet_col)) {
+    p <- p + facet_grid(rows = if (!is.null(facet_row)) vars(.data[[facet_row]]),
+                        cols = if (!is.null(facet_col)) vars(.data[[facet_col]]),
+                        scales = "free_x", space = "free_x")
+  }
+  p
+}
+ 
+plot_dot_pdf <- function(plot_df, feature_labels, file, types, highlight_terms) {
+  show_plot <- function(p) if (!is.null(p)) print(p)
+  with_pdf(file, width = 25, height = max(5, 0.2 * length(feature_labels) + 3), {
+    show_plot(dot_plot(plot_df, "plot_group", "All types combined", feature_labels))
+    id_df <- prep_identity(plot_df, highlight_terms)
+    if (nrow(id_df) > 0) show_plot(dot_plot(id_df, "identity", "cell-line names", feature_labels, facet_row = "treatment_status", facet_col = NULL))
+    for (t in types) {
+      sub_df <- plot_df[plot_df$type == t, ]
+      if (nrow(sub_df) == 0) next
+      show_plot(dot_plot(sub_df, "plot_group", as.character(t), feature_labels))
+    }
+  })
+}
+ 
+## ---------------------------------------------------------------- tau specificity strips
+pal_strip <- colorRampPalette(c("#4575B4", "#91BFDB", "#E0F3F8", "#FEE090", "#FC8D59", "#D73027"))(100)  # blue = low, red = high
+ 
+specificity_strip <- function(df, group_col, feature_labels, highlight, min_n = 3, per_feature = FALSE, tile_ratio = 1,
+                              title = NULL, zero_cut = 1e-12) {
+  grp <- df %>% group_by(.data[[group_col]]) %>%
+    summarise(n_samples = n(), across(all_of(feature_labels), ~ median(.x, na.rm = TRUE)), .groups = "drop") %>%
+    filter(n_samples >= min_n)
+  if (nrow(grp) < 3) return(NULL)
+ 
+  M <- 2^t(as.matrix(grp[, feature_labels])) - 1                  # rows = features, cols = groups, linear TPM
+  colnames(M) <- as.character(grp[[group_col]])
+  M <- M[rowSums(M) > 0, , drop = FALSE]                          # features never expressed are dropped
+  if (nrow(M) == 0) return(NULL)
+  tau <- apply(M, 1, function(x) sum(1 - x / max(x)) / (length(x) - 1))
+  peak <- apply(M, 1, which.max)
+ 
+  cell <- (M / rowSums(M)) * tau                                  # each feature's tau split across groups by share
+  col_order <- names(sort(colSums(cell), decreasing = TRUE))
+ 
+  if (per_feature) {
+    rownames(cell) <- sprintf("%s (tau = %.2f)", rownames(cell), tau)
+    rord <- order(match(colnames(M)[peak], col_order), -tau)      # staircase
+    long <- as.data.frame(as.table(cell[rord, col_order, drop = FALSE]))
+    long$Var1 <- factor(long$Var1, levels = rev(rownames(cell)[rord]))
+    fill_lab <- "tau x share of\nexpression"
+  } else {
+    long <- data.frame(Var1 = "all features", Var2 = factor(col_order, levels = col_order), Freq = colSums(cell)[col_order])
+    fill_lab <- "sum of\ntau x share"
+  }
+  long$Freq[abs(long$Freq) < zero_cut] <- NA                      # values below zero_cut become NA
+  if (all(is.na(long$Freq))) return(NULL)
+  zero_df <- long[is.na(long$Freq), ]                             # cells to draw in grey
+  key_lab <- if (zero_cut > 1e-6) paste0("< ", zero_cut) else "0" # legend label for the grey key
+ 
+  # Colour limits = data range; breaks include both ends of the range
+  rng <- range(long$Freq, na.rm = TRUE)
+  brks <- pretty(rng, n = 5)
+  brks <- brks[brks >= rng[1] & brks <= rng[2]]
+  gap <- max(diff(rng), 1e-9) * 0.08                              # don't add an end label that would crowd a neighbour
+  if (length(brks) == 0 || min(abs(brks - rng[1])) > gap) brks <- c(rng[1], brks)
+  if (min(abs(brks - rng[2])) > gap) brks <- c(brks, rng[2])
+  brks <- sort(unique(brks))
+  brk_labels <- function(x) vapply(x, function(v) format(round(v, 2)), character(1))
+ 
+  hl_col <- if (length(highlight) > 0) ifelse(grepl(paste(highlight, collapse = "|"), col_order, ignore.case = TRUE), "red", "black") else "black"
+ 
+  ggplot(long, aes(Var2, Var1)) +
+    geom_tile(aes(fill = Freq)) +
+    geom_tile(data = zero_df, fill = "grey90", linewidth = 0) +                       # the grey cells themselves
+    geom_point(data = long[1, ], aes(colour = key_lab), alpha = 0, shape = 22) +      # invisible layer: always creates the legend key
+    scale_fill_gradientn(colours = pal_strip, name = fill_lab, na.value = "transparent",
+                         limits = rng, breaks = brks, labels = brk_labels) +
+    scale_colour_manual(values = setNames("grey60", key_lab), name = NULL) +
+    guides(fill = guide_colourbar(order = 1),
+           colour = guide_legend(order = 2, override.aes = list(shape = 22, fill = "grey90", colour = "grey60", alpha = 1, size = 4))) +
+    scale_x_discrete(expand = c(0, 0)) + scale_y_discrete(expand = c(0, 0)) +
+    coord_fixed(ratio = tile_ratio) +
+    labs(x = NULL, y = NULL) + ggtitle(title) +
+    theme_minimal() +
+    theme(panel.grid = element_blank(), axis.ticks = element_blank(),
+          axis.text.y = element_text(size = 7),
+          axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5, size = 8, colour = hl_col))
+}
+ 
+make_strips <- function(plot_df, feature_labels, types, highlight_terms, per_feature, file, height) {
+  with_pdf(file, width = 16, height = height, {
+    sp <- function(d, g, ttl) {
+      p <- specificity_strip(d, g, feature_labels, highlight = highlight_terms, per_feature = per_feature, title = ttl)
+      if (!is.null(p)) print(p)
+    }
+    sp(plot_df, "plot_group", "All types combined")
+    id_df <- prep_identity(plot_df, highlight_terms)
+    if (nrow(id_df) > 0) sp(id_df, "identity", "cell-line names")
+    for (t in types) sp(plot_df[plot_df$type == t, ], "plot_group", as.character(t))
+  })
 }
