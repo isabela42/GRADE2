@@ -880,7 +880,7 @@ metadata_barplot_facet <- function(df, x_condition, y_condition, fill_condition 
     plot_df <- df %>% count(.data[[y_condition]], .data[[x_condition]]) %>%
       mutate(x_ordered = tidytext::reorder_within(.data[[x_condition]], -n, .data[[y_condition]]))
     plot <- ggplot(plot_df, aes(x = x_ordered, y = n)) +
-    geom_col(fill = "#003557", alpha=1, color = "black") +
+    geom_col(fill = "#0072B2", alpha=1, color = "black") +
     geom_text(aes(label = n), vjust = -0.2, size = 3) +
     scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
     tidytext::scale_x_reordered(expand = c(0, 0))
@@ -915,7 +915,7 @@ metadata_barplot_facet <- function(df, x_condition, y_condition, fill_condition 
  
 histogram_plot <- function(df, condition, wrap = NULL, title, scales = NULL, log10 = FALSE, bins = 50){
     plot <- ggplot(df, aes(x = .data[[condition]])) +
-    geom_histogram(fill = "#003557", bins = bins)
+    geom_histogram(fill = "#0072B2", bins = bins)
     if(log10){plot <- plot + scale_x_log10()}
     if(!is.null(wrap)){plot <- plot + facet_wrap(wrap, scales = scales)}
     plot + ggtitle(title) + my_theme()
@@ -923,18 +923,18 @@ histogram_plot <- function(df, condition, wrap = NULL, title, scales = NULL, log
  
 barplot_distribution <- function(df, conditionX, conditionY = NULL, wrap = NULL, title, scales = "fixed"){
     if(is.null(conditionY)){
-        plot <- ggplot(df, aes(x = .data[[conditionX]])) + geom_bar(fill = "#003557")
+        plot <- ggplot(df, aes(x = .data[[conditionX]])) + geom_bar(fill = "#0072B2")
     } else {
-        plot <- ggplot(df, aes(x = .data[[conditionX]], y = .data[[conditionY]])) + geom_col(fill = "#003557")}
+        plot <- ggplot(df, aes(x = .data[[conditionX]], y = .data[[conditionY]])) + geom_col(fill = "#0072B2")}
     if(!is.null(wrap)){plot <- plot + facet_wrap(wrap, scales = scales)}
     plot + ggtitle(title) + my_theme()
 }
  
 boxplot_distribution <- function(df, conditionX, conditionY = NULL, wrap = NULL, title, scales = "fixed"){
     if(is.null(conditionY)){
-        plot <- ggplot(df, aes(x = .data[[conditionX]])) + geom_boxplot(fill = "#003557")
+        plot <- ggplot(df, aes(x = .data[[conditionX]])) + geom_boxplot(fill = "#0072B2")
     } else {
-        plot <- ggplot(df, aes(x = .data[[conditionX]], y = .data[[conditionY]])) + geom_boxplot(fill = "#003557")}
+        plot <- ggplot(df, aes(x = .data[[conditionX]], y = .data[[conditionY]])) + geom_boxplot(fill = "#0072B2")}
     if(!is.null(wrap)){plot <- plot + facet_wrap(wrap, scales = scales)}
     plot + ggtitle(title) + my_theme()
 }
@@ -942,9 +942,9 @@ boxplot_distribution <- function(df, conditionX, conditionY = NULL, wrap = NULL,
 scatter_plot <- function(df, conditionX, conditionY, gridcol = NULL, gridrow = NULL, shape = NULL, title, log10_x = FALSE){
     plot <- ggplot(df, aes(x = .data[[conditionX]], y = .data[[conditionY]]))
     if (!is.null(shape)) {plot <- plot +
-        geom_point(aes(shape = .data[[shape]]), color = "#003557", alpha = 0.5, size = 2) +
+        geom_point(aes(shape = .data[[shape]]), color = "#0072B2", alpha = 0.5, size = 2) +
         scale_shape_manual(values = rep_len(0:14, dplyr::n_distinct(df[[shape]])))   # recycles if > 15 levels
-    } else {plot <- plot + geom_point(color = "#003557", alpha = 0.5)}
+    } else {plot <- plot + geom_point(color = "#0072B2", alpha = 0.5)}
     if(log10_x){plot <- plot + scale_x_log10()}
     if(!is.null(gridrow) && !is.null(gridcol)){plot <- plot +
         facet_grid(rows = vars(.data[[gridrow]]), cols = vars(.data[[gridcol]]))
@@ -955,7 +955,7 @@ scatter_plot <- function(df, conditionX, conditionY, gridcol = NULL, gridrow = N
 violin_distribution <- function(df, conditionX, conditionY, gridrow = NULL, gridcol = NULL, title, scales = "fixed", show_n = FALSE,
                                 plot_width = 11.67, max_n_size = 3, min_n_size = 1.2, max_strip_size = 12, min_strip_size = 4) {
   plot <- ggplot(df, aes(x = .data[[conditionX]], y = .data[[conditionY]])) +
-    geom_violin(fill = "#003557", alpha = 0.7, color = "black", scale = "width") +
+    geom_violin(fill = "#0072B2", alpha = 0.7, color = "black", scale = "width") +
     geom_boxplot(width = 0.1) +
     ggbeeswarm::geom_quasirandom(color = "black", size = 0.5, alpha = 0.2, width = 0.2)
  
