@@ -1117,10 +1117,11 @@ heatmap_palettes <- list(
   ylgnbu = colorRampPalette(RColorBrewer::brewer.pal(9, "YlGnBu"))(100),
   # Diverging (use with scale = "row", i.e. z-scores centred on 0)
   div      = colorRampPalette(c("#2166AC", "#F7F7F7", "#B2182B"))(100),
-  div_blue = colorRampPalette(c("#08306B", "#4292C6", "#F7FBFF", "#FDD49E", "#B30000"))(100)
+  div_blue = colorRampPalette(c("#08306B", "#4292C6", "#F7FBFF", "#FDD49E", "#B30000"))(100),
+  div_strong = colorRampPalette(c("#053061", "#2166AC", "#67A9CF", "#F7F7F7", "#FDB863", "#E66101", "#7F3B08"))(100)
 )
  
-plot_heatmap <- function(plot_df, feature_labels, file, pal = heatmap_palettes$div_blue) {
+plot_heatmap <- function(plot_df, feature_labels, file, pal = heatmap_palettes$div_strong) {
   grp <- plot_df %>%
     group_by(category, plot_group) %>%
     summarise(n_samples = n(), across(all_of(feature_labels), ~ median(.x, na.rm = TRUE)), .groups = "drop")
