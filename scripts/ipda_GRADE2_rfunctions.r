@@ -1002,7 +1002,7 @@ violin_distribution <- function(df, conditionX, conditionY, gridrow = NULL, grid
                 mean_y = mean(.data[[conditionY]], na.rm = TRUE),
                 ymax = suppressWarnings(max(.data[[conditionY]], na.rm = TRUE)),
                 .groups = "drop") %>%
-      filter(is.finite(mean_y), mean_y != 0)
+      filter(is.finite(mean_y)) # To hide when mean is 0: filter(is.finite(mean_y), mean_y != 0)
     if (nrow(counts_df) > 0) {
       n_size <- min(max_n_size, max(min_n_size, 40 * slot_w / max(nchar(counts_df$n))))
       plot <- plot +
