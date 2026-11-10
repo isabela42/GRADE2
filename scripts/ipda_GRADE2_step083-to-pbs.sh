@@ -3,9 +3,9 @@
 version="1.0.0"
 usage(){
 echo "
-Written by Isabela Almeida with input from Larissa Cassiano
+Written by Isabela Almeida
 Created on May 13, 2026
-Last modified on Jun 03, 2026
+Last modified on Nov 11, 2026
 Version: ${version}
 
 Description: Write and submit PBS jobs for step 083 of the
@@ -21,7 +21,7 @@ Resources used for pipeline in-house: -m 1 -c 1 -w "01:00:00"
                             directory. This TSV file should contain:
                             
                             Col1:
-                            transcript-id-to-plot
+                            stem
 
                             Col2:
                             /path/from/working/dir/to/grade055_rquant_Bash_DATE/RSEM-stem_tpm.tsv
@@ -31,17 +31,32 @@ Resources used for pipeline in-house: -m 1 -c 1 -w "01:00:00"
                             Note: must contain condition and seccondition columns per sample
 
                             Col4:
-                            condition
-                            Note: must be a column name from metadata file
+                            /path/from/working/dir/to/features.tsv
+                            Note: genes/transcripts to plot; formatted as 
+                            ID | name
 
                             Col5:
-                            seccondition
-                            Note: must be a column name from metadata file
+                            /path/from/working/dir/to/grade051_alignment_STAR_DATE/
+                            Note: NA if not available or if you want to skip these plots
 
                             Col6:
-                            /path/from/working/dir/to/GRADE2/scripts/ipda_grade2_step043.r
+                            highlight-terms
+                            Note: comma sepparated; NA to skip
 
                             Col7:
+                            exclude-terms
+                            Note: similar to col6; NA to skip
+
+                            Col8:
+                            INT
+                            Note: Max features to be plotted - if feature file contains > INT,
+                            only combined plots are generated; otherwise per feature plots are generated;
+                            NA for 50 default.
+                            
+                            Col9:
+                            /path/from/working/dir/to/GRADE2/scripts/ipda_grade2_step083.r
+
+                            Col10:
                             /path/from/working/dir/to/GRADE2/scripts/ipda_grade2_rfunctions.r
 
                             It does not matter if same stem 
@@ -68,7 +83,7 @@ Pipeline description:
 #   050 Align (1STAR, 2SAMtools, 3NovoSort) and quantify reads (4RSEM, 5BASH count tables)
 #   060 PSeudo align and quantify reads at isoform level (1Salmon, 2BASH count tables)
 #   070 Differential Expression Analysis (1EdgeR)
-#-->080 Plot counts and draw metrics (1pca+heatmap+boxplot, 2metrics, 3id plots)
+#-->080 Plot counts and draw metrics (1pca+heatmap+boxplot, 2metrics, 3features)
 
 Please contact Isabela Almeida at mb.isabela42@gmail.com if you encounter any problems.
 "
@@ -254,8 +269,8 @@ cut -f1 ${input} | sort | uniq | while read stem; do echo "#....................
 cut -f1 ${input} | sort | uniq | while read stem; do echo "#  Run step" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read stem; do echo "#................................................" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 cut -f1 ${input} | sort | uniq | while read stem; do echo "" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read stem; do echo 'echo "## Plot per ID at" ; date ; echo' >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
-cut -f1 ${input} | sort | uniq | while read stem; do counts=`grep "${stem}" ${input} | cut -f2 | sort | uniq`; metadata=`grep "${stem}" ${input} | cut -f3 | sort | uniq`; condition=`grep "${stem}" ${input} | cut -f4 | sort | uniq`; seccondition=`grep "${stem}" ${input} | cut -f5 | sort | uniq`; rscript=`grep "${stem}" ${input} | cut -f6 | sort | uniq`; rfunctions=`grep "${stem}" ${input} | cut -f7 | sort | uniq`; echo "Rscript ${rscript} --inputc ${counts} --inputm ${metadata} --condition ${condition} --seccondition ${seccondition} --outdir ${outpath_GRADE2083_plots}/ --outstem \"${stem}\" --function ${rfunctions}" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do echo 'echo "## Generate plots at" ; date ; echo' >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
+cut -f1 ${input} | sort | uniq | while read stem; do line=$(awk -F'\t' -v s="${stem}" '$1==s' ${input} | head -n1); counts=$(echo "${line}" | cut -f2); metadata=$(echo "${line}" | cut -f3); features=$(echo "${line}" | cut -f4); stardir=$(echo "${line}" | cut -f5); highlight=$(echo "${line}" | cut -f6); exclude=$(echo "${line}" | cut -f7); maxfeatures=$(echo "${line}" | cut -f8); rscript=$(echo "${line}" | cut -f9); rfunctions=$(echo "${line}" | cut -f10); cmd="Rscript ${rscript} --inputc ${counts} --inputm ${metadata} --inputf ${features}" ; if [ -n "${stardir}" ] && [ "${stardir}" != "NA" ]; then cmd="${cmd} --stardir ${stardir}"; fi; if [ -n "${highlight}" ] && [ "${highlight}" != "NA" ]; then cmd="${cmd} --highlight \"${highlight}\""; fi; if [ -n "${exclude}" ] && [ "${exclude}" != "NA" ]; then cmd="${cmd} --exclude \"${exclude}\""; fi; if [ -n "${maxfeatures}" ] && [ "${maxfeatures}" != "NA" ]; then cmd="${cmd} --maxfeatures ${maxfeatures}"; fi; cmd="${cmd} --outdir ${outpath_GRADE2083_plots}/ --outstem \"${stem}\" --function ${rfunctions}"; echo "${cmd}" >> ${pbs_stem}_${stem}_${thislogdate}.pbs; done
 
 #................................................
 #  Submit PBS jobs

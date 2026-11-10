@@ -21,6 +21,8 @@ if (testing) {
   #grep -P "lincRNA|lncRNA" /working/lab_julietF/isabelaA/data/references/TranscriptomeGRCh38rel79.gtf | grep -P "\ttranscript\t" | cut -d'"' -f6,16 | tr '"' '\t' | sort | uniq | while read l; do col1=`echo "${l}" | cut -f1`; col2=`echo "${l}" | cut -f2`; echo -e "${col1}\t${col2}\n${col1}_PAR_Y\t${col2}" ; done > features.gencode.lncRNAs.transcript.tsv
   input_features <- "/working/lab_julietF/isabelaA/Project_RNA-Hub_IA/rnaseq/7kdatarnaseq/features.bcoclab.lncRNAs.transcript.tsv"
   #cut -f1 Project_BC-OC-lncRNAs_IA/lab_lncRNAs4LW-SC-SE-FC/rnaseq/grade055_rquant_Bash_29052026092303AEST/RSEM-bcoc_tpm.header-fixed.tsv | grep -v "ENST" | grep -v "NODE" | grep -v "TRINITY" | while read line ; do echo -e "${line}\t${line}" ; done > /working/lab_julietF/isabelaA/Project_RNA-Hub_IA/rnaseq/7kdatarnaseq/features.bcoclab.lncRNAs.transcript.tsv
+  input_features <- "/working/lab_julietF/isabelaA/Project_RNA-Hub_IA/rnaseq/7kdatarnaseq/features.hydra.lncRNAs.transcript.tsv"
+  #grep "NODE" /working/lab_julietF/isabelaA/Project_HyDRA_IA/ipda_hdr01_all-sl/HYDRA_step24H2_lncRNA-annotation_PBLAT_29052024173049AEST/hydra-all_m-low/hydra-all_m-low_all_plus-gencode.gtf | grep -P "\ttranscript\t" | cut -d'"' -f2 | sort | uniq > /working/lab_julietF/isabelaA/Project_RNA-Hub_IA/rnaseq/7kdatarnaseq/features.hydra.lncRNAs.transcript.tsv
   highlight <- "breast, ovar"
   exclude <- "MRC5"    # comma-separated, like highlight; "" for none
   max_features <- 50   # character(0) = default (50)
