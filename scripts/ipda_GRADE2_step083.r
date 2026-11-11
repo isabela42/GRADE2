@@ -11,7 +11,7 @@ outstem <- args[which(args == "--outstem") + 1]
 functions <- args[which(args == "--function") + 1]
 
 ## TESTING ONLY: set to TRUE to use the hardcoded values below instead of command-line arguments
-testing <- TRUE
+testing <- FALSE
 if (testing) {
   input_metadata <- "/working/lab_julietF/isabelaA/Project_RNA-Hub_IA/metadata/metadata.tsv"
   #input_counts <- "/working/lab_julietF/isabelaA/Project_HyDRA_IA/rnaseq/grade055_rquant_Bash_04022026141102AEST/RSEM-hydra-rnaseq_tpm-headerfixed.tsv"
