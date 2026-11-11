@@ -34,6 +34,9 @@ Resources used for pipeline in-house: -m 1 -c 1 -w "01:00:00"
                             /path/from/working/dir/to/features.tsv
                             Note: genes/transcripts to plot; formatted as 
                             ID | name
+                            Handles transcript-only, gene-only and gene+transcript features.
+                            For this last case, if user passes both transcripts and its respective gene,
+                            it will plot both, but this will interfere with the dot and TAU specificity plots.
 
                             Col5:
                             /path/from/working/dir/to/grade051_alignment_STAR_DATE/

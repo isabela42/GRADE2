@@ -148,13 +148,17 @@ features <- distinct(features, feature_id, .keep_all = TRUE)  # avoid duplicated
 common_samples <- intersect(colnames(counts), metadata$sequencing.id)
 if (length(common_samples) == 0) stop("No sample IDs shared between counts columns and metadata$sequencing.id")
 message(length(common_samples), " samples shared between counts and metadata")
-
-counts_subset <- counts %>% filter(TranscriptID %in% features$feature_id | GeneID %in% features$feature_id) %>%
-  select(transcript, gene, TranscriptID, GeneID, all_of(common_samples))
-if (nrow(counts_subset) == 0) stop("None of the features in --inputf were found in the counts file")
+# Each counts row can contribute to its transcript feature and to its gene feature
+tx_rows   <- counts %>% filter(TranscriptID %in% features$feature_id) %>% mutate(feature_id = TranscriptID)
+gene_rows <- counts %>% filter(GeneID %in% features$feature_id)       %>% mutate(feature_id = GeneID)
+matched   <- bind_rows(tx_rows, gene_rows) %>% distinct(transcript, feature_id, .keep_all = TRUE)   # guards rows where transcript id == gene id
+if (nrow(matched) == 0) stop("None of the features in --inputf were found in the counts file")
 metadata <- metadata %>% filter(sequencing.id %in% common_samples)
-counts_subset$feature_id <- ifelse(counts_subset$TranscriptID %in% features$feature_id, counts_subset$TranscriptID, counts_subset$GeneID)
-counts_subset <- counts_subset %>% left_join(features, by = "feature_id")
+counts_subset <- matched %>% # One row per feature_id: sum TPM across all matching rows, then add feature names
+  group_by(feature_id) %>%
+  summarise(across(all_of(common_samples), sum), .groups = "drop") %>%
+  left_join(features, by = "feature_id")
+message(nrow(matched), " matching rows collapsed to ", nrow(counts_subset), " features (TPM summed per feature id)")
 counts_subset$feature_label <- paste0(counts_subset$feature_name, " (", counts_subset$feature_id, ")")
 feature_labels <- counts_subset$feature_label
 message(length(feature_labels), " features matched")
