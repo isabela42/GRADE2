@@ -1388,7 +1388,7 @@ cor_scatter <- function(df, cor_all, color_col = "type", max_pairs = 12) {
     ggplot(d, aes(x, y, colour = .data[[color_col]])) +
       geom_point(alpha = 0.7, size = 1.5) +
       geom_smooth(aes(group = 1), method = "lm", formula = y ~ x, se = FALSE, colour = "black", linewidth = 0.6) +
-      viridis::scale_colour_viridis_d(name = color_col, drop = TRUE) +
+      scale_colour_viridis_d(name = color_col, drop = TRUE) +
       labs(x = paste(cl$feature1[i], "log2(tpm + 1)"), y = paste(cl$feature2[i], "log2(tpm + 1)")) +
       ggtitle(sprintf("%s rho = %.2f (n = %d)", cl$method[i], cl$rho[i], cl$n[i])) +
       my_theme(axis_title_size = 7, legend_size = 8) +
