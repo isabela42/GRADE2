@@ -36,11 +36,11 @@ print_help <- function() {
   cat("
 Written by Isabela Almeida
 Created on May 13, 2026
-Last modified on Nov 04, 2026
+Last modified on Nov 11, 2026
 Version: 1.0.0
 
 Description: Plot sample metadata, STAR alignment metrics and TPM expression of a feature list
-(violin, heatmap, dot plot and TAU specificity strips) for step 083 of the
+(violin, heatmap, dot plot, TAU specificity strips and feature-feature correlation) for step 083 of the
 GRADE2 PBS 2.0 pipeline (General RNAseq Analysis for Differential Expression version 2).
 
 Usage: Rscript ipda_grade2_step083.r [options]
@@ -72,7 +72,7 @@ Pipeline description:
 #   050 Align (1STAR, 2SAMtools, 3NovoSort) and quantify reads (4RSEM, 5BASH count tables)
 #   060 PSeudo align and quantify reads at isoform level (1Salmon, 2BASH count tables)
 #   070 Differential Expression Analysis (1EdgeR)
-#-->083 Plot counts and draw metrics (1pca+heatmap+boxplot, 2metrics, 3id plots)
+#-->083 Plot counts and draw metrics (1pca+heatmap+boxplot, 2metrics, 3features)
 
 Please contact Isabela Almeida at mb.isabela42@gmail.com if you encounter any problems.
 \n")
@@ -125,6 +125,10 @@ exclude_terms <- split_terms(exclude)
 type_levels <- c("patient-tissue", "cell-line", "cell-type", "PDX", "CDX", "biofluid")  # plotting order; unknown types are appended
 required_meta_cols <- c("sequencing.id", "type", "category", "biological.system", "source", "phenotype",
                         "phenotype.subtype", "phenotype.identity", "treatment")
+corr_methods <- c("spearman", "pearson", "kendall")
+corr_groups  <- c("all", "type", "category", "biological.system", "source", "phenotype", "plot_group",
+                  "phenotype.subtype", "phenotype.identity")   # any plot_df column; "all" is always added
+corr_min_n   <- 5                                               # minimum samples per group to compute a correlation
 
 ## Load metadata, features and expression matrix
 # Metadata
@@ -241,5 +245,9 @@ if (length(feature_labels) <= max_features) {                                   
   make_strips(plot_df, feature_labels, types, highlight_terms, per_feature = TRUE,
               file = paste0(outdir, "/", outstem, ".tau.features.pdf"), height = 0.2 * length(feature_labels) + 4)
 }
+
+## Expression correlation between features (all methods x all groupings)
+plot_correlation(plot_df, feature_labels, outdir, outstem, corr_groups, corr_methods, corr_min_n,
+                 max_pairs_features = max_features)
 
 message("Step 083 finished. Outputs written to: ", outdir)

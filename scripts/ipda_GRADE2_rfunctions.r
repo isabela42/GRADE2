@@ -629,7 +629,7 @@ run_fgsea <- function(qlfo, ctr, outstem, input_gmt, outdir, level) {
   }
 }
 
-plot_heatmap <- function(tpmcnt, groups_vec, genesets, qlfo_list,
+plot_heatmap_de <- function(tpmcnt, groups_vec, genesets, qlfo_list,
                          outstem, level, outdir,annotpm, substem) {
   if (is.null(genesets)) return(invisible(NULL))
 
@@ -1254,4 +1254,207 @@ make_strips <- function(plot_df, feature_labels, types, highlight_terms, per_fea
     if (nrow(id_df) > 0) sp(id_df, "identity", "cell-line names")
     for (t in types) sp(plot_df[plot_df$type == t, ], "plot_group", as.character(t))
   })
+}
+
+## ---------------------------------------------------------------- expression correlation
+# Add grouping factor .grp to df. group_col = "all" pools every sample.
+# Existing factor level order is kept (e.g. plot_group follows the highlight order).
+cor_group_df <- function(df, group_col = "all") {
+  if (identical(group_col, "all")) {
+    df$.grp <- factor("all samples")
+    return(df)
+  }
+  if (!group_col %in% colnames(df)) stop("Correlation grouping column not found: ", group_col)
+  g <- df[[group_col]]
+  df$.grp <- if (is.factor(g)) g else factor(as.character(g))
+  df <- df[!is.na(df$.grp) & as.character(df$.grp) != "", , drop = FALSE]
+  df$.grp <- droplevels(df$.grp)
+  df
+}
+
+# Feature x feature correlation matrix for one set of samples (NULL if fewer than min_n samples).
+# Constant features have no correlation and stay NA.
+cor_matrix <- function(d, features, method = "spearman", min_n = 5) {
+  m <- as.matrix(d[, features, drop = FALSE])
+  if (nrow(m) < min_n) return(NULL)
+  keep <- apply(m, 2, function(v) isTRUE(sd(v, na.rm = TRUE) > 0))
+  r <- matrix(NA_real_, length(features), length(features), dimnames = list(features, features))
+  if (sum(keep) >= 2) {
+    r[keep, keep] <- suppressWarnings(cor(m[, keep, drop = FALSE], method = method, use = "pairwise.complete.obs"))
+  }
+  r
+}
+
+# Long table of all feature pairs per group level: method, group_by, group, feature1, feature2, n, rho, p, padj
+# (padj = BH within each group level). Groups with fewer than min_n samples are omitted. NULL if nothing left.
+cor_pairs_long <- function(df, features, group_col = "all", method = "spearman", min_n = 5) {
+  df <- cor_group_df(df, group_col)
+  pairs <- t(combn(features, 2))
+  out <- list()
+  for (g in levels(df$.grp)) {
+    d <- df[df$.grp == g, , drop = FALSE]
+    if (nrow(d) < min_n) next
+    res <- lapply(seq_len(nrow(pairs)), function(i) {
+      x <- d[[pairs[i, 1]]]; y <- d[[pairs[i, 2]]]
+      ok <- is.finite(x) & is.finite(y); n <- sum(ok)
+      rho <- NA_real_; p <- NA_real_
+      if (n >= min_n && sd(x[ok]) > 0 && sd(y[ok]) > 0) {
+        ct <- suppressWarnings(cor.test(x[ok], y[ok], method = method, exact = FALSE))
+        rho <- unname(ct$estimate); p <- ct$p.value
+      }
+      c(n = n, rho = rho, p = p)
+    })
+    res <- as.data.frame(do.call(rbind, res))
+    res$padj <- p.adjust(res$p, method = "BH")
+    out[[g]] <- data.frame(method = method, group_by = group_col, group = g,
+                           feature1 = pairs[, 1], feature2 = pairs[, 2], res,
+                           row.names = NULL, stringsAsFactors = FALSE)
+  }
+  if (length(out) == 0) return(NULL)
+  out <- do.call(rbind, unname(out))
+  rownames(out) <- NULL
+  out
+}
+
+# Feature x feature heatmap, one page per group level (draws into the open device)
+cor_heatmap <- function(df, features, group_col = "all", method = "spearman", min_n = 5,
+                        pal = heatmap_palettes$div, max_numbers = 15) {
+  df <- cor_group_df(df, group_col)
+  for (g in levels(df$.grp)) {
+    d <- df[df$.grp == g, , drop = FALSE]
+    r <- cor_matrix(d, features, method, min_n)
+    if (is.null(r)) next
+    usable <- colSums(!is.na(r)) > 0                       # drops constant features
+    if (sum(usable) < 2) next
+    r <- r[usable, usable, drop = FALSE]
+    ord <- hclust(as.dist(1 - r), method = "ward.D2")$order
+    r <- r[ord, ord]
+    pheatmap::pheatmap(r, color = pal, breaks = seq(-1, 1, length.out = length(pal) + 1),
+                       cluster_rows = FALSE, cluster_cols = FALSE, na_col = "grey85", border_color = NA,
+                       display_numbers = nrow(r) <= max_numbers, number_format = "%.2f",
+                       fontsize_row = 8, fontsize_col = 8, angle_col = 90,
+                       main = sprintf("%s: %s (n = %d, %s)", group_col, g, nrow(d), method))
+  }
+}
+
+# Group x group heatmap: how similar are the expression profiles of the groups across the features?
+# Median profile per group, centred per feature across groups so baseline expression doesn't dominate.
+cor_groups_heatmap <- function(df, features, group_col, method = "spearman", min_n = 5, pal = heatmap_palettes$div) {
+  df <- cor_group_df(df, group_col)
+  keep <- names(which(table(df$.grp) >= min_n))
+  if (length(keep) < 3 || length(features) < 3) return(invisible(NULL))
+  prof <- sapply(keep, function(g) apply(df[df$.grp == g, features, drop = FALSE], 2, median, na.rm = TRUE))
+  prof <- prof - rowMeans(prof)
+  prof <- prof[, apply(prof, 2, sd) > 0, drop = FALSE]    # flat profiles have no correlation
+  if (ncol(prof) < 3) return(invisible(NULL))
+  r <- suppressWarnings(cor(prof, method = method, use = "pairwise.complete.obs"))
+  hc <- hclust(as.dist(1 - r), method = "ward.D2")
+  pheatmap::pheatmap(r, color = pal, breaks = seq(-1, 1, length.out = length(pal) + 1),
+                     cluster_rows = hc, cluster_cols = hc, border_color = NA, na_col = "grey85",
+                     fontsize_row = 6, fontsize_col = 6, angle_col = 90,
+                     main = sprintf("%s: expression-profile similarity (%s)", group_col, method))
+}
+
+# Dot plot of the top feature pairs (rows) across group levels (columns): fill = rho, size = -log10(padj)
+# Input: rows of cor_pairs_long() for one method and one group_by.
+cor_dotplot <- function(cor_long, max_pairs = 30) {
+  cl <- cor_long[!is.na(cor_long$rho), ]
+  if (nrow(cl) == 0) return(NULL)
+  cl$pair <- paste(cl$feature1, "~", cl$feature2)
+  top <- head(names(sort(tapply(abs(cl$rho), cl$pair, max), decreasing = TRUE)), max_pairs)
+  cl <- cl[cl$pair %in% top, ]
+  cl$pair <- factor(cl$pair, levels = rev(top))
+  cl$group <- factor(cl$group, levels = unique(cor_long$group))
+  cl$sig <- pmin(-log10(cl$padj), 10)
+  ggplot(cl, aes(group, pair, fill = rho, size = sig)) +
+    geom_point(shape = 21, colour = "grey30") +
+    scale_fill_gradientn(colours = c("#2166AC", "#F7F7F7", "#B2182B"), limits = c(-1, 1),
+                         name = paste0(unique(cl$method), "\nrho")) +
+    scale_size_continuous(range = c(0.5, 5), limits = c(0, 10), name = "-log10(padj)") +
+    labs(x = unique(cl$group_by), y = NULL) +
+    my_theme() +
+    theme(panel.background = element_rect(fill = "grey92"), panel.grid.major = element_line(colour = "white")) +
+    ggtitle(paste("Top feature-pair correlations by", unique(cl$group_by)))
+}
+
+# Scatter plots of the strongest pairs (input: rows of cor_pairs_long() with group_by == "all"); returns a list of ggplots
+cor_scatter <- function(df, cor_all, color_col = "type", max_pairs = 12) {
+  cl <- cor_all[!is.na(cor_all$rho), ]
+  if (nrow(cl) == 0) return(NULL)
+  cl <- head(cl[order(-abs(cl$rho)), ], max_pairs)
+  lapply(seq_len(nrow(cl)), function(i) {
+    d <- df
+    d$x <- d[[cl$feature1[i]]]; d$y <- d[[cl$feature2[i]]]
+    ggplot(d, aes(x, y, colour = .data[[color_col]])) +
+      geom_point(alpha = 0.7, size = 1.5) +
+      geom_smooth(aes(group = 1), method = "lm", formula = y ~ x, se = FALSE, colour = "black", linewidth = 0.6) +
+      viridis::scale_colour_viridis_d(name = color_col, drop = TRUE) +
+      labs(x = paste(cl$feature1[i], "log2(tpm + 1)"), y = paste(cl$feature2[i], "log2(tpm + 1)")) +
+      ggtitle(sprintf("%s rho = %.2f (n = %d)", cl$method[i], cl$rho[i], cl$n[i])) +
+      my_theme(axis_title_size = 7, legend_size = 8) +
+      theme(axis.text.x = element_text(angle = 0, hjust = 0.5, vjust = 1))
+  })
+}
+
+# Driver: every method x every grouping column.
+# Writes, per method m:  <outstem>.cor.<m>.heatmap.pdf   (feature x feature, one page per group level, all group_cols)
+#                        <outstem>.cor.<m>.groups.pdf    (group x group profile similarity, one page per group_col)
+#                        <outstem>.cor.<m>.dotplot.pdf   (top pairs x groups, one page per group_col)   [pair outputs only if
+#                        <outstem>.cor.<m>.scatter.pdf   (strongest pairs over all samples)               n features <= max_pairs_features]
+# and one tidy table <outstem>.cor.pairs.tsv with all methods and groupings (ready for the viewer).
+plot_correlation <- function(plot_df, feature_labels, outdir, outstem, group_cols = "all",
+                             methods = c("spearman", "pearson", "kendall"), min_n = 5,
+                             max_pairs_features = 50, max_dot_pairs = 30, max_scatter_pairs = 12,
+                             scatter_color = "type") {
+  if (length(feature_labels) < 2) { message("Correlation skipped: need >= 2 features"); return(invisible(NULL)) }
+  group_cols <- unique(c("all", group_cols))                       # "all" is always computed
+  absent <- setdiff(group_cols, c("all", colnames(plot_df)))
+  if (length(absent) > 0) message("Correlation: column(s) not found, skipping: ", paste(absent, collapse = ", "))
+  group_cols <- setdiff(group_cols, absent)
+  n_ok <- vapply(group_cols, function(g) sum(table(cor_group_df(plot_df, g)$.grp) >= min_n), numeric(1))
+  if (any(n_ok == 0)) message("Correlation: no group with >= ", min_n, " samples, skipping: ", paste(group_cols[n_ok == 0], collapse = ", "))
+  group_cols <- group_cols[n_ok > 0]; n_ok <- n_ok[n_ok > 0]
+  if (length(group_cols) == 0) return(invisible(NULL))
+  message("Correlation (min ", min_n, " samples/group) by: ", paste0(group_cols, " [", n_ok, " groups]", collapse = ", "))
+
+  prof_cols <- setdiff(group_cols, "all")
+  do_pairs  <- length(feature_labels) <= max_pairs_features
+  if (!do_pairs) message("More than ", max_pairs_features, " features: skipping pair tables, dot plots and scatter plots")
+  hm_size   <- max(8, 0.14 * length(feature_labels) + 4)
+  all_pairs <- list()
+
+  for (m in methods) {
+    message("  correlation method: ", m)
+    stem <- paste0(outdir, "/", outstem, ".cor.", m)
+    with_pdf(paste0(stem, ".heatmap.pdf"), hm_size, hm_size,
+             for (g in group_cols) cor_heatmap(plot_df, feature_labels, g, m, min_n))
+    if (length(prof_cols) > 0) {
+      with_pdf(paste0(stem, ".groups.pdf"), 9, 9,
+               for (g in prof_cols) cor_groups_heatmap(plot_df, feature_labels, g, m, min_n))
+    }
+    if (do_pairs) {
+      pm <- do.call(rbind, lapply(group_cols, function(g) cor_pairs_long(plot_df, feature_labels, g, m, min_n)))
+      if (is.null(pm)) next
+      all_pairs[[m]] <- pm
+      if (length(prof_cols) > 0) {
+        with_pdf(paste0(stem, ".dotplot.pdf"), 14, 0.22 * max_dot_pairs + 3, {
+          for (g in prof_cols) {
+            p <- cor_dotplot(pm[pm$group_by == g, ], max_dot_pairs)
+            if (!is.null(p)) print(p)
+          }
+        })
+      }
+      sc <- cor_scatter(plot_df, pm[pm$group_by == "all", ], scatter_color, max_scatter_pairs)
+      if (!is.null(sc)) {
+        with_pdf(paste0(stem, ".scatter.pdf"), 14, 9, {
+          for (s in seq(1, length(sc), by = 6)) print(patchwork::wrap_plots(sc[s:min(s + 5, length(sc))], ncol = 3, guides = "collect"))
+        })
+      }
+    }
+  }
+  if (length(all_pairs) > 0) {
+    write.table(do.call(rbind, unname(all_pairs)), paste0(outdir, "/", outstem, ".cor.pairs.tsv"),
+                sep = "\t", quote = FALSE, row.names = FALSE)
+  }
+  invisible(all_pairs)
 }
