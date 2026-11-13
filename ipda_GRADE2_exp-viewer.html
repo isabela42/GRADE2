@@ -123,7 +123,8 @@
   dialog.logdlg { width:min(720px, 94vw); } #log { font-size:12px; font-family:ui-monospace, Menlo, Consolas, monospace; max-height:58vh; min-height:80px; overflow:auto; margin:0; padding:8px; background:var(--bg); border:1px solid var(--line); border-radius:6px; white-space:pre-wrap; } #log .ok { color:var(--ok); } #log .bad { color:var(--bad); } #log .warn { color:var(--warn); }
   @media (max-height: 760px) { aside h2 { margin:8px 0 3px; } aside textarea { min-height:48px; } .frow { margin-top:3px; } button.primary { margin-top:7px; padding:6px; } }
   @media (max-width: 1500px) { .tabs button { padding:9px 7px; gap:5px; } .ico { width:20px; height:15px; } }
-  @media (max-width: 1430px) { .tabs button small { display:none; } .tabs button { padding:9px 10px; } }
+  main { container-type:inline-size; container-name:maintabs; }
+  @container maintabs (max-width: 1190px) { .tabs button small { display:none; } .tabs button { padding:9px 10px; } }      /* seven tabs: captions only when the tab bar is wide enough for one row */
   /* ---- start page ---- */
   .callout { position:absolute; left:34px; right:0; background:color-mix(in srgb, var(--accent) 7%, var(--panel)); border:1px solid color-mix(in srgb, var(--accent) 32%, var(--line)); border-radius:8px; padding:7px 12px 8px; font-size:13px; }
   .callout p { margin:2px 0 0; color:var(--muted); font-size:12px; } .callout .st { margin-left:6px; font-size:11.5px; color:var(--muted); } .callout.done { border-left:4px solid var(--accent); } .callout.done .st { color:var(--accent); font-weight:600; } .callout.opt b + .st { margin-left:4px; }
@@ -162,8 +163,8 @@
   .about code { overflow-wrap:anywhere; } .about td:first-child, .about th:first-child { overflow-wrap:normal; word-break:normal; min-width:5.2em; } .about table { table-layout:auto; } .about td, .about th { overflow-wrap:anywhere; } .about pre.code { overflow-x:auto; }
   @container panes (max-width: 980px) { .about-grid { grid-template-columns:minmax(0, 1fr); } }
   .oldv { margin:8px 0 0; border-top:1px dashed var(--line); padding-top:6px; } .oldv > summary { cursor:pointer; color:var(--accent); font-weight:600; font-size:13px; padding:4px 0; } .oldv .when-open { display:none; } .oldv[open] .when-open { display:inline; } .oldv[open] .when-closed { display:none; }
-  #run { background:var(--lock-bg); color:var(--lock-ink); border-color:var(--lock-bd); box-shadow:none; opacity:1; cursor:not-allowed; transition:background .25s ease, color .25s ease, box-shadow .25s ease; }
-  #run.ready { background:var(--ready); color:#ffffff; border-color:var(--ready); cursor:pointer; box-shadow:0 3px 12px color-mix(in srgb, var(--ready) 45%, transparent); } #run.ready:hover { filter:brightness(1.12); }
+  #run, #corPlot { background:var(--lock-bg); color:var(--lock-ink); border-color:var(--lock-bd); box-shadow:none; opacity:1; cursor:not-allowed; transition:background .25s ease, color .25s ease, box-shadow .25s ease; }
+  #run.ready, #corPlot.ready { background:var(--ready); color:#ffffff; border-color:var(--ready); cursor:pointer; box-shadow:0 3px 12px color-mix(in srgb, var(--ready) 45%, transparent); } #run.ready:hover, #corPlot.ready:hover { filter:brightness(1.12); }
   .samplebar { background:var(--panel); border:1px solid var(--line); border-left:5px solid var(--accent); border-radius:8px; padding:9px 13px; margin:6px 0 12px; font-size:13px; } .samplebar .srow { display:flex; flex-wrap:wrap; gap:8px 18px; align-items:center; margin:7px 0 3px; } .samplebar label { display:flex; gap:7px; align-items:center; margin:0; color:var(--ink); font-size:13px; } .samplebar .sampleN { width:84px; } .samplebar .sampleSeed { width:130px; }
   .card .head { flex-wrap:wrap; row-gap:6px; } .card .head button, .card .head select { white-space:nowrap; } .card .head .title { flex:1 1 260px; min-width:0; }
   .hovtoggle { display:inline-flex; align-items:center; gap:6px; margin:0 14px 0 0; font-size:13px; color:var(--ink); cursor:pointer; user-select:none; } .hovtoggle input { margin:0; }
@@ -174,6 +175,11 @@
   .tourcard .tstep { color:var(--muted); font-size:11.5px; text-transform:uppercase; letter-spacing:.04em; } .tourcard .tt { font-weight:700; font-size:16px; color:var(--accent); margin:2px 0 6px; } .tourcard .tn { margin-top:8px; padding:6px 9px; font-size:12.5px; color:var(--muted); background:color-mix(in srgb, var(--accent) 7%, var(--panel)); border-radius:6px; }
   .tourcard .tx { margin-top:10px; } .tourcard .tnav { display:flex; align-items:center; gap:8px; margin-top:12px; } .tourcard button { font-size:13px; padding:5px 12px; } .tourcard .tskip { background:none; border:none; color:var(--muted); padding:5px 2px; text-decoration:underline; }
   .tourcard .tprimary, .tourcard .tnext { background:var(--ready); border-color:var(--ready); color:#fff; font-weight:600; }
+  .corgrid { display:grid; grid-template-columns:repeat(auto-fit, minmax(380px, 1fr)); gap:0 12px; }
+  .corbox { background:var(--panel); border:1px solid var(--line); border-left:5px solid var(--accent); border-radius:8px; padding:9px 13px; margin:0 0 12px; } .corbox h4 { margin:0 0 6px; font-size:13.5px; color:var(--h3); } .corbox .crow { display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center; margin:5px 0; } .corbox label { display:flex; align-items:center; gap:6px; margin:0; font-size:13px; } .corbox input[type=search] { flex:1 1 170px; min-width:140px; } .corbox input[type=number] { width:76px; }
+  .corlist { max-height:230px; overflow:auto; margin:6px 0; padding:6px 8px; border:1px solid var(--line); border-radius:6px; background:color-mix(in srgb, var(--accent) 3%, var(--panel)); display:grid; grid-template-columns:repeat(auto-fill, minmax(215px, 1fr)); gap:2px 10px; } .corlist label { display:flex; gap:6px; align-items:center; font-size:12.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .corlist .cn { color:var(--muted); font-size:11.5px; } .corlist .hint { grid-column:1 / -1; }
+  #corPlot { width:auto; margin-left:auto; padding:7px 22px; font-weight:600; }
+  .citenote { max-width:540px; margin:10px 0 6px; padding:8px 12px; font-size:13px; border:1px solid var(--line); border-left:4px solid var(--h3); border-radius:4px; background:color-mix(in srgb, var(--h3) 6%, var(--panel)); } .citenote a { color:var(--accent); font-weight:600; overflow-wrap:anywhere; } .citenote.about { max-width:none; }
   .iconbtn { font-size:18px; line-height:1; padding:5px 10px; }
   @media (max-width: 1100px) { .about-grid { grid-template-columns:1fr; } }
   @media (max-width: 900px) { body { height:auto; overflow:auto; display:block; } .panes { overflow:visible; } main { overflow:visible; } aside { height:auto; } .runblock { position:static; } #foot { border-top:0; } .layout { grid-template-columns:1fr; } aside { position:static; max-height:none; } }
@@ -231,6 +237,7 @@
     <button data-tab="heatmap" type="button" title="median per group, row z-score"><svg class="ico" viewBox="0 0 28 21" aria-hidden="true"><rect class="c" x="1" y="1.5" width="6" height="5.4" rx=".8"/><rect class="d" x="8" y="1.5" width="6" height="5.4" rx=".8"/><rect class="b" x="15" y="1.5" width="6" height="5.4" rx=".8"/><rect class="a" x="22" y="1.5" width="5" height="5.4" rx=".8"/><rect class="d" x="1" y="7.8" width="6" height="5.4" rx=".8"/><rect class="b" x="8" y="7.8" width="6" height="5.4" rx=".8"/><rect class="o" x="15" y="7.8" width="6" height="5.4" rx=".8"/><rect class="b" x="22" y="7.8" width="5" height="5.4" rx=".8"/><rect class="a" x="1" y="14.1" width="6" height="5.4" rx=".8"/><rect class="c" x="8" y="14.1" width="6" height="5.4" rx=".8"/><rect class="d" x="15" y="14.1" width="6" height="5.4" rx=".8"/><rect class="c" x="22" y="14.1" width="5" height="5.4" rx=".8"/></svg><span class="tt"><b>Heatmap</b><small>median per group, row z-score</small></span></button>
     <button data-tab="tau" type="button" title="which groups express it"><svg class="ico" viewBox="0 0 28 21" aria-hidden="true"><rect class="d" x="1" y="4" width="4" height="4" /><rect class="d" x="5.8" y="4" width="4" height="4"/><rect class="c" x="10.6" y="4" width="4" height="4"/><rect class="o" x="15.4" y="4" width="4" height="4"/><rect class="c" x="20.2" y="4" width="4" height="4"/><rect class="d" x="25" y="4" width="2.6" height="4"/><rect class="c" x="1" y="9.2" width="4" height="4"/><rect class="d" x="5.8" y="9.2" width="4" height="4"/><rect class="d" x="10.6" y="9.2" width="4" height="4"/><rect class="b" x="15.4" y="9.2" width="4" height="4"/><rect class="d" x="20.2" y="9.2" width="4" height="4"/><rect class="c" x="25" y="9.2" width="2.6" height="4"/><rect class="d" x="1" y="14.4" width="4" height="4"/><rect class="c" x="5.8" y="14.4" width="4" height="4"/><rect class="d" x="10.6" y="14.4" width="4" height="4"/><rect class="d" x="15.4" y="14.4" width="4" height="4"/><rect class="b" x="20.2" y="14.4" width="4" height="4"/><rect class="d" x="25" y="14.4" width="2.6" height="4"/></svg><span class="tt"><b>TAU Specificity</b><small>which groups express it</small></span></button>
     <button data-tab="dot" type="button" title="fraction expressing &amp; median"><svg class="ico" viewBox="0 0 28 21" aria-hidden="true"><circle class="a" cx="5" cy="4.5" r="3.1"/><circle class="b" cx="14" cy="4.5" r="1.5"/><circle class="c" cx="23" cy="4.5" r="2.3"/><circle class="b" cx="5" cy="11" r="1.6"/><circle class="a" cx="14" cy="11" r="3.3"/><circle class="d" cx="23" cy="11" r="1.2"/><circle class="c" cx="5" cy="17" r="2.5"/><circle class="b" cx="14" cy="17" r="1.8"/><circle class="a" cx="23" cy="17" r="2.9"/></svg><span class="tt"><b>Dot plot</b><small>fraction expressing &amp; median</small></span></button>
+    <button data-tab="cor" type="button" title="scatter plots and correlation between features"><svg class="ico" viewBox="0 0 28 21" aria-hidden="true"><circle class="a" cx="5" cy="16" r="1.9"/><circle class="b" cx="9.5" cy="12.5" r="1.9"/><circle class="a" cx="13" cy="13.5" r="1.9"/><circle class="c" cx="16.5" cy="8.5" r="1.9"/><circle class="b" cx="21" cy="6" r="1.9"/><circle class="a" cx="24" cy="4" r="1.7"/><path d="M2.5 18 L26 2.5" stroke="#5d6b7a" stroke-width="1.3" fill="none"/></svg><span class="tt"><b>Correlation</b><small>between features</small></span></button>
     <button data-tab="meta" type="button" title="samples per group"><svg class="ico" viewBox="0 0 28 21" aria-hidden="true"><rect class="d" x="2" y="1.5" width="7" height="6"/><rect class="a" x="2" y="7.5" width="7" height="11"/><rect class="c" x="10.5" y="1.5" width="7" height="5"/><rect class="b" x="10.5" y="6.5" width="7" height="6"/><rect class="a" x="10.5" y="12.5" width="7" height="6"/><rect class="b" x="19" y="1.5" width="7" height="13"/><rect class="d" x="19" y="14.5" width="7" height="4"/></svg><span class="tt"><b>Sample metadata</b><small>samples per group</small></span></button>
     <button data-tab="star" type="button" title="mapping metrics"><svg class="ico" viewBox="0 0 28 21" aria-hidden="true"><rect class="a" x="2" y="5" width="4" height="14"/><rect class="b" x="7.6" y="10" width="4" height="9"/><rect class="a" x="13.2" y="2.5" width="4" height="16.5"/><rect class="b" x="18.8" y="13" width="4" height="6"/><rect class="a" x="24.4" y="8" width="2.6" height="11"/><path class="ln" d="M1 19.6H27.4"/></svg><span class="tt"><b>STAR alignment QC</b><small>mapping metrics</small></span></button>
   </nav>
@@ -248,15 +255,16 @@
       <svg class="conn" id="conn" aria-hidden="true"></svg>
       <div class="callout" id="stepMeta" data-target="metaFile"><b>Metadata TSV</b> <span class="st"></span><p>Tab-separated, one row per sample. Needs <code>sequencing-id</code>, <code>type</code>, <code>category</code>, <code>phenotype</code>, <code>phenotype-subtype</code>, <code>phenotype-identity</code> and <code>treatment</code>.</p></div>
       <div class="callout" id="stepCounts" data-target="countsFile"><b>TPM counts TSV</b> <span class="st"></span><p>Pipeline step 055 table: <code>transcript</code>, <code>gene</code>, then one column per sample (named like <code>sequencing-id</code>). Read in place, never uploaded; several GB are fine.</p></div>
-      <div class="callout" id="stepGenes" data-target="featText"><b>Gene or transcript ids</b> <span class="st"></span><p>One per line (optionally ID, Tab, name), the search box, and/or a TSV of id and name. A gene id selects all its transcripts.</p></div>
+      <div class="callout" id="stepGenes" data-target="featText"><b>Gene or transcript ids</b> <span class="st"></span><p>One per line (optionally ID, Tab, name), the search box, and/or a TSV of id and name. A transcript id is that transcript; a gene id is the gene as one feature (its transcripts' TPM added up). Both can be mixed.</p></div>
       <div class="callout opt" id="stepStar" data-target="starFile"><b>STAR alignment metrics</b> (optional) <span class="st"></span><p>One TSV with the STAR metrics of all samples; first column <code>sequencing-id</code>.</p></div>
       <div class="callout" id="stepRun" data-target="run"><b>Load features and plot</b> <span class="st"></span></div>
     </div>
     <div class="start-right">
       <h2>Welcome to the GRADE2 RNAseq expression viewer</h2>
       <div class="tagline">A standalone, browser-based visualisation tool</div>
-      <p>Explore the expression of genes and transcripts from your GRADE2 results: violins, heatmap, TAU Specificity, dot plots, sample metadata and STAR alignment QC.</p>
+      <p>Explore the expression of genes and transcripts from your GRADE2 results: violins, heatmap, TAU Specificity, dot plots, correlation, sample metadata and STAR alignment QC.</p>
       <p class="privnote"><b>Your data doesn't leave your computer.</b> The files are read by your browser, and this page is not allowed to use the network, so there is nowhere for them to go. The <a href="#" id="startPriv">Offline - no network access</a> badge at the top right checks this every time the page opens.</p>
+      <p class="citenote"><b>Using this tool? Please cite our work.</b> The most recent work that includes GRADE is <a href="https://doi.org/10.1016/j.isci.2026.116131" target="_blank" rel="noopener noreferrer">doi.org/10.1016/j.isci.2026.116131</a>.</p>
       <p class="hint">New here? The <b>Tutorial</b> button (top right) gives a two-minute guided tour. The exact format of every file is described under <a href="#inputFiles" data-goto="inputFiles">Input files</a> in the Help page.</p>
     </div>
     <div class="art-wrap"><svg class="art wide" viewBox="0 0 480 320" aria-hidden="true"><path class="ax" d="M8 8V150H230"/><path class="a" d="M43.2 134 L42.4 131.1 L41.5 128.1 L40.4 125.2 L39.2 122.2 L37.9 119.2 L36.4 116.3 L34.9 113.3 L33.4 110.4 L31.9 107.5 L30.5 104.5 L29.3 101.5 L28.3 98.6 L27.5 95.7 L27 92.7 L26.9 89.8 L27 86.8 L27.4 83.8 L28.1 80.9 L28.9 78 L30 75 L31.1 72 L32.3 69.1 L33.5 66.2 L34.7 63.2 L35.9 60.2 L37 57.3 L38 54.3 L38.9 51.4 L39.8 48.5 L40.5 45.5 L41.2 42.5 L41.8 39.6 L42.4 36.7 L42.9 33.7 L43.3 30.8 L43.7 27.8 L44 24.8 L44.3 21.9 L44.6 19 L44.8 16 L46.7 16 L46.9 19 L47.2 21.9 L47.5 24.8 L47.8 27.8 L48.2 30.8 L48.6 33.7 L49.1 36.7 L49.7 39.6 L50.3 42.5 L50.9 45.5 L51.7 48.5 L52.5 51.4 L53.5 54.3 L54.5 57.3 L55.6 60.2 L56.7 63.2 L57.9 66.2 L59.2 69.1 L60.4 72 L61.5 75 L62.6 78 L63.4 80.9 L64.1 83.8 L64.5 86.8 L64.6 89.8 L64.4 92.7 L64 95.7 L63.2 98.6 L62.2 101.5 L60.9 104.5 L59.6 107.5 L58.1 110.4 L56.6 113.3 L55.1 116.3 L53.6 119.2 L52.3 122.2 L51 125.2 L50 128.1 L49.1 131.1 L48.3 134Z"/><rect class="w" x="43.5" y="78.5" width="4.4" height="28.3" rx="1"/><path class="b" d="M93.9 134 L93.6 131.1 L93.2 128.1 L92.8 125.2 L92.2 122.2 L91.5 119.2 L90.7 116.3 L89.7 113.3 L88.5 110.4 L87.3 107.5 L85.9 104.5 L84.4 101.5 L82.8 98.6 L81.3 95.7 L79.9 92.7 L78.6 89.8 L77.4 86.8 L76.6 83.8 L76 80.9 L75.7 78 L75.8 75 L76.2 72 L76.8 69.1 L77.8 66.2 L78.9 63.2 L80.2 60.2 L81.6 57.3 L83.1 54.3 L84.5 51.4 L85.9 48.5 L87.2 45.5 L88.4 42.5 L89.5 39.6 L90.5 36.7 L91.3 33.7 L92 30.8 L92.6 27.8 L93 24.8 L93.4 21.9 L93.7 19 L93.9 16 L95.2 16 L95.4 19 L95.7 21.9 L96.1 24.8 L96.6 27.8 L97.2 30.8 L97.9 33.7 L98.7 36.7 L99.6 39.6 L100.7 42.5 L101.9 45.5 L103.2 48.5 L104.6 51.4 L106.1 54.3 L107.5 57.3 L108.9 60.2 L110.2 63.2 L111.4 66.2 L112.3 69.1 L113 72 L113.4 75 L113.5 78 L113.2 80.9 L112.6 83.8 L111.7 86.8 L110.6 89.8 L109.3 92.7 L107.8 95.7 L106.3 98.6 L104.8 101.5 L103.3 104.5 L101.9 107.5 L100.6 110.4 L99.5 113.3 L98.5 116.3 L97.6 119.2 L96.9 122.2 L96.4 125.2 L95.9 128.1 L95.6 131.1 L95.3 134Z"/><rect class="w" x="92.4" y="60.8" width="4.4" height="28.3" rx="1"/><path class="a" d="M143.1 134 L142.9 131.1 L142.6 128.1 L142.2 125.2 L141.6 122.2 L140.8 119.2 L139.9 116.3 L138.7 113.3 L137.3 110.4 L135.7 107.5 L134 104.5 L132.1 101.5 L130.3 98.6 L128.5 95.7 L127 92.7 L125.8 89.8 L125 86.8 L124.5 83.8 L124.6 80.9 L125.1 78 L125.9 75 L127 72 L128.3 69.1 L129.7 66.2 L131.1 63.2 L132.5 60.2 L133.7 57.3 L134.8 54.3 L135.8 51.4 L136.6 48.5 L137.3 45.5 L138 42.5 L138.5 39.6 L139.1 36.7 L139.6 33.7 L140.1 30.8 L140.5 27.8 L141 24.8 L141.4 21.9 L141.7 19 L142 16 L144.8 16 L145.1 19 L145.5 21.9 L145.9 24.8 L146.3 27.8 L146.8 30.8 L147.3 33.7 L147.8 36.7 L148.3 39.6 L148.9 42.5 L149.5 45.5 L150.3 48.5 L151.1 51.4 L152 54.3 L153.1 57.3 L154.4 60.2 L155.7 63.2 L157.1 66.2 L158.5 69.1 L159.8 72 L160.9 75 L161.8 78 L162.2 80.9 L162.3 83.8 L161.9 86.8 L161.1 89.8 L159.8 92.7 L158.3 95.7 L156.6 98.6 L154.7 101.5 L152.9 104.5 L151.1 107.5 L149.5 110.4 L148.1 113.3 L146.9 116.3 L146 119.2 L145.2 122.2 L144.7 125.2 L144.3 128.1 L144 131.1 L143.8 134Z"/><rect class="w" x="141.2" y="70.3" width="4.4" height="28.3" rx="1"/><path class="b" d="M185.2 134 L184 131.1 L182.8 128.1 L181.6 125.2 L180.4 122.2 L179.1 119.2 L178 116.3 L176.9 113.3 L176 110.4 L175.2 107.5 L174.5 104.5 L174 101.5 L173.7 98.6 L173.5 95.7 L173.4 92.7 L173.4 89.8 L173.6 86.8 L173.8 83.8 L174.2 80.9 L174.7 78 L175.4 75 L176.3 72 L177.4 69.1 L178.7 66.2 L180.2 63.2 L181.8 60.2 L183.4 57.3 L184.9 54.3 L186.3 51.4 L187.6 48.5 L188.7 45.5 L189.6 42.5 L190.3 39.6 L190.8 36.7 L191.2 33.7 L191.5 30.8 L191.7 27.8 L191.9 24.8 L192 21.9 L192.1 19 L192.1 16 L192.4 16 L192.4 19 L192.5 21.9 L192.6 24.8 L192.8 27.8 L193 30.8 L193.3 33.7 L193.7 36.7 L194.2 39.6 L194.9 42.5 L195.8 45.5 L196.9 48.5 L198.2 51.4 L199.6 54.3 L201.1 57.3 L202.7 60.2 L204.3 63.2 L205.8 66.2 L207.1 69.1 L208.2 72 L209.1 75 L209.8 78 L210.3 80.9 L210.7 83.8 L210.9 86.8 L211.1 89.8 L211.1 92.7 L211.1 95.7 L210.9 98.6 L210.5 101.5 L210 104.5 L209.4 107.5 L208.6 110.4 L207.6 113.3 L206.5 116.3 L205.4 119.2 L204.2 122.2 L202.9 125.2 L201.7 128.1 L200.5 131.1 L199.4 134Z"/><rect class="w" x="190.1" y="84.4" width="4.4" height="28.3" rx="1"/><rect class="b" x="251" y="9" width="25.8" height="21.7" rx="2"/><rect class="d" x="278.8" y="9" width="25.8" height="21.7" rx="2"/><rect class="d" x="306.5" y="9" width="25.8" height="21.7" rx="2"/><rect class="a" x="334.2" y="9" width="25.8" height="21.7" rx="2"/><rect class="d" x="362" y="9" width="25.8" height="21.7" rx="2"/><rect class="c" x="389.8" y="9" width="25.8" height="21.7" rx="2"/><rect class="a" x="417.5" y="9" width="25.8" height="21.7" rx="2"/><rect class="d" x="445.2" y="9" width="25.8" height="21.7" rx="2"/><rect class="a" x="251" y="32.7" width="25.8" height="21.7" rx="2"/><rect class="d" x="278.8" y="32.7" width="25.8" height="21.7" rx="2"/><rect class="d" x="306.5" y="32.7" width="25.8" height="21.7" rx="2"/><rect class="d" x="334.2" y="32.7" width="25.8" height="21.7" rx="2"/><rect class="b" x="362" y="32.7" width="25.8" height="21.7" rx="2"/><rect class="o" x="389.8" y="32.7" width="25.8" height="21.7" rx="2"/><rect class="b" x="417.5" y="32.7" width="25.8" height="21.7" rx="2"/><rect class="d" x="445.2" y="32.7" width="25.8" height="21.7" rx="2"/><rect class="d" x="251" y="56.3" width="25.8" height="21.7" rx="2"/><rect class="d" x="278.8" y="56.3" width="25.8" height="21.7" rx="2"/><rect class="a" x="306.5" y="56.3" width="25.8" height="21.7" rx="2"/><rect class="b" x="334.2" y="56.3" width="25.8" height="21.7" rx="2"/><rect class="d" x="362" y="56.3" width="25.8" height="21.7" rx="2"/><rect class="a" x="389.8" y="56.3" width="25.8" height="21.7" rx="2"/><rect class="d" x="417.5" y="56.3" width="25.8" height="21.7" rx="2"/><rect class="d" x="445.2" y="56.3" width="25.8" height="21.7" rx="2"/><rect class="a" x="251" y="80" width="25.8" height="21.7" rx="2"/><rect class="d" x="278.8" y="80" width="25.8" height="21.7" rx="2"/><rect class="a" x="306.5" y="80" width="25.8" height="21.7" rx="2"/><rect class="a" x="334.2" y="80" width="25.8" height="21.7" rx="2"/><rect class="b" x="362" y="80" width="25.8" height="21.7" rx="2"/><rect class="d" x="389.8" y="80" width="25.8" height="21.7" rx="2"/><rect class="d" x="417.5" y="80" width="25.8" height="21.7" rx="2"/><rect class="d" x="445.2" y="80" width="25.8" height="21.7" rx="2"/><rect class="a" x="251" y="103.7" width="25.8" height="21.7" rx="2"/><rect class="d" x="278.8" y="103.7" width="25.8" height="21.7" rx="2"/><rect class="c" x="306.5" y="103.7" width="25.8" height="21.7" rx="2"/><rect class="b" x="334.2" y="103.7" width="25.8" height="21.7" rx="2"/><rect class="d" x="362" y="103.7" width="25.8" height="21.7" rx="2"/><rect class="a" x="389.8" y="103.7" width="25.8" height="21.7" rx="2"/><rect class="d" x="417.5" y="103.7" width="25.8" height="21.7" rx="2"/><rect class="a" x="445.2" y="103.7" width="25.8" height="21.7" rx="2"/><rect class="c" x="251" y="127.3" width="25.8" height="21.7" rx="2"/><rect class="a" x="278.8" y="127.3" width="25.8" height="21.7" rx="2"/><rect class="d" x="306.5" y="127.3" width="25.8" height="21.7" rx="2"/><rect class="d" x="334.2" y="127.3" width="25.8" height="21.7" rx="2"/><rect class="a" x="362" y="127.3" width="25.8" height="21.7" rx="2"/><rect class="a" x="389.8" y="127.3" width="25.8" height="21.7" rx="2"/><rect class="d" x="417.5" y="127.3" width="25.8" height="21.7" rx="2"/><rect class="c" x="445.2" y="127.3" width="25.8" height="21.7" rx="2"/><path class="ax" d="M248 6V152"/><path class="ax" d="M8 170V312H230"/><circle class="a" cx="32.3" cy="189.8" r="6.8"/><circle class="c" cx="67" cy="189.8" r="10.9"/><circle class="a" cx="101.7" cy="189.8" r="9"/><circle class="c" cx="136.3" cy="189.8" r="3.5"/><circle class="a" cx="171" cy="189.8" r="9.5"/><circle class="c" cx="205.7" cy="189.8" r="10.7"/><circle class="b" cx="32.3" cy="222.8" r="9.5"/><circle class="d" cx="67" cy="222.8" r="3.3"/><circle class="b" cx="101.7" cy="222.8" r="9.1"/><circle class="d" cx="136.3" cy="222.8" r="10.9"/><circle class="b" cx="171" cy="222.8" r="6.7"/><circle class="d" cx="205.7" cy="222.8" r="6.2"/><circle class="c" cx="32.3" cy="255.9" r="8.5"/><circle class="a" cx="67" cy="255.9" r="11"/><circle class="c" cx="101.7" cy="255.9" r="7.4"/><circle class="a" cx="136.3" cy="255.9" r="5.5"/><circle class="c" cx="171" cy="255.9" r="10.5"/><circle class="a" cx="205.7" cy="255.9" r="9.8"/><circle class="d" cx="32.3" cy="288.9" r="8.1"/><circle class="b" cx="67" cy="288.9" r="4.7"/><circle class="d" cx="101.7" cy="288.9" r="10.2"/><circle class="b" cx="136.3" cy="288.9" r="10.2"/><circle class="d" cx="171" cy="288.9" r="4.8"/><circle class="b" cx="205.7" cy="288.9" r="8"/><path class="ax" d="M250 170V312H369.88"/><rect class="a" x="258" y="176" width="23.4" height="64"/><rect class="b" x="258" y="240" width="23.4" height="38.4"/><rect class="c" x="258" y="278.4" width="23.4" height="25.6"/><rect class="a" x="285.5" y="176" width="23.4" height="32"/><rect class="b" x="285.5" y="208" width="23.4" height="57.6"/><rect class="c" x="285.5" y="265.6" width="23.4" height="38.4"/><rect class="a" x="312.9" y="176" width="23.4" height="76.8"/><rect class="b" x="312.9" y="252.8" width="23.4" height="19.2"/><rect class="c" x="312.9" y="272" width="23.4" height="32"/><rect class="a" x="340.4" y="176" width="23.4" height="44.8"/><rect class="b" x="340.4" y="220.8" width="23.4" height="44.8"/><rect class="c" x="340.4" y="265.6" width="23.4" height="38.4"/><path class="ax" d="M383.2 170V312H472"/><rect class="a" x="391.2" y="217" width="10.8" height="87"/><rect class="b" x="406.6" y="247.7" width="10.8" height="56.3"/><rect class="a" x="421.9" y="201.6" width="10.8" height="102.4"/><rect class="b" x="437.3" y="268.2" width="10.8" height="35.8"/><rect class="a" x="452.6" y="233.6" width="10.8" height="70.4"/></svg><svg class="art tall" viewBox="0 0 378 390" aria-hidden="true"><path class="ax" d="M8 8V186H180"/><path class="a" d="M35.3 170 L34.7 166.2 L34 162.3 L33.1 158.5 L32.2 154.6 L31.1 150.8 L30 146.9 L28.9 143.1 L27.7 139.2 L26.5 135.4 L25.5 131.5 L24.5 127.6 L23.7 123.8 L23.1 120 L22.8 116.1 L22.6 112.2 L22.7 108.4 L23 104.5 L23.5 100.7 L24.2 96.9 L25 93 L25.9 89.1 L26.8 85.3 L27.8 81.5 L28.7 77.6 L29.6 73.8 L30.5 69.9 L31.2 66 L32 62.2 L32.6 58.4 L33.2 54.5 L33.7 50.6 L34.2 46.8 L34.6 43 L35 39.1 L35.3 35.2 L35.6 31.4 L35.9 27.5 L36.1 23.7 L36.3 19.9 L36.5 16 L38 16 L38.1 19.9 L38.3 23.7 L38.6 27.5 L38.8 31.4 L39.1 35.2 L39.5 39.1 L39.9 43 L40.3 46.8 L40.7 50.6 L41.3 54.5 L41.9 58.4 L42.5 62.2 L43.2 66 L44 69.9 L44.9 73.8 L45.8 77.6 L46.7 81.5 L47.6 85.3 L48.6 89.1 L49.5 93 L50.3 96.9 L50.9 100.7 L51.5 104.5 L51.8 108.4 L51.9 112.2 L51.7 116.1 L51.4 120 L50.8 123.8 L50 127.6 L49 131.5 L48 135.4 L46.8 139.2 L45.6 143.1 L44.5 146.9 L43.3 150.8 L42.3 154.6 L41.4 158.5 L40.5 162.3 L39.8 166.2 L39.2 170Z"/><rect class="w" x="35" y="97.6" width="4.4" height="37" rx="1"/><path class="b" d="M74.5 170 L74.3 166.2 L74 162.3 L73.7 158.5 L73.2 154.6 L72.7 150.8 L72.1 146.9 L71.3 143.1 L70.4 139.2 L69.4 135.4 L68.3 131.5 L67.2 127.6 L66 123.8 L64.8 120 L63.7 116.1 L62.7 112.2 L61.8 108.4 L61.1 104.5 L60.7 100.7 L60.5 96.9 L60.5 93 L60.8 89.1 L61.3 85.3 L62.1 81.5 L63 77.6 L64 73.8 L65.1 69.9 L66.2 66 L67.3 62.2 L68.4 58.4 L69.4 54.5 L70.3 50.6 L71.2 46.8 L71.9 43 L72.5 39.1 L73.1 35.2 L73.5 31.4 L73.9 27.5 L74.2 23.7 L74.4 19.9 L74.6 16 L75.6 16 L75.8 19.9 L76 23.7 L76.3 27.5 L76.6 31.4 L77.1 35.2 L77.6 39.1 L78.3 43 L79 46.8 L79.8 50.6 L80.8 54.5 L81.8 58.4 L82.9 62.2 L84 66 L85.1 69.9 L86.2 73.8 L87.2 77.6 L88.1 81.5 L88.8 85.3 L89.4 89.1 L89.7 93 L89.7 96.9 L89.5 100.7 L89 104.5 L88.4 108.4 L87.5 112.2 L86.5 116.1 L85.3 120 L84.2 123.8 L83 127.6 L81.8 131.5 L80.7 135.4 L79.8 139.2 L78.9 143.1 L78.1 146.9 L77.5 150.8 L76.9 154.6 L76.5 158.5 L76.1 162.3 L75.8 166.2 L75.6 170Z"/><rect class="w" x="72.9" y="74.5" width="4.4" height="37" rx="1"/><path class="a" d="M112.6 170 L112.5 166.2 L112.3 162.3 L111.9 158.5 L111.5 154.6 L110.9 150.8 L110.2 146.9 L109.3 143.1 L108.2 139.2 L107 135.4 L105.6 131.5 L104.2 127.6 L102.7 123.8 L101.4 120 L100.2 116.1 L99.3 112.2 L98.6 108.4 L98.3 104.5 L98.3 100.7 L98.7 96.9 L99.4 93 L100.2 89.1 L101.2 85.3 L102.3 81.5 L103.4 77.6 L104.4 73.8 L105.4 69.9 L106.2 66 L107 62.2 L107.6 58.4 L108.2 54.5 L108.7 50.6 L109.1 46.8 L109.6 43 L110 39.1 L110.3 35.2 L110.7 31.4 L111 27.5 L111.3 23.7 L111.6 19.9 L111.9 16 L114 16 L114.2 19.9 L114.5 23.7 L114.8 27.5 L115.2 31.4 L115.5 35.2 L115.9 39.1 L116.3 43 L116.7 46.8 L117.2 50.6 L117.7 54.5 L118.2 58.4 L118.9 62.2 L119.6 66 L120.4 69.9 L121.4 73.8 L122.4 77.6 L123.5 81.5 L124.6 85.3 L125.6 89.1 L126.5 93 L127.1 96.9 L127.5 100.7 L127.5 104.5 L127.2 108.4 L126.6 112.2 L125.6 116.1 L124.4 120 L123.1 123.8 L121.7 127.6 L120.2 131.5 L118.9 135.4 L117.6 139.2 L116.6 143.1 L115.7 146.9 L114.9 150.8 L114.3 154.6 L113.9 158.5 L113.6 162.3 L113.3 166.2 L113.2 170Z"/><rect class="w" x="110.7" y="86.8" width="4.4" height="37" rx="1"/><path class="b" d="M145.3 170 L144.4 166.2 L143.5 162.3 L142.5 158.5 L141.5 154.6 L140.6 150.8 L139.7 146.9 L138.9 143.1 L138.1 139.2 L137.5 135.4 L137 131.5 L136.6 127.6 L136.3 123.8 L136.2 120 L136.1 116.1 L136.2 112.2 L136.3 108.4 L136.5 104.5 L136.8 100.7 L137.2 96.9 L137.7 93 L138.4 89.1 L139.3 85.3 L140.3 81.5 L141.4 77.6 L142.6 73.8 L143.9 69.9 L145.1 66 L146.2 62.2 L147.2 58.4 L148 54.5 L148.7 50.6 L149.2 46.8 L149.6 43 L150 39.1 L150.2 35.2 L150.4 31.4 L150.5 27.5 L150.6 23.7 L150.6 19.9 L150.7 16 L150.9 16 L150.9 19.9 L151 23.7 L151 27.5 L151.2 31.4 L151.3 35.2 L151.6 39.1 L151.9 43 L152.3 46.8 L152.8 50.6 L153.5 54.5 L154.4 58.4 L155.3 62.2 L156.4 66 L157.6 69.9 L158.9 73.8 L160.1 77.6 L161.2 81.5 L162.2 85.3 L163.1 89.1 L163.8 93 L164.4 96.9 L164.8 100.7 L165 104.5 L165.2 108.4 L165.3 112.2 L165.4 116.1 L165.3 120 L165.2 123.8 L164.9 127.6 L164.5 131.5 L164 135.4 L163.4 139.2 L162.6 143.1 L161.8 146.9 L160.9 150.8 L160 154.6 L159 158.5 L158.1 162.3 L157.1 166.2 L156.3 170Z"/><rect class="w" x="148.6" y="105.3" width="4.4" height="37" rx="1"/><rect class="b" x="199" y="9" width="26.7" height="20.2" rx="2"/><rect class="d" x="227.7" y="9" width="26.7" height="20.2" rx="2"/><rect class="d" x="256.3" y="9" width="26.7" height="20.2" rx="2"/><rect class="a" x="285" y="9" width="26.7" height="20.2" rx="2"/><rect class="d" x="313.7" y="9" width="26.7" height="20.2" rx="2"/><rect class="c" x="342.3" y="9" width="26.7" height="20.2" rx="2"/><rect class="a" x="199" y="31.2" width="26.7" height="20.2" rx="2"/><rect class="d" x="227.7" y="31.2" width="26.7" height="20.2" rx="2"/><rect class="a" x="256.3" y="31.2" width="26.7" height="20.2" rx="2"/><rect class="d" x="285" y="31.2" width="26.7" height="20.2" rx="2"/><rect class="d" x="313.7" y="31.2" width="26.7" height="20.2" rx="2"/><rect class="d" x="342.3" y="31.2" width="26.7" height="20.2" rx="2"/><rect class="b" x="199" y="53.5" width="26.7" height="20.2" rx="2"/><rect class="b" x="227.7" y="53.5" width="26.7" height="20.2" rx="2"/><rect class="o" x="256.3" y="53.5" width="26.7" height="20.2" rx="2"/><rect class="d" x="285" y="53.5" width="26.7" height="20.2" rx="2"/><rect class="d" x="313.7" y="53.5" width="26.7" height="20.2" rx="2"/><rect class="d" x="342.3" y="53.5" width="26.7" height="20.2" rx="2"/><rect class="a" x="199" y="75.8" width="26.7" height="20.2" rx="2"/><rect class="b" x="227.7" y="75.8" width="26.7" height="20.2" rx="2"/><rect class="d" x="256.3" y="75.8" width="26.7" height="20.2" rx="2"/><rect class="a" x="285" y="75.8" width="26.7" height="20.2" rx="2"/><rect class="d" x="313.7" y="75.8" width="26.7" height="20.2" rx="2"/><rect class="d" x="342.3" y="75.8" width="26.7" height="20.2" rx="2"/><rect class="a" x="199" y="98" width="26.7" height="20.2" rx="2"/><rect class="d" x="227.7" y="98" width="26.7" height="20.2" rx="2"/><rect class="a" x="256.3" y="98" width="26.7" height="20.2" rx="2"/><rect class="a" x="285" y="98" width="26.7" height="20.2" rx="2"/><rect class="b" x="313.7" y="98" width="26.7" height="20.2" rx="2"/><rect class="d" x="342.3" y="98" width="26.7" height="20.2" rx="2"/><rect class="d" x="199" y="120.2" width="26.7" height="20.2" rx="2"/><rect class="d" x="227.7" y="120.2" width="26.7" height="20.2" rx="2"/><rect class="a" x="256.3" y="120.2" width="26.7" height="20.2" rx="2"/><rect class="d" x="285" y="120.2" width="26.7" height="20.2" rx="2"/><rect class="c" x="313.7" y="120.2" width="26.7" height="20.2" rx="2"/><rect class="b" x="342.3" y="120.2" width="26.7" height="20.2" rx="2"/><rect class="d" x="199" y="142.5" width="26.7" height="20.2" rx="2"/><rect class="a" x="227.7" y="142.5" width="26.7" height="20.2" rx="2"/><rect class="d" x="256.3" y="142.5" width="26.7" height="20.2" rx="2"/><rect class="a" x="285" y="142.5" width="26.7" height="20.2" rx="2"/><rect class="c" x="313.7" y="142.5" width="26.7" height="20.2" rx="2"/><rect class="a" x="342.3" y="142.5" width="26.7" height="20.2" rx="2"/><rect class="d" x="199" y="164.8" width="26.7" height="20.2" rx="2"/><rect class="d" x="227.7" y="164.8" width="26.7" height="20.2" rx="2"/><rect class="a" x="256.3" y="164.8" width="26.7" height="20.2" rx="2"/><rect class="a" x="285" y="164.8" width="26.7" height="20.2" rx="2"/><rect class="d" x="313.7" y="164.8" width="26.7" height="20.2" rx="2"/><rect class="c" x="342.3" y="164.8" width="26.7" height="20.2" rx="2"/><path class="ax" d="M196 6V188"/><path class="ax" d="M8 204V382H180"/><circle class="a" cx="26.8" cy="224.2" r="6.8"/><circle class="c" cx="53.7" cy="224.2" r="10.9"/><circle class="a" cx="80.6" cy="224.2" r="9"/><circle class="c" cx="107.4" cy="224.2" r="3.5"/><circle class="a" cx="134.3" cy="224.2" r="9.5"/><circle class="c" cx="161.2" cy="224.2" r="10.7"/><circle class="b" cx="26.8" cy="257.7" r="9.5"/><circle class="d" cx="53.7" cy="257.7" r="3.3"/><circle class="b" cx="80.6" cy="257.7" r="9.1"/><circle class="d" cx="107.4" cy="257.7" r="10.9"/><circle class="b" cx="134.3" cy="257.7" r="6.7"/><circle class="d" cx="161.2" cy="257.7" r="6.2"/><circle class="c" cx="26.8" cy="291.3" r="8.5"/><circle class="a" cx="53.7" cy="291.3" r="11"/><circle class="c" cx="80.6" cy="291.3" r="7.4"/><circle class="a" cx="107.4" cy="291.3" r="5.5"/><circle class="c" cx="134.3" cy="291.3" r="10.5"/><circle class="a" cx="161.2" cy="291.3" r="9.8"/><circle class="d" cx="26.8" cy="324.9" r="8.1"/><circle class="b" cx="53.7" cy="324.9" r="4.7"/><circle class="d" cx="80.6" cy="324.9" r="10.2"/><circle class="b" cx="107.4" cy="324.9" r="10.2"/><circle class="d" cx="134.3" cy="324.9" r="4.8"/><circle class="b" cx="161.2" cy="324.9" r="8"/><circle class="a" cx="26.8" cy="358.5" r="9.8"/><circle class="c" cx="53.7" cy="358.5" r="10.5"/><circle class="a" cx="80.6" cy="358.5" r="5.6"/><circle class="c" cx="107.4" cy="358.5" r="7.4"/><circle class="a" cx="134.3" cy="358.5" r="11"/><circle class="c" cx="161.2" cy="358.5" r="8.5"/><path class="ax" d="M198 204V382H290.88"/><rect class="a" x="206" y="210" width="18.1" height="82"/><rect class="b" x="206" y="292" width="18.1" height="49.2"/><rect class="c" x="206" y="341.2" width="18.1" height="32.8"/><rect class="a" x="226.7" y="210" width="18.1" height="41"/><rect class="b" x="226.7" y="251" width="18.1" height="73.8"/><rect class="c" x="226.7" y="324.8" width="18.1" height="49.2"/><rect class="a" x="247.4" y="210" width="18.1" height="98.4"/><rect class="b" x="247.4" y="308.4" width="18.1" height="24.6"/><rect class="c" x="247.4" y="333" width="18.1" height="41"/><rect class="a" x="268.2" y="210" width="18.1" height="57.4"/><rect class="b" x="268.2" y="267.4" width="18.1" height="57.4"/><rect class="c" x="268.2" y="324.8" width="18.1" height="49.2"/><path class="ax" d="M301.2 204V382H370"/><rect class="a" x="309.2" y="262.5" width="8" height="111.5"/><rect class="b" x="320.6" y="301.8" width="8" height="72.2"/><rect class="a" x="331.9" y="242.8" width="8" height="131.2"/><rect class="b" x="343.3" y="328.1" width="8" height="45.9"/><rect class="a" x="354.6" y="283.8" width="8" height="90.2"/></svg></div>
@@ -269,6 +277,21 @@
   <section class="tabpane" id="tab-dot"><div class="minbar"><label>Min samples per group <input type="number" class="minN" value="3" min="1"></label>
     <details class="mininfo"><summary>What does this do?</summary><p>Groups with fewer samples than this are not drawn in the dot plot. The default <b>3</b> is the <code>min_n = 3</code> of the R <code>dot_plot()</code> and <code>specificity_strip()</code> functions: a median, a fraction of samples above the cut-off, or a specificity score from one or two samples is not reliable. Set <b>1</b> to keep every group (a group of one sample then counts like any other). The figures on this page redraw as soon as you change the number.</p></details></div><div id="cards-dot"><div class="empty">Dot plot: fraction of samples above the TPM cut-off (dot size) and median expression (colour) per group.</div></div><div class="samplebar hidden" id="sample-dot"><div class="sinfo"></div><div class="srow"><label>Random sample of <input type="number" class="sampleN" min="2" value="300"> genes/transcripts</label><label>seed <input type="text" class="sampleSeed" size="9" placeholder="new each time"></label><button type="button" class="small primary2 sampleGo">Plot random sample</button></div><div class="hint">Names are shown. The seed (in the title and in the file names) makes a sample reproducible. Use the figure's buttons to export the selected list, or the whole list with a column that says which were selected.</div></div><div id="picker-dot"></div><div id="custom-dot"></div></section>
 
+  <section class="tabpane" id="tab-cor">
+    <div class="corgrid">
+      <div class="corbox"><h4>1. Features <span class="hint" id="corFeatInfo"></span></h4>
+        <div class="crow"><input type="search" id="corFilter" placeholder="Filter the loaded genes/transcripts ..." autocomplete="off"><button type="button" class="small" id="corFeatAll">Tick shown</button><button type="button" class="small" id="corFeatNone">Clear</button></div>
+        <div class="corlist" id="corFeatList"></div></div>
+      <div class="corbox"><h4>2. Samples and groups (optional) <span class="hint" id="corGrpInfo"></span></h4>
+        <div class="crow"><label>Group by <select id="corGrpCol"></select></label><input type="search" id="corGrpFilter" placeholder="Filter the groups ..." autocomplete="off"><button type="button" class="small" id="corGrpAll">Tick shown</button><button type="button" class="small" id="corGrpNone">Untick all</button></div>
+        <div class="corlist" id="corGrpList"></div>
+        <div class="hint">Leave all unticked to use every sample; tick groups to use only their samples, as if subsetting the metadata. The same column defines the groups of the group figures.</div></div>
+    </div>
+    <div class="corbox corplot"><h4>3. Plot</h4>
+      <div class="crow"><label>Colour points by <select id="corColour"></select></label><label>Method <select id="corMethod"><option value="spearman">Spearman</option><option value="pearson">Pearson</option><option value="kendall">Kendall</option></select></label><label>Min samples per group <input type="number" id="corMinN" value="5" min="3"></label><label>Panel order <select id="corOrder"><option value="strongest">Strongest correlation first</option><option value="fixed">Order of the ticked features</option></select></label><label>Pairs to draw <input type="number" id="corMaxPairs" value="36" min="1" max="200"></label><button type="button" id="corPlot" class="primary" disabled>Plot correlation</button></div>
+      <div class="hint" id="corMsg"></div>
+      <details class="mininfo"><summary>What does this do?</summary><p>The correlation is between <b>features</b> (genes/transcripts) across samples, on log2(tpm + 1), with pairwise complete observations. <b>Spearman</b> (default, as in the R script), <b>Pearson</b> and <b>Kendall</b> (tau-b; limited to 100 features) are offered. <b>Panel order</b>: <i>strongest correlation first</i> ranks the pairs by |correlation| in the samples you use, so it can change when you choose other groups; <i>order of the ticked features</i> keeps the same order whatever the groups, which makes sets easy to compare. <b>Pairs to draw</b> limits the scatter plots (9 per page). <b>Min samples per group</b> (5 in the R script, at least 3 here) applies to the group figures. Every choice is part of the plot: change any of them and the button turns blue; <b>Plot correlation</b> then adds a <b>new set of tabs</b> and keeps the earlier ones.</p></details></div>
+    <div id="custom-cor"></div></section>
   <section class="tabpane" id="tab-meta"><div id="cards-meta"></div></section>
   <section class="tabpane" id="tab-star"><label class="inl"><input type="checkbox" id="starFree"> Free axes in each panel (otherwise all panels share the same axes)</label><div id="cards-star"></div></section>
 
@@ -281,6 +304,7 @@
     <p>Everything runs inside your browser: no R, no server and no internet connection are needed.</p>
     <p class="author"><b>Created by Isabela Almeida</b>, 2026.<br><span id="verAbout"></span>. Problems or suggestions: mb.isabela42@gmail.com.</p>
 
+    <p class="citenote about"><b>Using this tool? Please cite our work.</b> The most recent work that includes GRADE is <a href="https://doi.org/10.1016/j.isci.2026.116131" target="_blank" rel="noopener noreferrer">doi.org/10.1016/j.isci.2026.116131</a>.</p>
     <div class="aidisc"><b>AI-assistance disclaimer.</b> This is a standalone, browser-based visualisation version of Isabela Almeida’s own R scripts for GRADE2 step 083: the plots, metrics and design come from those scripts, together with the requirements, feedback and testing of the author, Isabela Almeida. Its initial implementation was done with <b>Claude</b> (model: <b>Claude Sonnet 5.5</b>, Anthropic), which converted the scripts into JavaScript and wrote the interface code. AI-written code can contain errors: always remember to check important figures against the output of the step 083 R scripts before relying on them.</div>
 
     <h2>Privacy and your data</h2>
@@ -314,7 +338,7 @@
       <tr><th>File</th><th>Format</th></tr>
       <tr><td>Metadata TSV</td><td>Tab-separated with a header. Required columns: <code>sequencing-id</code>, <code>type</code>, <code>category</code>, <code>phenotype</code>, <code>phenotype-subtype</code>, <code>phenotype-identity</code>, <code>treatment</code>. Also used when present: <code>biological-system</code> and <code>source</code> (metadata and STAR tabs).</td></tr>
       <tr><td>Counts TSV</td><td>TPM table from pipeline step 055: first two columns <code>transcript</code> and <code>gene</code>, then one column per sample named like the metadata <code>sequencing-id</code>. Version suffixes (<code>.5</code>) are ignored when matching IDs. Samples missing from either file are dropped.</td></tr>
-      <tr><td>Features TSV</td><td>No header; column 1 = transcript or gene ID, column 2 (optional) = the name shown on plots. A gene ID selects all of that gene's transcripts.</td></tr>
+      <tr><td>Features TSV</td><td>No header; column 1 = transcript or gene ID, column 2 (optional) = the name shown on plots. Every ID is <b>one feature</b>: a transcript ID is that transcript, a gene ID is the gene with the TPM of all its transcripts added up (the log2(tpm + 1) is taken after the sum), as in step 083 of the R script. Transcript and gene IDs can be mixed, and a gene ID listed together with some of its transcripts gives the gene and those transcripts as separate features. A figure label is <i>name (id)</i>.</td></tr>
       <tr><td>STAR summary TSV</td><td>Optional (STAR alignment QC tab). One row per sample with the numbers from each <code>.Log.final.out</code>; first column <code>sequencing-id</code>. Create it with the command in <a href="#starSection" data-goto="starSection">STAR summary table</a> below.</td></tr>
     </table>
     <h3>The tabs</h3>
@@ -323,8 +347,23 @@
       <li><b>Heatmap - median per group, row z-score:</b> median expression per group scaled per feature, colour scale centred on 0 (so average expression is pale), clustered with Ward.D2 (an overview without names above 1,500 features, see below). Bars show the category and the number of samples in each group.</li>
       <li><b>TAU Specificity - which groups express it:</b> TAU (0 = everywhere, 1 = one group only) and how expression is shared between groups; square tiles, "combined" or one row per feature. Groups with fewer than <i>Min samples per group</i> samples are left out, and a feature whose median TPM is 0 in every remaining group has no TAU (0/0): it is listed as a grey "n/a" row and counted in the note under the figure. Custom groupings with many small groups therefore lose features; lower <i>Min samples per group</i> at the top of the TAU Specificity tab or group more coarsely.</li>
       <li><b>Dot plot - fraction expressing &amp; median:</b> dot size = fraction of samples at or above the TPM cut-off; colour = median expression.</li>
+      <li><b>Correlation - between features:</b> choose the features (and optionally the groups) yourself, then <b>Plot correlation</b>: pairwise scatter plots first, then a correlation matrix, the similarity between groups and the strongest pairs across groups (see <i>Correlation</i> below).</li>
       <li><b>Sample metadata - samples per group:</b> stacked bars of how many samples there are per type, phenotype, subtype, identity and source, split by biological system and category. </li>
       <li><b>STAR alignment QC - mapping metrics:</b> input reads, uniquely mapped reads, mapping rate, read length, unmapped reads and chimeric reads per source and category, from the STAR summary table.</li>
+    </ul>
+    <h3>Transcripts, genes, or both</h3>
+    <ul>
+      <li><b>Transcript ids only:</b> one feature per transcript (the counts row with that transcript id).</li>
+      <li><b>Gene ids only:</b> one feature per gene: the TPM of every counts row of that gene is added up per sample, then log2(tpm + 1) is taken. A gene with one transcript is the same as that transcript.</li>
+      <li><b>Gene and transcript ids together:</b> each id is its own feature, so a gene and some of its transcripts appear side by side (the gene is the sum, the transcripts are the parts). The Log says how many counts rows were matched and how many features they were collapsed into, like the R script. The exports have a <code>rows_summed</code> column and list the summed transcript ids.</li>
+    </ul>
+    <h3>Correlation</h3>
+    <ul>
+      <li><b>Nothing is drawn until you ask.</b> Open the <b>Correlation</b> tab, tick 2 to 100 features in box 1 (filter the list, <i>Tick shown</i>, <i>Clear</i>), optionally tick groups in box 2, and press <b>Plot correlation</b>. The button is grey until there is something to plot and turns blue again whenever you change anything (features, groups, colour, method, minimum, panel order, number of pairs). <b>Every plot adds a new set of tabs</b> (#1, #2 ...) with its own choices, so you can compare methods or groups side by side; remove a tab with ✕ or use <i>Clear all</i>.</li>
+      <li><b>Pairwise scatter plots (first):</b> one panel per pair of features, strongest |correlation| first (or in the order of the ticked features, see <i>Panel order</i>), 9 panels per page (several pages are tabs). The strongest-first order is worked out on the samples you use, so it can differ when you choose other groups. Each point is a sample (log2(tpm + 1) of the two features), coloured by the column you choose (<i>type</i> by default, like the R script); the black line is the least-squares fit; the title gives the correlation, n and p. <b>Hover a point</b> to see the sample (id, the colour value, plot_group, category and both values): the same sample is ringed in every panel of the page, so an outlier can be followed from pair to pair. Above 2,500 samples only 2,500 (a fixed random subset) are drawn per panel to keep the page fast; the correlation, the fit and n always use every sample, and the figure says so.</li>
+      <li><b>Samples and groups:</b> pick a metadata column (plot_group, type, source, phenotype ...) and tick the groups to include; unticked = all samples. The same column defines the groups of the <b>Groups</b> figure (each group's median profile across the features, centred per feature, correlated between groups) and of <b>Pairs by group</b> (the strongest feature pairs, colour = correlation, size = -log10 of the BH-adjusted p; up to 50 features).</li>
+      <li><b>Matrix:</b> the feature x feature correlation matrix of the selection, ordered by Ward.D2 clustering of 1 - correlation (numbers are written in for 15 features or fewer). Hover a cell for the correlation, n, p and the Benjamini-Hochberg adjusted p. <b>Export pairs (TSV)</b> writes the tidy table of the R script (<code>method, group_by, group, feature1, feature2, n, rho, p, padj</code>).</li>
+      <li><b>Statistics:</b> Pearson and Spearman p-values use the t approximation, Kendall the tie-corrected normal approximation (<code>cor.test(..., exact = FALSE)</code>); constant features have no correlation (NA).</li>
     </ul>
     <h3>Long lists of genes/transcripts</h3>
     <ul>
@@ -742,7 +781,7 @@ function finishIndex(tid, gid, off, len) {
   idx.byT = new Map(); idx.byG = new Map();
   for (let i = 0; i < idx.n; i++) {
     const t = stripVersion(idx.tid[i]), g = stripVersion(idx.gid[i]);
-    idx.byT.set(t, i);
+    if (!idx.byT.has(t)) idx.byT.set(t, []); idx.byT.get(t).push(i);
     if (!idx.byG.has(g)) idx.byG.set(g, []);
     idx.byG.get(g).push(i);
   }
@@ -791,36 +830,36 @@ async function readHeader(file, idx) {
 /* ------------------------------------------------- feature selection */
 // Same rule as the R script: a counts row is kept if its transcript id OR gene id (version stripped) is in the list
 function resolveFeatures(entries, idx) {
-  const nameOf = new Map(); entries.forEach(e => { if (!nameOf.has(e.id)) nameOf.set(stripVersion(e.id), e.name); });
-  const hitRows = new Set(), found = new Set();
-  for (const id of nameOf.keys()) {
-    if (idx.byT.has(id)) { hitRows.add(idx.byT.get(id)); found.add(id); }
-    if (idx.byG.has(id)) { idx.byG.get(id).forEach(r => hitRows.add(r)); found.add(id); }
+  // Same rule as step 083 of the R script: every requested id is ONE feature. Its rows are all counts rows whose transcript id or gene id
+  // (versions stripped) equals the id, one row per distinct transcript string (R: distinct(transcript, feature_id)); the TPM of those rows is
+  // summed per sample. So a transcript id is that transcript, a gene id is the gene (sum over its transcripts), and a gene id listed together
+  // with some of its transcripts gives the gene and those transcripts as separate features.
+  const nameOf = new Map(); entries.forEach(e => { const id = stripVersion(e.id); if (!nameOf.has(id)) nameOf.set(id, e.name); });
+  const feats = [], notFound = []; let nRowsMatched = 0;
+  for (const [id, name] of nameOf) {
+    const hit = new Set(); (idx.byT.get(id) || []).forEach(r => hit.add(r)); (idx.byG.get(id) || []).forEach(r => hit.add(r));
+    if (!hit.size) { notFound.push(id); continue; }
+    const seen = new Set(), rowsIdx = []; Array.from(hit).sort((x, y) => x - y).forEach(r => { const t = idx.tid[r]; if (!seen.has(t)) { seen.add(t); rowsIdx.push(r); } });
+    const genes = uniq(rowsIdx.map(r => stripVersion(idx.gid[r]))); nRowsMatched += rowsIdx.length;
+    feats.push({ row: rowsIdx[0], rowsIdx, nRows: rowsIdx.length, featureId: id, name: name || id, transcript: rowsIdx.map(r => idx.tid[r]).join(';'), gene: genes.join(';'), label: (name && name !== id) ? `${name} (${id})` : id });
   }
-  const rows = Array.from(hitRows).sort((a, b) => a - b).map(r => {
-    const t = stripVersion(idx.tid[r]), g = stripVersion(idx.gid[r]);
-    const fid = nameOf.has(t) ? t : g;
-    return { row: r, transcript: idx.tid[r], gene: idx.gid[r], featureId: fid, name: nameOf.get(fid) };
-  });
-  const cnt = new Map(); rows.forEach(r => cnt.set(r.featureId, (cnt.get(r.featureId) || 0) + 1));
-  rows.forEach(r => {
-    const base = r.name === r.featureId ? r.featureId : `${r.name} (${r.featureId})`;
-    r.label = cnt.get(r.featureId) > 1 ? `${base} ${r.transcript}` : base;      // gene id matched several transcripts
-  });
-  return { rows, notFound: Array.from(nameOf.keys()).filter(id => !found.has(id)) };
+  feats.sort((x, y) => x.row - y.row);
+  return { rows: feats, notFound, nRowsMatched };
 }
 // Reads the selected rows and returns log2(tpm+1) per feature over `cols` (column positions of the kept samples)
-async function readFeatureRows(file, idx, rows, cols, onProgress) {
-  const X = new Array(rows.length); let done = 0;
-  const work = async (k) => {
-    const r = rows[k].row, txt = await file.slice(idx.off[r], idx.off[r] + idx.len[r]).text();
-    const f = txt.replace(/\r?\n$/, '').split('\t'), a = new Float64Array(cols.length);
-    for (let j = 0; j < cols.length; j++) { const v = parseFloat(f[cols[j]]); a[j] = Number.isFinite(v) ? Math.log2(v + 1) : NaN; }
-    X[k] = a; done++; if (onProgress) onProgress(done, rows.length);
-  };
-  const B = 16;
-  for (let s = 0; s < rows.length; s += B) await Promise.all(rows.slice(s, s + B).map((_, i) => work(s + i)));
-  return X;
+async function readFeatureRows(file, idx, feats, cols, onProgress) {
+  const sums = feats.map(() => new Float64Array(cols.length)), tasks = []; feats.forEach((f, k) => f.rowsIdx.forEach(r => tasks.push([k, r])));
+  const B = 16; let done = 0;
+  for (let s = 0; s < tasks.length; s += B) {
+    const batch = tasks.slice(s, s + B);
+    const parts = await Promise.all(batch.map(async ([, r]) => {
+      const f = (await file.slice(idx.off[r], idx.off[r] + idx.len[r]).text()).replace(/\r?\n$/, '').split('\t'), a = new Float64Array(cols.length);
+      for (let j = 0; j < cols.length; j++) a[j] = parseFloat(f[cols[j]]); return a;
+    }));
+    batch.forEach(([k], i) => { const a = parts[i], S = sums[k]; for (let j = 0; j < S.length; j++) S[j] += a[j]; });         // a missing value stays missing, like sum() without na.rm
+    done += batch.length; if (onProgress) onProgress(done, tasks.length);
+  }
+  return sums.map(S => { const a = new Float64Array(S.length); for (let j = 0; j < S.length; j++) a[j] = Number.isFinite(S[j]) ? Math.log2(S[j] + 1) : NaN; return a; });
 }
 
 /* ------------------------------------------------------------ dataset */
@@ -1099,6 +1138,9 @@ function hclustWard(pts) {
   if (n < 2) return { order: pts.map((_, i) => i), merge: [], height: [] };
   const d2 = pts.map(() => new Float64Array(n));
   for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) { let s = 0; for (let k = 0; k < pts[i].length; k++) { const d = pts[i][k] - pts[j][k]; s += d * d; } d2[i][j] = d2[j][i] = s; }
+  return wardFromD2(d2, n);
+}
+function wardFromD2(d2, n) {              // d2: squared dissimilarities (Ward.D2 takes the dissimilarities as Euclidean distances and squares them)
   const size = new Array(n).fill(1), label = Array.from({ length: n }, (_, i) => -(i + 1)), active = Array.from({ length: n }, (_, i) => i);
   const merge = [], height = [];
   for (let step = 1; step < n; step++) {
@@ -1425,7 +1467,7 @@ function renderFamily(fam, Dv, set, o) {
   if (fam === 'tau') return tauStrip(Dv, set.idx, { groupKey: grp ? 'group' : 'identity', levels: grp ? L.groupLevels : L.identityLevels, perFeature: !!o.perFeature, highlight: splitTerms(op.highlight), minN: op.minN, title: t });
   throw new Error('unknown family ' + fam);
 }
-const TAB_RANK = { violin: 1, heatmap: 2, tau: 3, dot: 4, meta: 5, star: 6 };
+const TAB_RANK = { violin: 1, heatmap: 2, tau: 3, dot: 4, cor: 5, meta: 6, star: 7 };
 let ORD = 0;
 // One card = one figure ("All types combined") + functions that yield the other views on demand
 function makeItem(fam, Dv, o) {
@@ -1486,8 +1528,20 @@ function shortFeatureLabel(label) {
 function plainItem(fam, title, build) { const ord = TAB_RANK[fam] * 1e7 + (++ORD); return { id: 'p' + ord, ord, fam, title, label: title, build }; }
 
 /* ---------------------------------------------------------- version history */
-const APP_VERSION = '0.19.0';
+const APP_VERSION = '0.23.0';
 const CHANGELOG = [
+  { v: '0.23.0', date: 'Nov 2026', changes: [
+    'Correlation tab: every "Plot correlation" now ADDS a new set of tabs (#1, #2 ...) instead of replacing the previous results, and the method, minimum samples, colour, groups, panel order and number of pairs are part of each plot (changing a method no longer redraws the earlier figures; it turns the button blue so you can add a new set). Tabs can be removed (\u2715) or cleared.',
+    'New "Panel order": strongest correlation first (as before; the order is computed on the samples you use, so it can change with other groups) or the order of the ticked features (the same whatever the groups).',
+    'The introduction paragraph of the Correlation tab is removed.',
+    'Citation request with the DOI of the most recent work that includes GRADE (10.1016/j.isci.2026.116131) on the welcome page and the About page.'] },
+  { v: '0.22.0', date: 'Nov 2026', changes: [
+    'New Correlation tab. Nothing is drawn automatically: you tick the features (2 to 100) and, optionally, the groups to include, choose what to colour by, and press "Plot correlation" (grey and locked until there is something new to plot, blue when there is).',
+    'The first figures are the pairwise scatter plots of the R script (cor_scatter): one panel per pair of features, strongest correlation first, 9 per page, points coloured by a metadata column (type by default), least-squares line, and the correlation, n and p in each title. Hover a point to see the sample; the same sample is ringed in every panel. Above 2,500 samples only 2,500 points per panel are drawn (the statistics always use every sample).',
+    'Then the correlation matrix, the similarity between groups, and the strongest pairs across groups, for the groups of the column you choose; method (Spearman, Pearson, Kendall) and minimum samples redraw everything at once; "Export pairs (TSV)" writes the tidy table of the R script. This replaces the first design of the tab (0.21.0, withdrawn).'] },
+  { v: '0.20.0', date: 'Nov 2026', changes: [
+    'Transcript ids, gene ids, or both, like step 083 of the R script: every id is one feature. A transcript id is that transcript; a gene id is the gene with the TPM of all its transcripts added up per sample (log2(tpm + 1) is taken after the sum); a gene id listed with some of its transcripts gives the gene and those transcripts as separate features. Before, a gene id was expanded into one figure per transcript.',
+    'The Log reports counts rows matched and the features they were collapsed into; the exports have a rows_summed column and list the summed transcripts; the example data and the tutorial show a mixed list.'] },
   { v: '0.19.0', date: 'Nov 2026', changes: [
     'Tutorial button (header, between the network badge and Theme): a guided tour of 14 steps with a spotlight on each part of the page, keyboard control (arrows, Esc), and an optional made-up example dataset that is loaded through the normal file handlers so real figures can be shown. Works offline; no library.'] },
   { v: '0.18.0', date: 'Nov 2026', changes: [
@@ -1830,6 +1884,384 @@ function starPlots(rows, free) {
   }));
 }
 
+/* =====================================================================================================================
+   Correlation between features. Counterparts of the R functions cor_matrix, cor_heatmap, cor_groups_heatmap, cor_dotplot, cor_pairs_long
+   ===================================================================================================================== */
+const KENDALL_MAX = 100;                       // Kendall costs n log n per pair: above this many features it is not drawn automatically
+const COR_LABEL = { spearman: 'Spearman', pearson: 'Pearson', kendall: 'Kendall' };
+PAL.cor = ramp(['#2166AC', '#F7F7F7', '#B2182B']);                    // heatmap_palettes$div of the R script (blue - white - red)
+const COR_NA = '#d9d9d9';
+
+/* ---------------------------------------------------------------- special functions, for the p-values */
+const LG_G = 7, LG_C = [0.99999999999980993, 676.5203681218851, -1259.1392167224028, 771.32342877765313, -176.61502916214059, 12.507343278686905, -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7];
+function lgamma(x) {
+  if (x < 0.5) return Math.log(Math.PI / Math.abs(Math.sin(Math.PI * x))) - lgamma(1 - x);
+  x -= 1; let a = LG_C[0]; const t = x + LG_G + 0.5; for (let i = 1; i < 9; i++) a += LG_C[i] / (x + i);
+  return 0.5 * Math.log(2 * Math.PI) + (x + 0.5) * Math.log(t) - t + Math.log(a);
+}
+function betacf(a, b, x) {                       // continued fraction of the incomplete beta function (modified Lentz)
+  const TINY = 1e-300, qab = a + b, qap = a + 1, qam = a - 1; let c = 1, d = 1 - qab * x / qap; if (Math.abs(d) < TINY) d = TINY; d = 1 / d; let h = d;
+  for (let m = 1; m <= 1000; m++) {
+    const m2 = 2 * m; let aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+    d = 1 + aa * d; if (Math.abs(d) < TINY) d = TINY; c = 1 + aa / c; if (Math.abs(c) < TINY) c = TINY; d = 1 / d; h *= d * c;
+    aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+    d = 1 + aa * d; if (Math.abs(d) < TINY) d = TINY; c = 1 + aa / c; if (Math.abs(c) < TINY) c = TINY; d = 1 / d; const del = d * c; h *= del;
+    if (Math.abs(del - 1) < 3e-16) break;
+  }
+  return h;
+}
+function betaIncReg(x, a, b) {                   // regularised incomplete beta I_x(a, b)
+  if (x <= 0) return 0; if (x >= 1) return 1;
+  const bt = Math.exp(lgamma(a + b) - lgamma(a) - lgamma(b) + a * Math.log(x) + b * Math.log(1 - x));
+  return x < (a + 1) / (a + b + 2) ? bt * betacf(a, b, x) / a : 1 - bt * betacf(b, a, 1 - x) / b;
+}
+function gammaQ(a, x) {                          // regularised upper incomplete gamma Q(a, x); Q(1/2, z^2 / 2) is the two-sided normal tail
+  if (x <= 0) return 1;
+  if (x < a + 1) { let ap = a, sum = 1 / a, del = sum; for (let n = 0; n < 1000; n++) { ap++; del *= x / ap; sum += del; if (Math.abs(del) < Math.abs(sum) * 3e-16) break; } return 1 - sum * Math.exp(-x + a * Math.log(x) - lgamma(a)); }
+  let b = x + 1 - a, c = 1e300, d = 1 / b, h = d;
+  for (let i = 1; i <= 1000; i++) { const an = -i * (i - a); b += 2; d = an * d + b; if (Math.abs(d) < 1e-300) d = 1e-300; c = b + an / c; if (Math.abs(c) < 1e-300) c = 1e-300; d = 1 / d; const del = d * c; h *= del; if (Math.abs(del - 1) < 3e-16) break; }
+  return Math.exp(-x + a * Math.log(x) - lgamma(a)) * h;
+}
+const fmtP = p => p === p ? (p < 0.001 && p > 0 ? p.toExponential(1) : p === 0 ? '0' : p.toFixed(3)) : 'NA';
+
+/* ---------------------------------------------------------------- ranks, ties, Kendall */
+function rankAvg(v) {                            // ranks with ties averaged, like R's rank()
+  const n = v.length, ord = Int32Array.from({ length: n }, (_, i) => i).sort((a, b) => v[a] - v[b]), r = new Float64Array(n);
+  for (let i = 0; i < n;) { let j = i; while (j + 1 < n && v[ord[j + 1]] === v[ord[i]]) j++; const avg = (i + j) / 2 + 1; for (let k = i; k <= j; k++) r[ord[k]] = avg; i = j + 1; }
+  return r;
+}
+function tieStat(v) {                            // sums over tie groups of size t: t(t-1), t(t-1)(2t+5), t(t-1)(t-2)  (for the Kendall variance)
+  const s = Float64Array.from(v).sort(); let a = 0, b = 0, c = 0;
+  for (let i = 0; i < s.length;) { let j = i; while (j + 1 < s.length && s[j + 1] === s[i]) j++; const t = j - i + 1; if (t > 1) { a += t * (t - 1); b += t * (t - 1) * (2 * t + 5); c += t * (t - 1) * (t - 2); } i = j + 1; }
+  return { a, b, c };
+}
+function countInversions(arr) {                  // pairs i < j with arr[i] > arr[j] (strict), bottom-up merge sort on a copy
+  let a = Float64Array.from(arr), b = new Float64Array(a.length), inv = 0; const n = a.length;
+  for (let w = 1; w < n; w *= 2) {
+    for (let lo = 0; lo < n; lo += 2 * w) {
+      const mid = Math.min(lo + w, n), hi = Math.min(lo + 2 * w, n); let i = lo, j = mid, k = lo;
+      while (i < mid && j < hi) { if (a[i] <= a[j]) b[k++] = a[i++]; else { inv += mid - i; b[k++] = a[j++]; } }
+      while (i < mid) b[k++] = a[i++]; while (j < hi) b[k++] = a[j++];
+    }
+    const t = a; a = b; b = t;
+  }
+  return inv;
+}
+function countInversionsBuf(a, b) {            // as countInversions, but sorts `a` in place using the buffer `b` (no allocation per pair)
+  const n = a.length; let inv = 0, src = a, dst = b;
+  for (let w = 1; w < n; w *= 2) {
+    for (let lo = 0; lo < n; lo += 2 * w) {
+      const mid = Math.min(lo + w, n), hi = Math.min(lo + 2 * w, n); let i = lo, j = mid, k = lo;
+      while (i < mid && j < hi) { if (src[i] <= src[j]) dst[k++] = src[i++]; else { inv += mid - i; dst[k++] = src[j++]; } }
+      while (i < mid) dst[k++] = src[i++]; while (j < hi) dst[k++] = src[j++];
+    }
+    const t = src; src = dst; dst = t;
+  }
+  return inv;
+}
+// Kendall tau-b for all pairs of complete vectors: every feature is sorted once and its order reused for all its partners
+function kendallMatrix(vecs, keep, tie, set) {
+  const F = vecs.length, n = F ? vecs[0].length : 0, ys = new Float64Array(n), bufA = new Float64Array(n), bufB = new Float64Array(n), n0 = n * (n - 1) / 2;
+  for (let i = 0; i < F; i++) {
+    if (!keep[i]) continue; const x = vecs[i], ord = Int32Array.from({ length: n }, (_, k) => k).sort((p, q) => x[p] - x[q]), runs = []; let n1 = 0;
+    for (let a = 0; a < n;) { let b = a; while (b + 1 < n && x[ord[b + 1]] === x[ord[a]]) b++; const t = b - a + 1; if (t > 1) { runs.push([a, b + 1]); n1 += t * (t - 1) / 2; } a = b + 1; }
+    for (let j = i + 1; j < F; j++) {
+      if (!keep[j]) continue; const y = vecs[j]; for (let k = 0; k < n; k++) ys[k] = y[ord[k]];
+      let n3 = 0; for (const [s, e] of runs) { const sub = ys.subarray(s, e); sub.sort(); for (let a = 0; a < sub.length;) { let b = a; while (b + 1 < sub.length && sub[b + 1] === sub[a]) b++; const u = b - a + 1; n3 += u * (u - 1) / 2; a = b + 1; } }
+      bufA.set(ys); const swaps = countInversionsBuf(bufA, bufB), n2 = tie[j].a / 2, den = Math.sqrt((n0 - n1) * (n0 - n2));
+      set(i, j, den > 0 ? Math.max(-1, Math.min(1, (n0 - n1 - n2 + n3 - 2 * swaps) / den)) : NaN, n);
+    }
+  }
+}
+function kendallTauB(x, y) {                     // Knight's O(n log n) algorithm, tau-b (ties handled)
+  const n = x.length, ord = Int32Array.from({ length: n }, (_, i) => i).sort((p, q) => (x[p] - x[q]) || (y[p] - y[q]));
+  let n1 = 0, n3 = 0;
+  for (let i = 0; i < n;) {
+    let j = i; while (j + 1 < n && x[ord[j + 1]] === x[ord[i]]) j++; const t = j - i + 1; n1 += t * (t - 1) / 2;
+    for (let a = i; a <= j;) { let b = a; while (b + 1 <= j && y[ord[b + 1]] === y[ord[a]]) b++; const u = b - a + 1; n3 += u * (u - 1) / 2; a = b + 1; }
+    i = j + 1;
+  }
+  const ys = new Float64Array(n); for (let i = 0; i < n; i++) ys[i] = y[ord[i]];
+  const swaps = countInversions(ys), ysorted = Float64Array.from(y).sort(); let n2 = 0;
+  for (let i = 0; i < n;) { let j = i; while (j + 1 < n && ysorted[j + 1] === ysorted[i]) j++; const u = j - i + 1; n2 += u * (u - 1) / 2; i = j + 1; }
+  const n0 = n * (n - 1) / 2, den = Math.sqrt((n0 - n1) * (n0 - n2));
+  return den > 0 ? (n0 - n1 - n2 + n3 - 2 * swaps) / den : NaN;
+}
+function unitVec(v) {                            // centred and scaled to length 1: a dot product of two of these is Pearson's r. null if constant
+  const n = v.length; let m = 0; for (let i = 0; i < n; i++) m += v[i]; m /= n; const o = new Float64Array(n); let s = 0;
+  for (let i = 0; i < n; i++) { o[i] = v[i] - m; s += o[i] * o[i]; }
+  if (!(s > 0)) return null; s = Math.sqrt(s); for (let i = 0; i < n; i++) o[i] /= s; return o;
+}
+
+/* ---------------------------------------------------------------- p-values: R cor.test(..., exact = FALSE) */
+function pPearsonT(r, n) {                       // Pearson and Spearman (t approximation, df = n - 2); two-sided
+  if (!(n > 2)) return NaN; const r2 = r * r; if (r2 >= 1) return 0;
+  return betaIncReg((n - 2) / (n - 2 + r2 * (n - 2) / (1 - r2)), (n - 2) / 2, 0.5);
+}
+function pKendall(tau, n, tx, ty) {              // normal approximation with the tie-corrected variance
+  if (!(n > 2)) return NaN; const n0 = n * (n - 1) / 2, S = tau * Math.sqrt((n0 - tx.a / 2) * (n0 - ty.a / 2));
+  const v0 = n * (n - 1) * (2 * n + 5), varS = (v0 - tx.b - ty.b) / 18 + tx.a * ty.a / (2 * n * (n - 1)) + tx.c * ty.c / (9 * n * (n - 1) * (n - 2));
+  if (!(varS > 0)) return NaN; const z = S / Math.sqrt(varS); return gammaQ(0.5, z * z / 2);
+}
+const corP = (method, r, n, tx, ty) => method === 'kendall' ? pKendall(r, n, tx, ty) : pPearsonT(r, n);
+function padjBH(p) {                             // Benjamini-Hochberg; NA values are left out, like R's p.adjust
+  const ix = []; for (let i = 0; i < p.length; i++) if (p[i] === p[i]) ix.push(i);
+  ix.sort((a, b) => p[a] - p[b]); const m = ix.length, out = new Float64Array(p.length).fill(NaN); let prev = 1;
+  for (let k = m - 1; k >= 0; k--) { const v = Math.min(prev, p[ix[k]] * m / (k + 1)); out[ix[k]] = v; prev = v; }
+  return out;
+}
+
+/* ---------------------------------------------------------------- one pair, and the whole matrix */
+function corPair(x, y, method) {                 // pairwise complete observations: {r, n, p}
+  const xs = [], ys = []; for (let k = 0; k < x.length; k++) if (x[k] === x[k] && y[k] === y[k]) { xs.push(x[k]); ys.push(y[k]); }
+  const n = xs.length; if (n < 3) return { r: NaN, n, p: NaN };
+  const X = Float64Array.from(xs), Y = Float64Array.from(ys); let r;
+  if (method === 'kendall') r = kendallTauB(X, Y);
+  else { const a = unitVec(method === 'spearman' ? rankAvg(X) : X), b = unitVec(method === 'spearman' ? rankAvg(Y) : Y); if (!a || !b) return { r: NaN, n, p: NaN }; r = 0; for (let k = 0; k < n; k++) r += a[k] * b[k]; }
+  if (!(r === r)) return { r: NaN, n, p: NaN };
+  r = Math.max(-1, Math.min(1, r)); return { r, n, p: corP(method, r, n, tieStat(X), tieStat(Y)) };
+}
+function corVectors(D, idx) { return D.X.map(X => Float64Array.from(idx, i => X[i])); }
+// vecs: one Float64Array per feature (same samples). Returns r (F x F, NaN where not defined), n per pair, which features vary, tie statistics.
+// A constant feature has no correlation and stays NA (R: cor_matrix)
+function corCompute(vecs, method) {
+  const F = vecs.length, r = new Float64Array(F * F).fill(NaN), nn = new Int32Array(F * F);
+  let hasNA = false; for (const v of vecs) { for (let k = 0; k < v.length; k++) if (v[k] !== v[k]) { hasNA = true; break; } if (hasNA) break; }
+  const keep = vecs.map(v => { let m = 0, c = 0; for (let k = 0; k < v.length; k++) if (v[k] === v[k]) { m += v[k]; c++; } if (c < 2) return false; m /= c; let s = 0; for (let k = 0; k < v.length; k++) if (v[k] === v[k]) s += (v[k] - m) * (v[k] - m); return s / (c - 1) > 0; });
+  const tie = hasNA ? null : vecs.map((v, f) => keep[f] ? tieStat(v) : null);
+  for (let f = 0; f < F; f++) if (keep[f]) { r[f * F + f] = 1; let c = 0; for (let k = 0; k < vecs[f].length; k++) if (vecs[f][k] === vecs[f][k]) c++; nn[f * F + f] = c; }
+  const set = (i, j, v, n) => { r[i * F + j] = r[j * F + i] = v; nn[i * F + j] = nn[j * F + i] = n; };
+  if (!hasNA && method !== 'kendall') {
+    const U = vecs.map((v, f) => keep[f] ? unitVec(method === 'spearman' ? rankAvg(v) : v) : null), n = vecs.length ? vecs[0].length : 0;
+    for (let i = 0; i < F; i++) if (U[i]) for (let j = i + 1; j < F; j++) if (U[j]) { let s = 0; const a = U[i], b = U[j]; for (let k = 0; k < n; k++) s += a[k] * b[k]; set(i, j, Math.max(-1, Math.min(1, s)), n); }
+  } else if (!hasNA) {
+    kendallMatrix(vecs, keep, tie, set);
+  } else {
+    for (let i = 0; i < F; i++) if (keep[i]) for (let j = i + 1; j < F; j++) if (keep[j]) { const o = corPair(vecs[i], vecs[j], method); set(i, j, o.r, o.n); }
+  }
+  return { F, r, nn, keep, tie, hasNA, vecs, method };
+}
+function corPvalue(res, i, j) {                  // two-sided p of the pair (i, j)
+  const r = res.r[i * res.F + j]; if (!(r === r)) return NaN;
+  if (!res.hasNA) return corP(res.method, r, res.nn[i * res.F + j], res.tie[i], res.tie[j]);
+  return corPair(res.vecs[i], res.vecs[j], res.method).p;
+}
+function corPAdjAll(res, minN) {                 // p and BH-adjusted p of every pair (R: p.adjust within a group)
+  const F = res.F, P = new Float64Array(F * F).fill(NaN), A = new Float64Array(F * F).fill(NaN), at = [], pv = [];
+  for (let i = 0; i < F; i++) for (let j = i + 1; j < F; j++) { const r = res.r[i * F + j]; if (!(r === r) || res.nn[i * F + j] < minN) continue; at.push([i, j]); pv.push(corPvalue(res, i, j)); }
+  const adj = padjBH(pv); at.forEach(([i, j], t) => { P[i * F + j] = P[j * F + i] = pv[t]; A[i * F + j] = A[j * F + i] = adj[t]; });
+  return { p: P, padj: A };
+}
+// the tidy table of the R script (cor_pairs_long): method, group_by, group, feature1, feature2, n, rho, p, padj
+function corLongRows(D, groups, method, minN, groupBy) {       // groups: [{name, idx}]
+  const F = D.labels.length, rows = [['method', 'group_by', 'group', 'feature1', 'feature2', 'n', 'rho', 'p', 'padj']], num = v => v === v ? String(v) : 'NA';
+  for (const g of groups) {
+    if (g.idx.length < minN) continue; const res = corCompute(corVectors(D, g.idx), method), pa = corPAdjAll(res, minN);
+    for (let i = 0; i < F; i++) for (let j = i + 1; j < F; j++) { const k = i * F + j; rows.push([method, groupBy, g.name, D.labels[i], D.labels[j], res.nn[k], num(res.r[k]), num(pa.p[k]), num(pa.padj[k])]); }
+  }
+  return rows;
+}
+
+/* ---------------------------------------------------------------- Ward.D2 on a dissimilarity (R: hclust(as.dist(1 - r), "ward.D2")) */
+function hclustFromDist(dist, n) {
+  if (n < 2) return { order: Array.from({ length: n }, (_, i) => i), merge: [], height: [] };
+  const d2 = Array.from({ length: n }, () => new Float64Array(n));
+  for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) { const d = dist(i, j); d2[i][j] = d2[j][i] = d * d; }
+  return wardFromD2(d2, n);
+}
+
+/* ---------------------------------------------------------------- figure 1: feature x feature heatmap (cor_heatmap) */
+function corCells(sc, x0, y0, s, m, valueAt, rgbLut) {      // vector cells for small matrices, one raster image for large ones
+  if (m <= 100) { for (let a = 0; a < m; a++) for (let b = 0; b < m; b++) { const v = valueAt(a, b); sc.rect(x0 + b * s, y0 + a * s, s + 0.3, s + 0.3, { fill: v === v ? PAL.cor((v + 1) / 2) : COR_NA }); } return; }
+  const rgb = new Uint8Array(m * m * 3), na = hex2rgb(COR_NA).map(v => Math.round(v * 255));
+  for (let a = 0; a < m; a++) for (let b = 0; b < m; b++) { const v = valueAt(a, b), c = v === v ? rgbLut[Math.max(0, Math.min(200, Math.round((v + 1) * 100)))] : na, q = (a * m + b) * 3; rgb[q] = c[0]; rgb[q + 1] = c[1]; rgb[q + 2] = c[2]; }
+  sc.image(x0, y0, m * s, m * s, { rgb, pw: m, ph: m });
+}
+const corLut = () => Array.from({ length: 201 }, (_, k) => hex2rgb(PAL.cor(k / 200)).map(v => Math.round(v * 255)));
+function corHeatmapScene(D, idx, o) {
+  const F = D.labels.length, method = o.method || 'spearman', minN = o.minN || 5, title = o.title || '', need = Math.max(3, minN);
+  if (F < 2) return messageScene(title, 'Needs at least 2 features');
+  if (idx.length < need) return messageScene(title, `Fewer than ${need} samples (${idx.length}); lower "Min samples per group" to draw this`);
+  if (method === 'kendall' && F > KENDALL_MAX) return messageScene(title, `Kendall is too slow for more than ${KENDALL_MAX} features (${F}): use Spearman or Pearson, or select fewer features`);
+  const res = corCompute(corVectors(D, idx), method), use = []; res.keep.forEach((k, f) => { if (k) use.push(f); });
+  if (use.length < 2) return messageScene(title, 'Needs at least 2 features that vary between the samples');
+  const r = res.r, tree = hclustFromDist((a, b) => { const v = r[use[a] * F + use[b]]; return v === v ? 1 - v : 1; }, use.length), ord = tree.order.map(k => use[k]), m = ord.length, labs = ord.map(f => D.labels[f]);
+  const W = CW, left = 10, legendW = 140, g0 = clamp((W - left - 10 - legendW - Math.min(maxTextW(labs, 8), 240) - 8) / m, 3, 28), showNames = g0 >= 5, lsz = clamp(g0 * 0.85, 4, 8);
+  const rowLabW = showNames ? Math.min(maxTextW(labs, lsz), 240) + 8 : 0, s = clamp((W - left - 10 - legendW - rowLabW) / m, 3, 28), size = m * s, top = 42, colLabH = rowLabW;
+  const H = Math.max(top + size + colLabH + 22, top + 240), sc = new Scene(W, H);
+  sc.text(6, 12, title, { size: 12, bold: true });
+  sc.text(6, 26, `${COR_LABEL[method]} correlation across ${idx.length.toLocaleString()} samples; features ordered by Ward.D2 clustering of 1 - correlation.` + (F > m ? ` ${F - m} feature(s) left out: no variation between these samples.` : '') + (showNames ? '' : ' Names hidden (too many): hover a cell.'), { size: 8.5, fill: '@muted' });
+  const lut = corLut(); corCells(sc, left, top, s, m, (a, b) => r[ord[a] * F + ord[b]], lut);
+  sc.rect(left, top, size, size, { stroke: '@border', sw: 0.6 });
+  if (m <= 15) for (let a = 0; a < m; a++) for (let b = 0; b < m; b++) { const v = r[ord[a] * F + ord[b]]; if (v === v) sc.text(left + (b + 0.5) * s, top + (a + 0.5) * s, v.toFixed(2), { size: clamp(s * 0.3, 5, 9), anchor: 'middle', fill: lum(PAL.cor((v + 1) / 2)) > 0.55 ? '#1d2733' : '#ffffff' }); }
+  if (showNames) labs.forEach((t, k) => { sc.text(left + size + 4, top + (k + 0.5) * s, t, { size: lsz }); sc.text(left + (k + 0.5) * s, top + size + 5, t, { size: lsz, anchor: 'end', rot: -90 }); });
+  const lx = left + size + rowLabW + 14; drawColourBar(sc, lx, top + 24, 12, 100, PAL.cor, -1, 1, [-1, -0.5, 0, 0.5, 1], `${COR_LABEL[method]}\ncorrelation`, v => String(Math.round(v * 10) / 10));
+  let anyNA = false; for (let a = 0; a < m && !anyNA; a++) for (let b = 0; b < m; b++) if (r[ord[a] * F + ord[b]] !== r[ord[a] * F + ord[b]]) { anyNA = true; break; }
+  if (anyNA) { sc.rect(lx, top + 150, 11, 11, { fill: COR_NA, stroke: '@border', sw: 0.6 }); sc.text(lx + 16, top + 155.5, 'NA', { size: 8 }); }
+  let pa = null;
+  sc.hover({ x0: left, y0: top, cw: s, ch: s, nc: m, nr: m, tip: (ci, ri) => {
+    const a = ord[ri], b = ord[ci], k = a * F + b, v = r[k]; if (a === b) return [D.labels[a], 'the same feature (correlation 1)'];
+    const lines = [`${D.labels[a]} ~ ${D.labels[b]}`, `${COR_LABEL[method]} correlation = ${v === v ? v.toFixed(3) : 'NA'}`, `n = ${res.nn[k]} samples`];
+    if (v === v) { pa = pa || corPAdjAll(res, minN); lines.push(`p = ${fmtP(pa.p[k])}  \u00B7  BH-adjusted p = ${fmtP(pa.padj[k])}`); }
+    return lines;
+  } });
+  return sc;
+}
+
+/* ---------------------------------------------------------------- figure 2: how similar are the groups across the features (cor_groups_heatmap) */
+function corGroupScene(D, idx, o) {
+  const F = D.labels.length, S = D.samples, gKey = o.groupKey || 'group', method = o.method || 'spearman', minN = o.minN || 5, title = o.title || '', byG = new Map();
+  idx.forEach(i => { const g = S[i][gKey]; if (!byG.has(g)) byG.set(g, []); byG.get(g).push(i); });
+  const lv = (o.levels || Array.from(byG.keys()).sort(cmpStr)).filter(g => byG.has(g) && byG.get(g).length >= minN);
+  if (lv.length < 3 || F < 3) return messageScene(title, `Needs >= 3 groups with >= ${minN} samples and >= 3 features (found ${lv.length} groups, ${F} features)`);
+  const prof = lv.map(g => { const ids = byG.get(g); return Float64Array.from({ length: F }, (_, f) => medianFinite(ids.map(i => D.X[f][i]))); });
+  for (let f = 0; f < F; f++) { let mn = 0, c = 0; for (const p of prof) if (p[f] === p[f]) { mn += p[f]; c++; } mn = c ? mn / c : NaN; for (const p of prof) p[f] -= mn; }     // centred per feature across groups
+  const res = corCompute(prof, method), use = []; res.keep.forEach((k, g) => { if (k) use.push(g); });                                         // flat profiles have no correlation
+  if (use.length < 3) return messageScene(title, `Fewer than 3 groups have a varying profile across the ${F} features`);
+  const r = res.r, G = lv.length, tree = hclustFromDist((a, b) => { const v = r[use[a] * G + use[b]]; return v === v ? 1 - v : 1; }, use.length), ord = tree.order.map(k => use[k]), m = ord.length, labs = ord.map(g => String(lv[g]));
+  const hl = hlSet(S, idx, gKey), W = CW, dendW = 50, dendH = 40, left = 10 + dendW, legendW = 140, g0 = clamp((W - left - 10 - legendW - Math.min(maxTextW(labs, 7), 220) - 8) / m, 3, 22), lsz = clamp(g0 * 0.85, 3.5, 7), showNames = g0 >= 4.5;
+  const rowLabW = showNames ? Math.min(maxTextW(labs, lsz), 220) + 8 : 0, s = clamp((W - left - 10 - legendW - rowLabW) / m, 3, 22), size = m * s, top = 34 + dendH + 4, H = Math.max(top + size + rowLabW + 22, top + 240), sc = new Scene(W, H);
+  sc.text(6, 12, title, { size: 12, bold: true });
+  sc.text(6, 26, `Median profile of each group across the ${F} features, centred per feature; ${COR_LABEL[method]} correlation between groups with >= ${minN} samples.` + (lv.length > m ? ` ${lv.length - m} group(s) left out: flat profile.` : '') + (showNames ? '' : ' Names hidden (too many): hover a cell.'), { size: 8.5, fill: '@muted' });
+  corCells(sc, left, top, s, m, (a, b) => r[ord[a] * G + ord[b]], corLut()); sc.rect(left, top, size, size, { stroke: '@border', sw: 0.6 });
+  drawDendrogram(sc, tree, 'cols', left, 34, dendH - 4, size, m); drawDendrogram(sc, tree, 'rows', 10, top, dendW - 4, size, m);
+  if (showNames) labs.forEach((t, k) => { const red = hl.has(lv[ord[k]]); sc.text(left + size + 4, top + (k + 0.5) * s, t, { size: lsz, fill: red ? '@hl' : '@ink' }); sc.text(left + (k + 0.5) * s, top + size + 5, t, { size: lsz, anchor: 'end', rot: -90, fill: red ? '@hl' : '@ink' }); });
+  const lx = left + size + rowLabW + 14; drawColourBar(sc, lx, top + 24, 12, 100, PAL.cor, -1, 1, [-1, -0.5, 0, 0.5, 1], `${COR_LABEL[method]}\ncorrelation`, v => String(Math.round(v * 10) / 10));
+  drawHlKey(sc, W, splitTerms(((D.opts || {}).highlight) || ''), labs.some((_, k) => hl.has(lv[ord[k]])));
+  sc.hover({ x0: left, y0: top, cw: s, ch: s, nc: m, nr: m, tip: (ci, ri) => {
+    const a = ord[ri], b = ord[ci], v = r[a * G + b]; if (a === b) return [String(lv[a]), `${byG.get(lv[a]).length} samples`];
+    return [`${lv[a]} ~ ${lv[b]}`, `${COR_LABEL[method]} correlation of the two profiles = ${v === v ? v.toFixed(3) : 'NA'}`, `across ${F} features (${byG.get(lv[a]).length} and ${byG.get(lv[b]).length} samples)`];
+  } });
+  return sc;
+}
+
+/* ---------------------------------------------------------------- figure 3: the strongest feature pairs across groups (cor_dotplot, cor_pairs_long) */
+function corPairsData(D, idx, o) {
+  const F = D.labels.length, S = D.samples, gKey = o.groupKey || 'group', method = o.method || 'spearman', minN = o.minN || 5, byG = new Map();
+  idx.forEach(i => { const g = S[i][gKey]; if (!byG.has(g)) byG.set(g, []); byG.get(g).push(i); });
+  const lv = (o.levels || Array.from(byG.keys()).sort(cmpStr)).filter(g => byG.has(g) && byG.get(g).length >= Math.max(3, minN)), G = lv.length, pairs = [];
+  for (let i = 0; i < F; i++) for (let j = i + 1; j < F; j++) pairs.push([i, j]);
+  const P = pairs.length, rho = new Float64Array(P * G).fill(NaN), nn = new Int32Array(P * G), pv = new Float64Array(P * G).fill(NaN), pa = new Float64Array(P * G).fill(NaN);
+  lv.forEach((g, gi) => {
+    const res = corCompute(corVectors(D, byG.get(g)), method), col = new Float64Array(P).fill(NaN);
+    pairs.forEach(([i, j], k) => { const r = res.r[i * F + j]; rho[k * G + gi] = r; nn[k * G + gi] = res.nn[i * F + j]; if (r === r && res.nn[i * F + j] >= minN) { col[k] = corPvalue(res, i, j); pv[k * G + gi] = col[k]; } });
+    const adj = padjBH(col); for (let k = 0; k < P; k++) pa[k * G + gi] = adj[k];
+  });
+  return { F, G, P, lv, pairs, rho, nn, pv, pa, byG, method, minN };
+}
+function corPairsScene(D, idx, o) {
+  const title = o.title || '', F = D.labels.length;
+  if (F < 2) return messageScene(title, 'Needs at least 2 features');
+  if ((o.method || 'spearman') === 'kendall' && F > KENDALL_MAX) return messageScene(title, `Kendall is too slow for more than ${KENDALL_MAX} features (${F}): use Spearman or Pearson, or select fewer features`);
+  const d = corPairsData(D, idx, o), { G, P, lv, pairs, rho, nn, pv, pa, method, minN } = d;
+  if (G < 1) return messageScene(title, `No group has >= ${Math.max(3, minN)} samples`);
+  const score = pairs.map((_, k) => { let mx = -1; for (let gi = 0; gi < G; gi++) { const v = rho[k * G + gi]; if (v === v && Math.abs(v) > mx) mx = Math.abs(v); } return mx; });
+  const top = pairs.map((_, k) => k).filter(k => score[k] >= 0).sort((a, b) => score[b] - score[a]).slice(0, 30), nT = top.length;
+  if (!nT) return messageScene(title, 'No feature pair has a correlation in these groups');
+  const plabs = top.map(k => `${D.labels[pairs[k][0]]} ~ ${D.labels[pairs[k][1]]}`), hl = hlSet(D.samples, idx, o.groupKey || 'group'), W = CW, rowH = 13, legendW = 150;
+  const left = 8 + Math.min(maxTextW(plabs, FS), 330) + 8, slot = clamp((W - left - legendW - 10) / G, 6, 28), tY = 40, bottom = Math.min(maxTextW(lv.map(String), FS) + 26, 260), ph = nT * rowH + 6, H = Math.max(CH, tY + ph + bottom, tY + 250), sc = new Scene(W, H);
+  sc.text(6, 12, title, { size: 12, bold: true });
+  sc.text(6, 26, `The ${nT} strongest feature pairs (largest |${COR_LABEL[method]} correlation| in any group); groups with >= ${minN} samples. Size: -log10 of the BH-adjusted p, capped at 10.`, { size: 8.5, fill: '@muted' });
+  sc.rect(left, tY, G * slot, ph, { fill: '@panelalt', stroke: '@border', sw: 0.8 });
+  for (let t = 0; t < nT; t++) sc.line(left, tY + 3 + (t + 0.5) * rowH, left + G * slot, tY + 3 + (t + 0.5) * rowH, { stroke: '@gridalt', sw: 0.8 });
+  for (let gi = 0; gi < G; gi++) sc.line(left + (gi + 0.5) * slot, tY, left + (gi + 0.5) * slot, tY + ph, { stroke: '@gridalt', sw: 0.8 });
+  const lsz = clamp(slot * 0.85, 4, 8);
+  top.forEach((k, t) => { sc.text(left - 5, tY + 3 + (t + 0.5) * rowH, plabs[t], { size: FS, anchor: 'end' }); for (let gi = 0; gi < G; gi++) { const v = rho[k * G + gi]; if (v !== v) continue; const sig = Math.min(pa[k * G + gi] === pa[k * G + gi] ? -Math.log10(Math.max(pa[k * G + gi], 1e-300)) : 0, 10); sc.circle(left + (gi + 0.5) * slot, tY + 3 + (t + 0.5) * rowH, Math.min(1.2 + 4.3 * sig / 10, rowH * 0.5, slot * 0.5 + 1), { fill: PAL.cor((v + 1) / 2), stroke: '#4d4d4d', sw: 0.5 }); } });
+  lv.forEach((g, gi) => sc.text(left + (gi + 0.5) * slot, tY + ph + 6, String(g), { size: lsz, anchor: 'end', rot: -90, fill: hl.has(g) ? '@hl' : '@ink' }));
+  const lx = left + G * slot + 16; drawColourBar(sc, lx, tY + 24, 12, 100, PAL.cor, -1, 1, [-1, -0.5, 0, 0.5, 1], `${COR_LABEL[method]}\ncorrelation`, v => String(Math.round(v * 10) / 10));
+  sc.text(lx, tY + 150, '-log10(BH-adj. p)', { size: 10 }); [0, 2.5, 5, 7.5, 10].forEach((v, q) => { const yy = tY + 168 + q * 15; sc.circle(lx + 8, yy, 1.2 + 4.3 * v / 10, { fill: '@ink' }); sc.text(lx + 22, yy, String(v), { size: 8 }); });
+  drawHlKey(sc, W, splitTerms(((D.opts || {}).highlight) || ''), lv.some(g => hl.has(g)));
+  sc.hover({ x0: left, y0: tY + 3, cw: slot, ch: rowH, nc: G, nr: nT, tip: (gi, t) => {
+    const k = top[t], v = rho[k * G + gi]; if (v !== v) return [plabs[t], String(lv[gi]), 'no correlation in this group'];
+    return [plabs[t], `${lv[gi]} (${d.byG.get(lv[gi]).length} samples)`, `${COR_LABEL[method]} correlation = ${v.toFixed(3)}  \u00B7  n = ${nn[k * G + gi]}`, `p = ${fmtP(pv[k * G + gi])}  \u00B7  BH-adjusted p = ${fmtP(pa[k * G + gi])}`];
+  } });
+  return sc;
+}
+
+/* ---------------------------------------------------------------- pairwise scatter plots (R: cor_scatter) */
+const COR_CAP = 2500, COR_PER_PAGE = 9;                 // points drawn per panel (the statistics always use every sample); panels per page (3 x 3)
+function corSubsample(idx, cap) {                       // a reproducible random subset, in the original order
+  if (idx.length <= cap) return idx;
+  const r = mulberry32(20261111), a = Int32Array.from(idx);
+  for (let i = 0; i < cap; i++) { const j = i + Math.floor(r() * (a.length - i)), t = a[i]; a[i] = a[j]; a[j] = t; }
+  return Array.from(a.subarray(0, cap)).sort((x, y) => x - y);
+}
+function corRank(Dv, idx, method, fixed) {             // every pair of the features: strongest |correlation| first, or in the order of the features (fixed)
+  const F = Dv.labels.length, res = corCompute(corVectors(Dv, idx), method), pairs = [];
+  for (let i = 0; i < F; i++) for (let j = i + 1; j < F; j++) pairs.push({ i, j, r: res.r[i * F + j], n: res.nn[i * F + j] });
+  if (!fixed) { const a = v => v === v ? Math.abs(v) : -1; pairs.sort((p, q) => (a(q.r) - a(p.r)) || (p.i - q.i) || (p.j - q.j)); }
+  return { res, pairs, method };
+}
+const clipLabel = (s, n) => s.length > n ? s.slice(0, n - 1) + '\u2026' : s;
+// o: { title, method, pairs: [{i, j, r, n}], res, colourKey, colourLabel, levels }
+function corScatterScene(Dv, idx, o) {
+  const S = Dv.samples, W = CW, ncol = 3, pairs = o.pairs || [], title = o.title || '', key = o.colourKey;
+  if (!pairs.length) return messageScene(title, 'Needs at least 2 features');
+  if (idx.length < 3) return messageScene(title, `Fewer than 3 samples (${idx.length}) in this selection`);
+  const present = uniq(idx.map(i => S[i][key])), lv = (o.levels || present).filter(v => present.includes(v)), colOf = new Map(lv.map((v, k) => [v, catColor(k)]));
+  const sub = corSubsample(idx, COR_CAP), legendW = 190, gap = 16, cellW = (W - legendW - 14 - (ncol - 1) * gap) / ncol, padL = 42, padR = 8, titleH = 17, plotH = 200, padB = 38, cellH = titleH + plotH + padB + 8, top = 46;
+  const rows = Math.ceil(pairs.length / ncol), legendH = 40 + Math.min(lv.length, 24) * 13 + 24, H = Math.max(top + rows * cellH + 8, top + legendH), sc = new Scene(W, H);
+  sc.text(6, 12, title, { size: 12, bold: true });
+  sc.text(6, 27, `${COR_LABEL[o.method]} correlation of log2(tpm + 1) between two features; each point is a sample, coloured by ${o.colourLabel}; black line: least-squares fit; ${o.orderText || 'strongest pairs first'}.` + (idx.length > sub.length ? ` Showing ${sub.length.toLocaleString()} of ${idx.length.toLocaleString()} samples (a random subset); the correlation, the fit and n use all of them.` : ''), { size: 8.5, fill: '@muted' });
+  pairs.forEach((pr, k) => {
+    const cx = 8 + (k % ncol) * (cellW + gap), cy = top + Math.floor(k / ncol) * cellH, px = cx + padL, py = cy + titleH, pw = cellW - padL - padR, xa = Dv.X[pr.i], ya = Dv.X[pr.j];
+    let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity, n = 0, sx = 0, sy = 0, sxx = 0, sxy = 0;
+    for (const s of idx) { const a = xa[s], b = ya[s]; if (a !== a || b !== b) continue; n++; sx += a; sy += b; sxx += a * a; sxy += a * b; if (a < x0) x0 = a; if (a > x1) x1 = a; if (b < y0) y0 = b; if (b > y1) y1 = b; }
+    const px0 = (x1 - x0) * 0.05 || 0.5, py0 = (y1 - y0) * 0.05 || 0.5; x0 -= px0; x1 += px0; y0 -= py0; y1 += py0;
+    const X = v => px + (v - x0) / (x1 - x0) * pw, Y = v => py + plotH - (v - y0) / (y1 - y0) * plotH;
+    drawPanelFrame(sc, px, py, pw, plotH);
+    const xt = prettyTicks(x0, x1, 4).filter(t => t >= x0 && t <= x1), yt = prettyTicks(y0, y1, 4).filter(t => t >= y0 && t <= y1);
+    xt.forEach(t => { sc.line(X(t), py, X(t), py + plotH, { stroke: '@grid', sw: 0.6 }); sc.line(X(t), py + plotH, X(t), py + plotH + 3, { stroke: '@border', sw: 0.6 }); sc.text(X(t), py + plotH + 10, fmtNum(t), { size: 6.5, anchor: 'middle' }); });
+    yt.forEach(t => { sc.line(px, Y(t), px + pw, Y(t), { stroke: '@grid', sw: 0.6 }); sc.line(px - 3, Y(t), px, Y(t), { stroke: '@border', sw: 0.6 }); sc.text(px - 5, Y(t), fmtNum(t), { size: 6.5, anchor: 'end' }); });
+    sc.text(px + pw / 2, py + plotH + 25, clipLabel(Dv.labels[pr.i], 60), { size: 7.5, anchor: 'middle' });
+    sc.text(px - 31, py + plotH / 2, clipLabel(Dv.labels[pr.j], 50), { size: 7.5, anchor: 'middle', rot: -90 });
+    const p = pr.r === pr.r ? corPvalue(o.res, pr.i, pr.j) : NaN;
+    sc.text(px, cy + 9, pr.r === pr.r ? `${COR_LABEL[o.method]} rho = ${pr.r.toFixed(2)} (n = ${pr.n}), p = ${fmtP(p)}` : 'rho = NA (a feature does not vary here)', { size: 8.5, bold: true });
+    const xs = [], ys = [], ids = [];
+    for (const s of sub) { const a = xa[s], b = ya[s]; if (a !== a || b !== b) continue; const qx = X(a), qy = Y(b); sc.circle(qx, qy, 1.7, { fill: colOf.get(S[s][key]) || '@ink', alpha: 0.65 }); xs.push(qx); ys.push(qy); ids.push(s); }
+    const den = n * sxx - sx * sx;
+    if (n > 2 && den > 0) {                                    // least-squares line y = a + b x, clipped to the panel
+      const b = (n * sxy - sx * sy) / den, a = (sy - b * sx) / n; let l0 = x0, l1 = x1;
+      if (b !== 0) { const u = (y0 - a) / b, v = (y1 - a) / b; l0 = Math.max(l0, Math.min(u, v)); l1 = Math.min(l1, Math.max(u, v)); }
+      if (l1 > l0) sc.line(X(l0), Y(a + b * l0), X(l1), Y(a + b * l1), { stroke: '@ink', sw: 1.1 });
+    }
+    sc.hover({ pts: true, x0: px, y0: py, w: pw, h: plotH, xs: Float32Array.from(xs), ys: Float32Array.from(ys), ids: Int32Array.from(ids), hitR: 6, tip: q => {
+      const s = ids[q], smp = S[s]; return [String(smp.id), `${o.colourLabel}: ${smp[key]}`, `plot_group: ${smp.group}  \u00B7  ${smp.category}`, `${Dv.labels[pr.i]}: ${xa[s].toFixed(2)}`, `${Dv.labels[pr.j]}: ${ya[s].toFixed(2)}   (log2(tpm + 1))`];
+    } });
+  });
+  const lx = W - legendW + 4; sc.text(lx, top + 4, o.colourLabel, { size: 10, bold: true });
+  lv.slice(0, 24).forEach((v, k) => { sc.circle(lx + 5, top + 20 + k * 13, 3.2, { fill: catColor(k) }); sc.text(lx + 14, top + 20 + k * 13, clipLabel(String(v), 28), { size: 8 }); });
+  if (lv.length > 24) sc.text(lx, top + 20 + 24 * 13, `... and ${lv.length - 24} more (colours repeat)`, { size: 8, fill: '@muted' });
+  return sc;
+}
+
+/* ---------------------------------------------------------------- the figures of one "Plot correlation": scatter pages first, then matrix, groups, pairs by group */
+// Every plot is a new set of tabs and keeps its own choices (method, minimum, order ...), so earlier results are never overwritten.
+// ctx: { D, fidx, idx, colourKey, colourLabel, colourLevels, groupKey, groupLabel, groupLevels, maxPairs, selLabel, method, minN, order ('strongest' | 'fixed'), run }
+function corItems(ctx) {
+  const Dv = subD(ctx.D, ctx.fidx), F = Dv.labels.length, idx = ctx.idx, S = Dv.samples, method = ctx.method || 'spearman', minN = ctx.minN || 5, fixed = ctx.order === 'fixed', run = ctx.run || 1;
+  const tag = `#${run}`, mlab = COR_LABEL[method], sel = `${mlab}, ${ctx.selLabel}`;
+  let cache = null; const ranked = () => cache || (cache = corRank(Dv, idx, method, fixed));
+  const mk = (label, title, build, extra) => { const ord = TAB_RANK.cor * 1e7 + (++ORD); return Object.assign({ id: 'cor' + ord, ord, fam: 'cor', label: `${tag} ${label} \u00B7 ${mlab}`, title: `${tag} ${title}`, build }, extra || {}); };
+  const kmsg = t => method === 'kendall' && F > KENDALL_MAX ? messageScene(t, `Kendall is too slow for more than ${KENDALL_MAX} features (${F}): use Spearman or Pearson, or select fewer features`) : null;
+  const act = [{ id: 'corTable', label: 'Export pairs (TSV)', title: 'Every feature pair: method, group_by, group, feature1, feature2, n, rho, p, padj (like the R script)' }];
+  const table = () => corLongRows(Dv, [{ name: ctx.selLabel, idx }], method, minN, 'selection');
+  const total = F * (F - 1) / 2, P = Math.min(total, ctx.maxPairs), pages = Math.max(1, Math.ceil(P / COR_PER_PAGE)), items = [];
+  const cut = P < total ? (fixed ? ` (the first ${P} of ${total}, in feature order)` : ` (the strongest of ${total})`) : '';
+  for (let pg = 0; pg < pages; pg++) {
+    const a = pg * COR_PER_PAGE, b = Math.min(P, a + COR_PER_PAGE), title = `Pairwise scatter plots - pairs ${a + 1}-${b} of ${P}${cut} - ${sel}`;
+    items.push(mk(pages === 1 ? 'Scatter plots' : `Scatter ${a + 1}-${b}`, title, () => kmsg(title) || (() => { const rk = ranked(); return corScatterScene(Dv, idx, { title, method, pairs: rk.pairs.slice(a, b), res: rk.res, colourKey: ctx.colourKey, colourLabel: ctx.colourLabel, levels: ctx.colourLevels, orderText: fixed ? 'pairs in the order of the ticked features' : 'strongest pairs first' }); })(), pg === 0 ? { actions: act, table } : {}));
+  }
+  const mt = `Correlation matrix - ${sel}`;
+  items.push(mk('Matrix', mt, () => kmsg(mt) || corHeatmapScene(Dv, idx, { title: mt, method, minN }), { actions: act, table }));
+  const gt = `Similarity between groups (${ctx.groupLabel}) - ${sel}`;
+  items.push(mk('Groups', gt, () => corGroupScene(Dv, idx, { title: gt, method, minN, groupKey: ctx.groupKey, levels: ctx.groupLevels })));
+  const pt = `Strongest feature pairs across groups (${ctx.groupLabel}) - ${sel}`;
+  items.push(mk('Pairs by group', pt, () => F > 50 ? messageScene(pt, `Drawn for up to 50 features (this selection has ${F}): select fewer`) : kmsg(pt) || corPairsScene(Dv, idx, { title: pt, method, minN, groupKey: ctx.groupKey, levels: ctx.groupLevels }),
+    { actions: act, table: () => corLongRows(Dv, ctx.groupLevels.map(g => ({ name: String(g), idx: idx.filter(i => S[i][ctx.groupKey] === g) })), method, minN, ctx.groupLabel) }));
+  return items;
+}
+
 /* =====================================================================
    UI layer (browser only)
    ===================================================================== */
@@ -1932,7 +2364,7 @@ function starPlots(rows, free) {
       if (state.idx) for (let i = 0; i < state.idx.n && hits.length < 12; i++) {
         const t = state.idx.tid[i], g = state.idx.gid[i];
         if (t.toLowerCase().includes(q)) hits.push({ id: stripVersion(t), note: 'transcript' });
-        else if (g.toLowerCase().includes(q) && !hits.some(h => h.id === stripVersion(g))) hits.push({ id: stripVersion(g), note: 'gene (all its transcripts)' });
+        else if (g.toLowerCase().includes(q) && !hits.some(h => h.id === stripVersion(g))) hits.push({ id: stripVersion(g), note: 'gene (one feature: its transcripts summed)' });
       }
       for (const e of state.featEntries) { if (hits.length >= 12) break; if (e.name.toLowerCase().includes(q)) hits.push({ id: e.id, note: e.name }); }
       if (!hits.length) { box.textContent = state.idx ? 'No match' : 'Load the counts file (or a features file) to search'; return; }
@@ -1960,8 +2392,8 @@ function starPlots(rows, free) {
       state.featRows = res.rows;
       const ps = prepareSamples(state.meta.recs, state.header, opts);
       if (!ps.samples.length) throw new Error('No sample IDs shared between the counts header and metadata "sequencing-id".');
-      log(`${res.rows.length} counts rows matched | ${ps.samples.length} samples shared with metadata${ps.nExcluded ? ` | ${ps.nExcluded} excluded` : ''}`);
-      if (res.rows.length > 3000) log('Warning: many features - reading may take a while over a network drive.', 'warn');
+      log(`${res.nRowsMatched} counts rows matched, collapsed to ${res.rows.length} features (TPM summed per feature id) | ${ps.samples.length} samples shared with metadata${ps.nExcluded ? ` | ${ps.nExcluded} excluded` : ''}`);
+      if (res.nRowsMatched > 3000) log('Warning: many features - reading may take a while over a network drive.', 'warn');
       { const gb = res.rows.length * ps.samples.length * 8 / 1e9; if (gb > 1) log(`Warning: ${res.rows.length.toLocaleString()} features x ${ps.samples.length.toLocaleString()} samples need about ${gb.toFixed(1)} GB of memory in this tab; use a shorter list if the page becomes slow.`, 'warn'); }
       const X = await readFeatureRows(state.countsFile, state.idx, res.rows, ps.cols, (a, b) => progress(a / b, `Reading rows: ${a} / ${b}`));
       const levels = addGroups(ps.samples, splitTerms(opts.highlight), DEFAULT_TYPES);
@@ -1976,7 +2408,7 @@ function starPlots(rows, free) {
         plan[t].forEach(item => { state.items.set(item.id, item); addCard(host, item); });
         buildPicker(t);
       });
-      buildSampleBars();
+      buildSampleBars(); buildCorPanel();
       renderMetaTab(); renderStarTab();
       updateCount(); refreshStart(); showTab('violin'); progress(1, 'Done');
       log('Ready. Plots render as you scroll. "Other views" splits a figure into tabs; the picker under each tab plots individual genes/transcripts.', 'ok');
@@ -2192,8 +2624,9 @@ function starPlots(rows, free) {
     for (let t = 0; t < 24; t++) {
       const pref = t % 3 === 2 ? -1 : (t * 2) % G.length, base = 1.2 + rnd() * 2, row = [`ENST000009${String(t + 1).padStart(5, '0')}.1`, `ENSG000008${String(Math.floor(t / 2) + 1).padStart(5, '0')}.1`];
       for (let gi = 0; gi < G.length; gi++) for (let k = 0; k < PER; k++) row.push(Math.max(0, Math.pow(2, base + (pref >= 0 && gi === pref ? 3 : 0) + 0.45 * gauss()) - 1).toFixed(3));
-      counts.push(row.join('\t')); if (t < 16) idList.push(row[0].split('.')[0] + '\tEXAMPLE_' + String.fromCharCode(65 + t));
+      counts.push(row.join('\t')); if (t < 14) idList.push(row[0].split('.')[0] + '\tEXAMPLE_' + String.fromCharCode(65 + t));
     }
+    idList.push('ENSG00000800001\tEXAMPLE_GENE_1', 'ENSG00000800009\tEXAMPLE_GENE_9');     // gene ids: one feature each, the sum of the gene's transcripts (gene 1 is also listed through its transcripts)
     return { meta: meta.join('\n') + '\n', counts: counts.join('\n') + '\n', ids: idList.join('\n') };
   }
   async function loadDemo() {                          // through the same handlers as a real file choice
@@ -2211,11 +2644,11 @@ function starPlots(rows, free) {
       { t: 'Welcome', h: 'A two-minute tour of where everything is. <b>Your files are read in place by your browser and never uploaded.</b>' + (state.meta || state.idx ? '' : '<br><br>No data at hand? Load a small <b>made-up example</b> first, so the figures can be shown as we go.'), sel: null, extra: (state.meta || state.idx) ? null : [{ label: 'Load example data', fn: 'demo' }] },
       { t: 'Offline - no network access', h: 'Every time the page opens, this badge tests that the browser blocks all network connections. <b>Green means your data cannot leave this computer.</b> Click it for the details.', sel: '#netBadge', side: 'below' },
       { t: '1. Main files', h: 'Choose the <b>metadata TSV</b> (one row per sample) and the <b>TPM counts TSV</b> (it can be several GB: it is read in place). A green line under each says what was read.', sel: ['aside h2:nth-of-type(1)', '#metaFile', '#countsFile', '#countsStatus'], side: 'right', pre: openMenu },
-      { t: '2. Gene names and id list', h: 'Type or paste transcript/gene ids (one per line; <i>id, Tab, name</i> gives one a label), search by id or name, or load a TSV. A gene id selects all its transcripts.', sel: ['aside h2:nth-of-type(2)', '#featFile', '#featFileStatus'], side: 'right', pre: openMenu },
+      { t: '2. Gene names and id list', h: 'Type or paste transcript/gene ids (one per line; <i>id, Tab, name</i> gives one a label), search by id or name, or load a TSV. A <b>transcript id</b> plots that transcript; a <b>gene id</b> plots the gene as one feature (its transcripts\' TPM added up). You can mix both.' + (demo ? ' The example mixes 14 transcript ids with 2 gene ids.' : ''), sel: ['aside h2:nth-of-type(2)', '#featFile', '#featFileStatus'], side: 'right', pre: openMenu },
       { t: '3. Settings', h: '<i>Highlight terms</i> draw matching groups in red; <i>Exclude samples</i> leaves matching samples out (separate several terms with commas); then the <i>dot plot TPM cut-off</i> and <i>max plots on screen</i>.' + (demo ? ' In the example, "breast" is highlighted.' : ''), sel: ['aside h2:nth-of-type(3)', '.sethint + .pair'], side: 'right', pre: openMenu },
       { t: '4. STAR alignment (optional)', h: 'Choose the STAR summary TSV to fill the <i>STAR alignment QC</i> tab. The Help page shows the command that makes this file.', sel: ['aside h2:nth-of-type(4)', '#starFile', '#starStatus'], side: 'right', pre: openMenu },
       { t: 'Load features and plot', h: 'Grey and locked while there is nothing new to plot; <b>blue when files and ids are in</b>, and blue again whenever you change an id, a file or a setting: press it so the change takes effect.', sel: ['#run', '#lastMsg'], side: 'right', pre: openMenu },
-      { t: 'The tabs', h: '<b>Violin</b> (distribution per group), <b>Heatmap</b> (median per group), <b>TAU Specificity</b>, <b>Dot plot</b>, <b>Sample metadata</b> and <b>STAR alignment QC</b>. The last two open as soon as their files are read; the others after you plot.', sel: '.tabs', side: 'below' },
+      { t: 'The tabs', h: '<b>Violin</b> (distribution per group), <b>Heatmap</b> (median per group), <b>TAU Specificity</b>, <b>Dot plot</b>, <b>Correlation</b> (scatter plots between features), <b>Sample metadata</b> and <b>STAR alignment QC</b>. The last two open as soon as their files are read; the others after you plot.', sel: '.tabs', side: 'below' },
       { t: 'A figure', h: 'Each figure is a card: tick the box to select it for PDF export, <b>- / +</b> zooms, <b>Expand</b> opens a large window, and <b>Other views</b> splits it by subtype, source or treatment, or makes a custom plot. <b>Move the mouse over a figure</b> to highlight a group (and feature) and see its details: on screen only, never in a PDF.', sel: '#cards-violin > .card', side: 'left', pre: onTab('violin'), note: later },
       { t: 'Toolbar', h: '<b>Select all / none</b>, the <b>Hover details</b> switch, and <b>Export selected to PDF</b>: the figures you ticked, from any tab, go into one vector PDF.', sel: '#toolbar', side: 'below', pre: onTab('violin'), note: later },
       { t: 'Individual genes and long lists', h: 'Under each tab, <b>Plot individual genes/transcripts</b> lets you plot only the loaded features you want. With very long lists (above 1,500 for the heatmap, 300 for the dot plot) a heatmap overview or a random sample is offered.', sel: '#picker-violin', side: 'above', pre: onTab('violin'), note: later },
@@ -2281,6 +2714,62 @@ function starPlots(rows, free) {
     document.removeEventListener('keydown', tourKey, true); window.removeEventListener('resize', tourSoon); document.removeEventListener('scroll', tourSoon, true); $('tourBtn').focus();
   }
 
+  /* ---- Correlation tab: choose the features (and groups), then Plot correlation: scatter plots first ---- */
+  const cor = { feat: new Set(), grp: new Set(), vals: [], counts: new Map(), shownFeat: [], shownGrp: [], lastSig: null, runs: 0 };
+  const COR_MAX = 100, corCol = id => $(id).value === '@group' ? 'plot_group' : $(id).value;
+  function fillSelect(sel, opts, def) { sel.textContent = ''; opts.forEach(c => { const op = el('option', null, c.label); op.value = c.value; sel.appendChild(op); }); if (opts.some(o => o.value === def)) sel.value = def; }
+  function buildCorPanel() {                           // called after every "Load features and plot": a fresh, empty choice
+    cor.feat = new Set(); cor.grp = new Set(); cor.lastSig = null; cor.runs = 0; $('custom-cor').textContent = ''; $('corFilter').value = ''; $('corGrpFilter').value = '';
+    fillSelect($('corGrpCol'), state.cols.cat, '@group'); fillSelect($('corColour'), state.cols.cat, 'type'); drawCorFeats(); loadCorGroups();
+  }
+  function drawCorFeats() {
+    const D = state.D, q = $('corFilter').value.trim().toLowerCase(), list = $('corFeatList'), all = []; list.textContent = '';
+    for (let f = 0; f < D.labels.length; f++) if (!q || D.labels[f].toLowerCase().includes(q)) all.push(f);
+    cor.shownFeat = all.slice(0, 150);
+    cor.shownFeat.forEach(f => { const lab = el('label'), c = el('input'); c.type = 'checkbox'; c.checked = cor.feat.has(f); c.onchange = () => { c.checked ? cor.feat.add(f) : cor.feat.delete(f); refreshCorBtn(); }; lab.append(c, document.createTextNode(' ' + D.labels[f])); lab.title = D.labels[f]; list.appendChild(lab); });
+    if (all.length > 150) list.appendChild(el('div', 'hint', `Showing 150 of ${all.length}: refine the filter.`));
+    refreshCorBtn();
+  }
+  function loadCorGroups() {
+    const D = state.D, col = $('corGrpCol').value, key = ensureCol(D, col); cor.counts = new Map(); D.samples.forEach(s => cor.counts.set(s[key], (cor.counts.get(s[key]) || 0) + 1));
+    cor.vals = colLevels(D, col, D.samples.map((_, i) => i)); cor.grp = new Set(); $('corGrpFilter').value = ''; drawCorGroups();
+  }
+  function drawCorGroups() {
+    const q = $('corGrpFilter').value.trim().toLowerCase(), list = $('corGrpList'), all = cor.vals.filter(v => !q || String(v).toLowerCase().includes(q)); list.textContent = ''; cor.shownGrp = all.slice(0, 300);
+    cor.shownGrp.forEach(v => { const lab = el('label'), c = el('input'); c.type = 'checkbox'; c.checked = cor.grp.has(v); c.onchange = () => { c.checked ? cor.grp.add(v) : cor.grp.delete(v); refreshCorBtn(); }; lab.append(c, document.createTextNode(' ' + v + ' ')); lab.appendChild(el('span', 'cn', `(${cor.counts.get(v)})`)); lab.title = `${v} (${cor.counts.get(v)} samples)`; list.appendChild(lab); });
+    if (all.length > 300) list.appendChild(el('div', 'hint', `Showing 300 of ${all.length}: refine the filter.`));
+    refreshCorBtn();
+  }
+  const corSig = () => [Array.from(cor.feat).sort((a, b) => a - b).join(','), $('corGrpCol').value, cor.vals.filter(v => cor.grp.has(v)).join('\u0001'), $('corColour').value, $('corMaxPairs').value, $('corMethod').value, $('corMinN').value, $('corOrder').value].join('|');
+  function refreshCorBtn() {                           // grey and locked until there is something new to plot, blue when there is
+    const D = state.D, n = cor.feat.size, g = cor.grp.size, b = $('corPlot'), ok = n >= 2 && n <= COR_MAX, pending = ok && corSig() !== cor.lastSig;
+    $('corFeatInfo').textContent = n ? `${n} ticked` + (n <= 3 ? ': ' + Array.from(cor.feat).sort((a, c) => a - c).map(f => D.labels[f]).join(', ') : '') : 'none ticked yet';
+    const ns = g ? cor.vals.filter(v => cor.grp.has(v)).reduce((a, v) => a + cor.counts.get(v), 0) : D.samples.length;
+    $('corGrpInfo').textContent = g ? `${g} ticked (${ns.toLocaleString()} samples)` : `all ${D.samples.length.toLocaleString()} samples`;
+    b.disabled = !pending; b.classList.toggle('ready', pending);
+    b.title = n < 2 ? 'Tick at least 2 features' : n > COR_MAX ? `At most ${COR_MAX} features at a time (${n} ticked)` : pending ? 'Plot the correlation of the ticked features' : 'Everything on screen is up to date. Change a choice to plot again.';
+    $('corMsg').textContent = n > COR_MAX ? `${n} features are ticked: at most ${COR_MAX} at a time.` : n === 1 ? 'Tick one more feature: a correlation needs at least 2.' : '';
+  }
+  function plotCorrelation() {
+    const D = state.D, fidx = Array.from(cor.feat).sort((a, b) => a - b); if (fidx.length < 2 || fidx.length > COR_MAX) return;
+    const gcol = $('corGrpCol').value, gkey = ensureCol(D, gcol), ticked = cor.vals.filter(v => cor.grp.has(v)), idx = D.samples.map((_, i) => i).filter(i => !ticked.length || cor.grp.has(D.samples[i][gkey]));
+    if (idx.length < 3) { $('corMsg').textContent = 'Fewer than 3 samples in the ticked groups.'; return; }
+    const ccol = $('corColour').value, ckey = ensureCol(D, ccol), maxPairs = Math.max(1, Math.min(200, parseInt($('corMaxPairs').value, 10) || 36)), minN = Math.max(3, parseInt($('corMinN').value, 10) || 5);
+    const ctx = { D, fidx, idx, colourKey: ckey, colourLabel: corCol('corColour'), colourLevels: colLevels(D, ccol, idx), groupKey: gkey, groupLabel: corCol('corGrpCol'), groupLevels: ticked.length ? ticked : colLevels(D, gcol, idx), maxPairs, method: $('corMethod').value, minN, order: $('corOrder').value, run: ++cor.runs,
+      selLabel: `${fidx.length} features, ${idx.length.toLocaleString()} samples${ticked.length ? ` (${corCol('corGrpCol')}: ${ticked.length <= 3 ? ticked.join(', ') : ticked.length + ' groups'})` : ''}` };
+    let v = state.custom.cor;                           // every plot ADDS a set of tabs; the earlier ones stay until you remove them
+    if (!v || !v.wrap.isConnected) { const c = $('custom-cor'); c.textContent = ''; c.appendChild(el('h3', 'vh', 'Results')); c.appendChild(el('div', 'hint', 'Each "Plot correlation" adds a new set of tabs (#1, #2 ...) with its own method and choices; earlier results stay until you remove them (\u2715) or press Clear all.'));
+      v = state.custom.cor = createViewer(c, [], { removable: true, onEmpty: () => { $('custom-cor').textContent = ''; state.custom.cor = null; } }); }
+    const first = v.items.length; corItems(ctx).forEach(it => v.add(it, false)); v.activate(first); cor.lastSig = corSig(); refreshCorBtn(); updateCount(); v.wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  function initCor() {
+    $('corFilter').oninput = drawCorFeats; $('corGrpFilter').oninput = drawCorGroups; $('corGrpCol').onchange = loadCorGroups;
+    $('corFeatAll').onclick = () => { cor.shownFeat.forEach(f => cor.feat.add(f)); drawCorFeats(); }; $('corFeatNone').onclick = () => { cor.feat.clear(); drawCorFeats(); };
+    $('corGrpAll').onclick = () => { cor.shownGrp.forEach(v => cor.grp.add(v)); drawCorGroups(); }; $('corGrpNone').onclick = () => { cor.grp.clear(); drawCorGroups(); };
+    ['corColour', 'corMaxPairs', 'corMethod', 'corOrder'].forEach(id => { $(id).onchange = refreshCorBtn; });
+    $('corMinN').onchange = () => { $('corMinN').value = Math.max(3, Math.floor(Number($('corMinN').value)) || 5); refreshCorBtn(); }; $('corPlot').onclick = plotCorrelation;
+  }
+
   /* ---- hover details: browser only. The PDFs are drawn from the scenes, which never contain this layer ---- */
   const hov = { on: true, raf: 0, evt: null, svg: null, key: '' };
   function hoverOff() {
@@ -2292,18 +2781,34 @@ function starPlots(rows, free) {
     if (!hov.on || !sc || !sc.zones) { hoverOff(); return; }
     const r = svg.getBoundingClientRect(); if (!r.width || !r.height) { hoverOff(); return; }
     const x = (e.clientX - r.left) * sc.w / r.width, y = (e.clientY - r.top) * sc.h / r.height; let hit = null;
-    for (let zi = 0; zi < sc.zones.length; zi++) { const z = sc.zones[zi], ci = Math.floor((x - z.x0) / z.cw), ri = Math.floor((y - z.y0) / z.ch); if (ci >= 0 && ci < z.nc && ri >= 0 && ri < z.nr) { hit = { z, zi, ci, ri }; break; } }
+    for (let zi = 0; zi < sc.zones.length; zi++) {
+      const z = sc.zones[zi];
+      if (z.pts) {                                                // scatter panel: the nearest point within a few pixels
+        if (x < z.x0 || x > z.x0 + z.w || y < z.y0 || y > z.y0 + z.h) continue;
+        let best = -1, bd = (z.hitR || 6) * (z.hitR || 6); for (let k = 0; k < z.ids.length; k++) { const dx = z.xs[k] - x, dy = z.ys[k] - y, d = dx * dx + dy * dy; if (d < bd) { bd = d; best = k; } }
+        if (best >= 0) hit = { z, zi, k: best }; break;
+      }
+      const ci = Math.floor((x - z.x0) / z.cw), ri = Math.floor((y - z.y0) / z.ch); if (ci >= 0 && ci < z.nc && ri >= 0 && ri < z.nr) { hit = { z, zi, ci, ri }; break; }
+    }
     if (!hit) { hoverOff(); return; }
-    const { z, zi, ci, ri } = hit, tip = $('hovtip'), key = `${zi}:${ci}:${ri}`;
-    if (hov.svg !== svg || hov.key !== key) {                    // the highlight is redrawn only when the cell changes
+    const { z, zi, ci, ri, k } = hit, tip = $('hovtip'), key = k !== undefined ? `${zi}:p${k}` : `${zi}:${ci}:${ri}`;
+    if (hov.svg !== svg || hov.key !== key) {                    // the highlight is redrawn only when the cell or point changes
       if (hov.svg && hov.svg !== svg) hoverOff();
-      const cx = z.x0 + ci * z.cw, cy = z.y0 + ri * z.ch, ns = 'vector-effect="non-scaling-stroke"';
-      const band = (a, b, w, h) => `<rect x="${a}" y="${b}" width="${w}" height="${h}" fill="#0072B2" fill-opacity=".14" stroke="#0072B2" stroke-width="1" ${ns}/>`;
-      let s = band(cx, z.y0, z.cw, z.nr * z.ch);                  // the column (group)
-      if (z.rowBand !== false && z.nr > 1) s += band(z.x0, cy, z.nc * z.cw, z.ch) + `<rect x="${cx}" y="${cy}" width="${z.cw}" height="${z.ch}" fill="none" stroke="#ffffff" stroke-width="3" ${ns}/><rect x="${cx}" y="${cy}" width="${z.cw}" height="${z.ch}" fill="none" stroke="#000000" stroke-width="1.2" ${ns}/>`;   // the row (feature) and the cell under the mouse
+      const ns = 'vector-effect="non-scaling-stroke"'; let s = '', lines;
+      if (k !== undefined) {                                      // ring the hovered sample in this panel and the same sample in every other panel
+        const sid = z.ids[k];
+        sc.zones.forEach(zz => { if (!zz.pts) return; if (!zz._pos) { zz._pos = new Map(); zz.ids.forEach((id, q) => zz._pos.set(id, q)); } const q = zz._pos.get(sid); if (q === undefined) return; const self = zz === z;
+          s += `<circle cx="${zz.xs[q]}" cy="${zz.ys[q]}" r="${self ? 5.5 : 4}" fill="none" stroke="#ffffff" stroke-width="${self ? 3.4 : 2.6}" ${ns}/><circle cx="${zz.xs[q]}" cy="${zz.ys[q]}" r="${self ? 5.5 : 4}" fill="none" stroke="#000000" stroke-width="${self ? 1.5 : 1.1}" ${ns}/>`; });
+        lines = z.tip(k) || [];
+      } else {
+        const cx = z.x0 + ci * z.cw, cy = z.y0 + ri * z.ch, band = (a, b, w, h) => `<rect x="${a}" y="${b}" width="${w}" height="${h}" fill="#0072B2" fill-opacity=".14" stroke="#0072B2" stroke-width="1" ${ns}/>`;
+        s = band(cx, z.y0, z.cw, z.nr * z.ch);                    // the column (group)
+        if (z.rowBand !== false && z.nr > 1) s += band(z.x0, cy, z.nc * z.cw, z.ch) + `<rect x="${cx}" y="${cy}" width="${z.cw}" height="${z.ch}" fill="none" stroke="#ffffff" stroke-width="3" ${ns}/><rect x="${cx}" y="${cy}" width="${z.cw}" height="${z.ch}" fill="none" stroke="#000000" stroke-width="1.2" ${ns}/>`;   // the row (feature) and the cell under the mouse
+        lines = z.tip(ci, ri) || [];
+      }
       let g = svg.querySelector(':scope > g.hov'); if (!g) { svg.insertAdjacentHTML('beforeend', '<g class="hov" pointer-events="none"></g>'); g = svg.querySelector(':scope > g.hov'); }
       g.innerHTML = s; hov.svg = svg; hov.key = key;
-      const lines = z.tip(ci, ri) || []; tip.textContent = ''; lines.forEach((t, i) => tip.appendChild(el(i === 0 ? 'b' : 'div', null, t)));
+      tip.textContent = ''; lines.forEach((t, i) => tip.appendChild(el(i === 0 ? 'b' : 'div', null, t)));
     }
     const host = svg.closest('dialog') || document.body; if (tip.parentNode !== host) host.appendChild(tip);        // inside the Expand window when it is open
     tip.classList.remove('hidden'); const w = tip.offsetWidth, h = tip.offsetHeight; let tx = e.clientX + 16, ty = e.clientY + 16;
@@ -2323,9 +2828,10 @@ function starPlots(rows, free) {
     if (t.handle) { const w = await t.handle.createWritable(); await w.write(bytes); await w.close(); log('Saved ' + t.handle.name, 'ok'); }
     else { downloadBytes(bytes, t.fallbackName, 'text/tab-separated-values'); log('Downloaded ' + t.fallbackName, 'ok'); }
   }
-  const FEAT_COLS = ['feature_label', 'feature_id', 'feature_name', 'transcript', 'gene'], featCells = f => { const r = state.featRows[f] || {}; return [r.label, r.featureId, r.name, r.transcript, r.gene]; };
+  const FEAT_COLS = ['feature_label', 'feature_id', 'feature_name', 'transcript', 'gene', 'rows_summed'], featCells = f => { const r = state.featRows[f] || {}; return [r.label, r.featureId, r.name, r.transcript, r.gene, r.nRows]; };      // transcript: the transcript id, or all the transcript ids that were summed (a gene id)
   function runAction(a, item) {
     if (a.id === 'heatRows') return saveTSV(autoName('tsv').replace('grade2_', 'grade2_heatmap-row-order_'), () => [tsvLine(['position', ...FEAT_COLS, 'peak_group', 'peak_z']), ...sceneOf(item).exportRows.map(r => tsvLine([r.position, ...featCells(r.f), r.peakGroup, r.peakZ.toFixed(3)]))].join('\n') + '\n');
+    if (a.id === 'corTable') return saveTSV(autoName('tsv').replace('grade2_', 'grade2_correlation-pairs_'), () => item.table().map(tsvLine).join('\n') + '\n');
     const s = item.sample, all = a.id === 'sampleAll', chosen = new Set(s.fidx);
     return saveTSV(`grade2_random${s.n}_seed${s.seed}_${all ? 'all-features-with-flag' : 'selected'}.tsv`, () => [tsvLine(all ? ['selected', ...FEAT_COLS] : FEAT_COLS),
       ...(all ? state.featRows.map((_, f) => f) : s.fidx).map(f => tsvLine(all ? [chosen.has(f) ? 'yes' : 'no', ...featCells(f)] : featCells(f)))].join('\n') + '\n');
@@ -2484,7 +2990,7 @@ function starPlots(rows, free) {
     add('What the browser observed', [`Network requests made by this page: ${net.resources.length}${net.resources.length ? ' - ' + net.resources.slice(0, 5).join(', ') : ''}`,
       `Blocked attempts by the page: ${net.violations}${net.last ? ' (last: ' + net.last + ')' : ''}`, `Your computer is currently ${navigator.onLine ? 'online' : 'offline'}. The page works the same either way.`]);
     add('Web addresses written inside this page', [el('p', null, urls.length ? 'These are the only addresses in the file. None is loaded automatically; a link is only followed if you click it.' : 'None.'),
-      ...urls.map(u => { const p = el('p', 'urlrow'); p.textContent = u + (/w3\.org\/2000\/svg/.test(u) ? '   (XML name for SVG drawings; an identifier, not a request)' : /github\.com\/isabela42\/GRADE2$/.test(u) ? '   (link in the About page)' : ''); return p; })]);
+      ...urls.map(u => { const p = el('p', 'urlrow'); p.textContent = u + (/w3\.org\/2000\/svg/.test(u) ? '   (XML name for SVG drawings; an identifier, not a request)' : /github\.com\/isabela42\/GRADE2$/.test(u) ? '   (link in the About page)' : /doi\.org\/10\.1016\/j\.isci\.2026\.116131$/.test(u) ? '   (citation link in the welcome and About pages; followed only if you click it)' : ''); return p; })]);
     add('Check it yourself', [el('p', null, '1. Switch off Wi-Fi/ethernet before loading your files: everything still works, because nothing is sent anywhere.'),
       el('p', null, '2. Open the browser developer tools (F12), tab Network, then load files and make plots: the list stays empty.'),
       el('p', null, '3. Open the .html file in a text editor and search for "http": only the addresses listed above are present.'),
@@ -2505,8 +3011,11 @@ function starPlots(rows, free) {
   function setMinN(v) {
     const n = Math.max(1, Math.floor(Number(v)) || 3); state.minN = n; document.querySelectorAll('.minN').forEach(i => { i.value = n; });
     if (!state.opts) return; state.opts.minN = n;
-    state.items.forEach(it => { if (it.fam === 'tau' || it.fam === 'dot') it._scene = null; });
-    document.querySelectorAll('.card').forEach(c => { const f = c._item.fam; if ((f === 'tau' || f === 'dot') && c._rendered) { c._rendered = false; observer.unobserve(c); observer.observe(c); } });
+    redrawFams(['tau', 'dot']);
+  }
+  function redrawFams(fams) {                          // forget the drawn figures of these families and draw the visible ones again
+    state.items.forEach(it => { if (fams.includes(it.fam)) it._scene = null; });
+    document.querySelectorAll('.card').forEach(c => { if (fams.includes(c._item.fam) && c._rendered) { c._rendered = false; observer.unobserve(c); observer.observe(c); } });
     if ($('viewDlg').open) showExpanded();
   }
 
@@ -2523,7 +3032,7 @@ function starPlots(rows, free) {
     set('stepCounts', !!state.idx && !!state.header, state.idx && state.header ? `\u2713 ${state.idx.n.toLocaleString()} rows, ${state.header.length - 2} samples` : (state.indexing ? 'reading ...' : ''));
     const n = parseFeatureText($('featText').value).length + state.featEntries.length, ri = state.runInfo; set('stepGenes', n > 0, n ? `\u2713 ${n} id(s)` + (ri ? `, ${ri.rows} matched` : '') : '');
     $('stepRun').classList.toggle('ready', pending());   // something new to plot: prompt to press the button
-    set('stepRun', !!ri, ri ? `\u2713 ${ri.rows} gene/transcript rows, ${ri.samples} samples` + (ri.excluded ? `, ${ri.excluded} excluded` : '') : '');
+    set('stepRun', !!ri, ri ? `\u2713 ${ri.rows} features, ${ri.samples} samples` + (ri.excluded ? `, ${ri.excluded} excluded` : '') : '');
     let starTxt = ''; if (state.starLogs.size) { const ids = currentMetaRecs().map(r => r['sequencing-id']), found = ids.filter(id => state.starLogs.has(id)).length; starTxt = state.meta ? `\u2713 ${found.toLocaleString()} of ${ids.length.toLocaleString()} samples` : `\u2713 ${state.starLogs.size.toLocaleString()} rows`; }
     set('stepStar', state.starLogs.size > 0, starTxt);
     refreshReady(); queueAlign();
@@ -2566,7 +3075,7 @@ function starPlots(rows, free) {
   function helpLink(text, id) { const a = el('a', null, text); a.href = '#' + id; a.onclick = e => { e.preventDefault(); goToHelp(id); }; return a; }
 
   /* ---- tabs ---- */
-  const FEATURE_TABS = ['violin', 'heatmap', 'tau', 'dot'];
+  const FEATURE_TABS = ['violin', 'heatmap', 'tau', 'dot', 'cor'];
   function showTab(name) {
     if (FEATURE_TABS.includes(name) && !state.D) name = 'start';           // nothing to show yet: go (back) to the welcome page
     state.tab = name; if (name !== 'about') state.lastDataTab = name;
@@ -2584,7 +3093,7 @@ function starPlots(rows, free) {
     $('metaFile').onchange = e => onMetadata(e.target.files[0]);
     $('countsFile').onchange = e => onCounts(e.target.files[0]);
     $('featFile').onchange = e => onFeatFile(e.target.files[0]);
-    $('search').oninput = onSearch; $('run').onclick = run; $('export').onclick = exportPDF; initHover(); $('tourBtn').onclick = startTour;
+    $('search').oninput = onSearch; $('run').onclick = run; $('export').onclick = exportPDF; initHover(); $('tourBtn').onclick = startTour; initCor();
     $('selAll').onclick = () => selectAllHere(true); $('selNone').onclick = () => selectAllHere(false);
     document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => showTab(b.dataset.tab));
     $('themeBtn').onclick = () => applyTheme({ auto: 'light', light: 'dark', dark: 'auto' }[state.theme]);
