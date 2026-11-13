@@ -956,7 +956,7 @@ violin_distribution <- function(df, conditionX, conditionY, gridrow = NULL, grid
                                 plot_width = 11.67, max_n_size = 3, min_n_size = 1.2, max_strip_size = 12, min_strip_size = 4) {
   plot <- ggplot(df, aes(x = .data[[conditionX]], y = .data[[conditionY]])) +
     geom_violin(fill = "#0072B2", alpha = 0.7, color = "black", scale = "width") +
-    geom_boxplot(width = 0.1, outlier.shape = NA) +
+    geom_boxplot(width = 0.1, outlier.size = 0.5, outlier.shape = 16, outlier.stroke = 0) +
     ggbeeswarm::geom_quasirandom(color = "black", size = 0.5, alpha = 0.2, width = 0.2, shape = 16, stroke = 0)
  
   # --- Estimate layout: violins per column panel, and inches available per violin / per panel
