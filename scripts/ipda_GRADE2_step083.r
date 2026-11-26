@@ -36,7 +36,7 @@ print_help <- function() {
   cat("
 Written by Isabela Almeida
 Created on May 13, 2026
-Last modified on Nov 11, 2026
+Last modified on Nov 26, 2026
 Version: 1.0.0
 
 Description: Plot sample metadata, STAR alignment metrics and TPM expression of a feature list
@@ -219,6 +219,9 @@ if (!is.null(star_dir)) {
 ## Plot expression matrix - features
 # Violins of mean expression across all features
 plot_mean_pdf(plot_df, feature_labels, paste0(outdir, "/", outstem, ".violin.mean.pdf"), types, highlight_terms)
+
+# Boxplots of mean expression across all features
+plot_mean_pdf(plot_df, feature_labels, paste0(outdir, "/", outstem, ".boxplot.mean.pdf"), types, highlight_terms, geom = "boxplot")
 
 # One PDF per feature, only for small feature sets to avoid too many files
 if (length(feature_labels) <= max_features) {

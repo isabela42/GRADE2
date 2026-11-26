@@ -3,7 +3,7 @@
 # ============================================================
 # Written by Isabela Almeida
 # Created on May 13, 2026
-# Last modified on Nov 04, 2026
+# Last modified on Nov 26, 2026
 # Version: 1.0.0
 #
 # DESCRIPTION: GRADE2 R FUNCTIONS
@@ -953,11 +953,19 @@ scatter_plot <- function(df, conditionX, conditionY, gridcol = NULL, gridrow = N
 }
  
 violin_distribution <- function(df, conditionX, conditionY, gridrow = NULL, gridcol = NULL, title, scales = "fixed", show_n = FALSE,
-                                plot_width = 11.67, max_n_size = 3, min_n_size = 1.2, max_strip_size = 12, min_strip_size = 4) {
+                                plot_width = 11.67, max_n_size = 3, min_n_size = 1.2, max_strip_size = 12, min_strip_size = 4,
+                                geom = c("violin", "boxplot", "point", "bar")) {
+  geom <- match.arg(geom)
   plot <- ggplot(df, aes(x = .data[[conditionX]], y = .data[[conditionY]])) +
-    geom_violin(fill = "#0072B2", alpha = 0.7, color = "black", scale = "width", linewidth = 0.2) +
-    geom_boxplot(width = 0.12, fill = "white", color = "grey20", linewidth = 0.25, outlier.size = 0.6, outlier.shape = 16, outlier.stroke = 0) +
-    ggbeeswarm::geom_quasirandom(color = "black", size = 0.5, alpha = 0.3, width = 0.2, shape = 16, stroke = 0)
+    switch(geom,
+      violin = list(
+        geom_violin(fill = "#0072B2", alpha = 0.7, color = "black", scale = "width", linewidth = 0.2),
+        geom_boxplot(width = 0.12, fill = "white", color = "grey20", linewidth = 0.25, outlier.size = 0.6, outlier.shape = 16, outlier.stroke = 0),
+        ggbeeswarm::geom_quasirandom(color = "black", size = 0.5, alpha = 0.3, width = 0.2, shape = 16, stroke = 0)),
+      boxplot = list(geom_boxplot(fill = "#0072B2", alpha = 0.7, color = "black", width = 0.6, linewidth = 0.25,
+                     outlier.size = 0.6, outlier.shape = 16, outlier.stroke = 0)),
+      point = list(geom_point(color = "#0072B2", size = 2, alpha = 0.9)),
+      bar = list(geom_col(fill = "#0072B2", alpha = 0.7, color = "black", linewidth = 0.2)))
  
   # --- Estimate layout: violins per column panel, and inches available per violin / per panel
   free_x <- !is.null(gridcol) && scales %in% c("free", "free_x")
@@ -1040,12 +1048,13 @@ add_plot_group <- function(df, highlight_terms, type_levels) {
   df
 }
  
-prep_identity <- function(df, terms, treat_col = "treatment") {
-  df <- df[df$type == "cell-line", ]
+prep_identity <- function(df, terms, types = "cell-line", id_col = "phenotype.identity", treat_col = "treatment") {
+  df <- df[df$type %in% types, , drop = FALSE]
+  if (nrow(df) == 0) return(df)
   tr <- as.character(df[[treat_col]])
   df$treatment_status <- factor(ifelse(is.na(tr) | trimws(tr) %in% c("", "NA"), "untreated", "treated"),
                                 levels = c("untreated", "treated"))
-  df$identity <- as.character(df$phenotype.identity)
+  df$identity <- as.character(df[[id_col]])
   hl <- c()
   for (term in terms) hl <- c(hl, sort(unique(df$identity[grepl(term, df$phenotype, ignore.case = TRUE)])))
   hl <- unique(hl)
@@ -1071,7 +1080,8 @@ save_plot_list_pdf <- function(plots, heights, file, width = 8.27) {
 }
  
 ## ---------------------------------------------------------------- expression plots
-plot_feature_pdf <- function(feature, file_stem, plot_df, outdir, outstem, types, highlight_terms) {
+plot_feature_pdf <- function(feature, file_stem, plot_df, outdir, outstem, types, highlight_terms,
+                             sample_types = c("PDX", "CDX")) {
   df <- plot_df
   df$feature_value <- df[[feature]]
   ylab <- "log2(tpm + 1)"
@@ -1081,6 +1091,11 @@ plot_feature_pdf <- function(feature, file_stem, plot_df, outdir, outstem, types
     id_df <- prep_identity(df, highlight_terms)
     if (nrow(id_df) > 0) print(violin_distribution(id_df, conditionX = "identity", conditionY = "feature_value", gridrow = "treatment_status", title = ylab, show_n = TRUE, plot_width = 24) +
       ggtitle(paste(feature, "- cell-line names")))
+    for (st in sample_types) {
+      sid_df <- prep_identity(df, highlight_terms, types = st, id_col = "sample")
+      if (nrow(sid_df) > 0) print(violin_distribution(sid_df, conditionX = "identity", conditionY = "feature_value", gridrow = "treatment_status", title = ylab, plot_width = 24, geom = "bar") +
+        ggtitle(paste(feature, "-", st, "sample IDs")))
+    }
     for (t in types) {
       sub_df <- df[df$type == t, ]
       if (nrow(sub_df) == 0) next
@@ -1090,19 +1105,24 @@ plot_feature_pdf <- function(feature, file_stem, plot_df, outdir, outstem, types
   })
 }
  
-plot_mean_pdf <- function(plot_df, feature_labels, file, types, highlight_terms) {
+plot_mean_pdf <- function(plot_df, feature_labels, file, types, highlight_terms, geom = "violin", sample_types = c("PDX", "CDX")) {
   plot_df$feature_mean <- rowMeans(plot_df[, feature_labels, drop = FALSE], na.rm = TRUE)
   ttl <- "mean log2(tpm + 1) expression"
   with_pdf(file, width = 11.67, height = 5, {
-    print(violin_distribution(plot_df, conditionX = "plot_group", conditionY = "feature_mean", gridcol = "category", scales = "free_x", title = ttl, show_n = TRUE) +
+    print(violin_distribution(plot_df, conditionX = "plot_group", conditionY = "feature_mean", gridcol = "category", scales = "free_x", title = ttl, show_n = TRUE, geom = geom) +
       ggtitle("All types combined"))
     id_df <- prep_identity(plot_df, highlight_terms)
-    if (nrow(id_df) > 0) print(violin_distribution(id_df, conditionX = "identity", conditionY = "feature_mean", gridrow = "treatment_status", title = ttl, show_n = TRUE, plot_width = 24) +
+    if (nrow(id_df) > 0) print(violin_distribution(id_df, conditionX = "identity", conditionY = "feature_mean", gridrow = "treatment_status", title = ttl, show_n = TRUE, plot_width = 24, geom = geom) +
       ggtitle("cell-line names"))
+    for (st in sample_types) {
+      sid_df <- prep_identity(plot_df, highlight_terms, types = st, id_col = "sample")
+      if (nrow(sid_df) > 0) print(violin_distribution(sid_df, conditionX = "identity", conditionY = "feature_mean", gridrow = "treatment_status", title = ttl, plot_width = 24, geom = "bar") +
+        ggtitle(paste(st, "sample IDs")))
+    }
     for (t in types) {
       sub_df <- plot_df[plot_df$type == t, ]
       if (nrow(sub_df) == 0) next
-      print(violin_distribution(sub_df, conditionX = "plot_group", conditionY = "feature_mean", gridcol = "category", gridrow = NULL, scales = "free_x", title = ttl, show_n = TRUE) +
+      print(violin_distribution(sub_df, conditionX = "plot_group", conditionY = "feature_mean", gridcol = "category", gridrow = NULL, scales = "free_x", title = ttl, show_n = TRUE, geom = geom) +
         ggtitle(as.character(t)))
     }
   })
@@ -1164,12 +1184,17 @@ dot_plot <- function(df, group_col, title, feature_labels, min_n = 3, tpm_cut = 
   p
 }
  
-plot_dot_pdf <- function(plot_df, feature_labels, file, types, highlight_terms) {
+plot_dot_pdf <- function(plot_df, feature_labels, file, types, highlight_terms, sample_types = c("PDX", "CDX")) {
   show_plot <- function(p) if (!is.null(p)) print(p)
   with_pdf(file, width = 25, height = max(5, 0.2 * length(feature_labels) + 3), {
     show_plot(dot_plot(plot_df, "plot_group", "All types combined", feature_labels))
     id_df <- prep_identity(plot_df, highlight_terms)
     if (nrow(id_df) > 0) show_plot(dot_plot(id_df, "identity", "cell-line names", feature_labels, facet_row = "treatment_status", facet_col = NULL))
+    for (st in sample_types) {
+      sid_df <- prep_identity(plot_df, highlight_terms, types = st, id_col = "sample")
+      if (nrow(sid_df) > 0) show_plot(dot_plot(sid_df, "identity", paste(st, "sample IDs"), feature_labels, min_n = 1,
+                                               facet_row = "treatment_status", facet_col = NULL))
+    }
     for (t in types) {
       sub_df <- plot_df[plot_df$type == t, ]
       if (nrow(sub_df) == 0) next
@@ -1243,15 +1268,19 @@ specificity_strip <- function(df, group_col, feature_labels, highlight, min_n = 
           axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5, size = 8, colour = hl_col))
 }
  
-make_strips <- function(plot_df, feature_labels, types, highlight_terms, per_feature, file, height) {
+make_strips <- function(plot_df, feature_labels, types, highlight_terms, per_feature, file, height, sample_types = c("PDX", "CDX")) {
   with_pdf(file, width = 16, height = height, {
-    sp <- function(d, g, ttl) {
-      p <- specificity_strip(d, g, feature_labels, highlight = highlight_terms, per_feature = per_feature, title = ttl)
+    sp <- function(d, g, ttl, min_n = 3) {
+      p <- specificity_strip(d, g, feature_labels, highlight = highlight_terms, per_feature = per_feature, title = ttl, min_n = min_n)
       if (!is.null(p)) print(p)
     }
     sp(plot_df, "plot_group", "All types combined")
     id_df <- prep_identity(plot_df, highlight_terms)
     if (nrow(id_df) > 0) sp(id_df, "identity", "cell-line names")
+    for (st in sample_types) {
+      sid_df <- prep_identity(plot_df, highlight_terms, types = st, id_col = "sample")
+      if (nrow(sid_df) > 0) sp(sid_df, "identity", paste(st, "sample IDs"), min_n = 1)
+    }
     for (t in types) sp(plot_df[plot_df$type == t, ], "plot_group", as.character(t))
   })
 }
