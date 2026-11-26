@@ -230,6 +230,7 @@ if (length(feature_labels) <= max_features) {
   file_stems <- make.unique(file_stems, sep = "_")          # avoid overwriting if names repeat
   for (i in seq_along(feature_labels)) {
     plot_feature_pdf(feature_labels[i], file_stems[i], plot_df, outdir, outstem, types, highlight_terms)
+    plot_feature_pdf(feature_labels[i], file_stems[i], plot_df, outdir, outstem, types, highlight_terms, geom = "boxplot")
   }
 } else {
   message("More than ", max_features, " features (", length(feature_labels), "): skipping per-feature PDFs")

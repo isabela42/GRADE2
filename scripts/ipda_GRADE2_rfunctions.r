@@ -1080,16 +1080,15 @@ save_plot_list_pdf <- function(plots, heights, file, width = 8.27) {
 }
  
 ## ---------------------------------------------------------------- expression plots
-plot_feature_pdf <- function(feature, file_stem, plot_df, outdir, outstem, types, highlight_terms,
-                             sample_types = c("PDX", "CDX")) {
+plot_feature_pdf <- function(feature, file_stem, plot_df, outdir, outstem, types, highlight_terms, geom = "violin", sample_types = c("PDX", "CDX")) {
   df <- plot_df
   df$feature_value <- df[[feature]]
   ylab <- "log2(tpm + 1)"
-  with_pdf(paste0(outdir, "/", outstem, ".violin.", file_stem, ".pdf"), width = 11.67, height = 5, {
-    print(violin_distribution(df, conditionX = "plot_group", conditionY = "feature_value", gridcol = "category", scales = "free_x", title = ylab, show_n = TRUE) +
+  with_pdf(paste0(outdir, "/", outstem, ".", geom, ".", file_stem, ".pdf"), width = 11.67, height = 5, {
+    print(violin_distribution(df, conditionX = "plot_group", conditionY = "feature_value", gridcol = "category", scales = "free_x", title = ylab, show_n = TRUE, geom = geom) +
       ggtitle(paste(feature, "- all types combined")))
     id_df <- prep_identity(df, highlight_terms)
-    if (nrow(id_df) > 0) print(violin_distribution(id_df, conditionX = "identity", conditionY = "feature_value", gridrow = "treatment_status", title = ylab, show_n = TRUE, plot_width = 24) +
+    if (nrow(id_df) > 0) print(violin_distribution(id_df, conditionX = "identity", conditionY = "feature_value", gridrow = "treatment_status", title = ylab, show_n = TRUE, plot_width = 24, geom = geom) +
       ggtitle(paste(feature, "- cell-line names")))
     for (st in sample_types) {
       sid_df <- prep_identity(df, highlight_terms, types = st, id_col = "sample")
@@ -1099,7 +1098,7 @@ plot_feature_pdf <- function(feature, file_stem, plot_df, outdir, outstem, types
     for (t in types) {
       sub_df <- df[df$type == t, ]
       if (nrow(sub_df) == 0) next
-      print(violin_distribution(sub_df, conditionX = "plot_group", conditionY = "feature_value", gridcol = "category", gridrow = NULL, scales = "free_x", title = ylab, show_n = TRUE) +
+      print(violin_distribution(sub_df, conditionX = "plot_group", conditionY = "feature_value", gridcol = "category", gridrow = NULL, scales = "free_x", title = ylab, show_n = TRUE, geom = geom) +
         ggtitle(paste(feature, "-", as.character(t))))
     }
   })
